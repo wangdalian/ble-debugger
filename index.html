@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+	<meta charset="UTF-8">
+	<title i18n='title'>Cassia 调试工具</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+	<meta http-equiv="expires" content="0">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <link href="./lib/element-ui-2.12.0/index.css" rel="stylesheet">
+	<link rel="stylesheet" href="./css/index.css">
+</head>
+
+<body>
+  <div id="app">
+    <el-row class="box">
+      <!-- <el-form ref="form" :model="form" label-width="80px">
+
+      </el-form> -->
+      <el-col :span="8" class="col1">
+        <el-row>
+          <el-divider>连接配置</el-divider>
+        </el-row>
+        <el-row>
+          <el-col :span="6">服务器URL</el-col>
+          <el-col :span="10">
+            <el-input v-model="store.devConf.serverURI" class="server-ip" clearable placeholder="http://192.168.0.100"></el-input>
+          </el-col>
+          <el-col :span="8">
+            <el-radio-group v-model="store.devConf.controlStyle">
+              <el-radio-button :label="'ap'">AP</el-radio-button>
+              <el-radio-button :label="'ac'">AC</el-radio-button>
+            </el-radio-group>
+          </el-col>
+        </el-row>
+        <el-row class="ac-dev-conf" v-show="store.devConf.controlStyle === 'ac'">
+          <el-row>
+            <el-col :span="6">
+              开发者账号
+            </el-col>
+            <el-col :span="18">
+              <el-input v-model="store.devConf.acDevKey" class="ac-dev-key"></el-input>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="6">
+              开发者密码
+            </el-col>
+            <el-col :span="18">
+              <el-input v-model="store.devConf.acDevSecret" class="ac-dev-secret"></el-input>
+            </el-col>
+          </el-row>
+        </el-row>
+        <el-row v-show="store.devConf.controlStyle === 'ac'">
+          <el-col :span="6">
+            路由器MAC
+          </el-col>
+          <el-col :span="18">
+            <el-input v-model="store.devConf.mac" class="ap-mac"></el-input>
+          </el-col>
+        </el-row>
+        <el-divider>扫描参数</el-divider>
+        <el-row>
+          <el-row>
+            <el-col :span="6">使用芯片</el-col>
+            <el-col :span="18">
+              <el-radio-group v-model="store.devConf.chip">
+                <el-radio-button :label="0">芯片0</el-radio-button>
+                <el-radio-button :label="1">芯片1</el-radio-button>
+              </el-radio-group>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="6">过滤名称</el-col>
+            <el-col :span="18">
+              <el-tag
+                :key="tag"
+                v-for="tag in store.devConf.filter_name"
+                closable
+                :disable-transitions="false"
+                @close="scanFilterNamesHandleClose(tag)">
+                {{tag}}
+              </el-tag>
+              <el-input
+                class="input-new-tag"
+                v-if="store.devConfDisplayVars.scanFilterNamesInputVisible"
+                v-model="store.devConfDisplayVars.scanFilterNamesInputValue"
+                ref="scanFilterNamesSaveTagInput"
+                @keyup.enter.native="scanFilterNamesHandleInputConfirm"
+                @blur="scanFilterNamesHandleInputConfirm"
+              >
+              </el-input>
+              <el-button v-else class="button-new-tag" @click="scanFilterNamesShowInput">+</el-button>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="6">过滤MAC</el-col>
+            <el-col :span="18">
+              <el-tag
+                :key="tag"
+                v-for="tag in store.devConf.filter_mac"
+                closable
+                :disable-transitions="false"
+                @close="scanFilterMacsHandleClose(tag)">
+                {{tag}}
+              </el-tag>
+              <el-input
+                class="input-new-tag"
+                v-if="store.devConfDisplayVars.scanFilterMacsInputVisible"
+                v-model="store.devConfDisplayVars.scanFilterMacsInputValue"
+                ref="scanFilterMacsSaveTagInput"
+                @keyup.enter.native="scanFilterMacsHandleInputConfirm"
+                @blur="scanFilterMacsHandleInputConfirm"
+              >
+              </el-input>
+              <el-button v-else class="button-new-tag" @click="scanFilterMacsShowInput">+</el-button>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="6">过滤RSSI</el-col>
+            <el-col :span="18">
+              <el-slider
+                v-model="store.devConf.filter_rssi"
+                show-stops
+                :step="5"
+                :min="-85"
+                :max="0">
+              </el-slider>
+            </el-col>
+          </el-row>
+        </el-row>
+        <el-divider>常用操作</el-divider>
+        <el-row>
+          <el-button>重启</el-button>
+          <el-button @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
+          <el-button @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
+        </el-row>
+      </el-col>
+      <el-col :span="16">
+        <el-row>
+          <el-tabs tab-position="left" type="card">
+            <el-tab-pane>
+              <span slot="label"><i class="el-icon-date"></i> 扫描列表</span>
+              <el-row v-for="(item, index) in cache.scanResultList" :key="index">
+                <el-col :span="12">
+                  <el-row>{{ item.name }}</el-row>
+                  <el-row>{{ item.mac }}</el-row>
+                  <el-row>{{ item.bdaddrType }}</el-row>
+                </el-col>
+                <el-col :span="6">
+                  {{ item.rssi }}dBm
+                </el-col>
+                <el-col :span="6">
+                  <el-button @click="connectDevice(item.mac)">连接</el-button>
+                </el-col>
+              </el-row>
+            </el-tab-pane>
+            <el-tab-pane>
+              <span slot="label"><i class="el-icon-date"></i> 连接列表</span>
+              <el-tabs type="card" closable>
+                <el-tab-pane v-for="(device, index) in cache.connectedList" :key="index">
+                  <span slot="label"><i class="el-icon-date"></i>{{ device.mac }}</span>
+                  <el-row>
+                    <el-col :span="3">{{ device.name }}</el-col>
+                    <el-col :span="5">{{ device.mac }}</el-col>
+                    <el-col :span="2">{{ device.bdAddrType }}</el-col>
+                    <el-col :span="2">chip{{ device.chip }}</el-col>
+                    <el-col :span="12">
+                      <el-button-group>
+                        <el-button icon="el-icon-edit" size="mini" @click="getDeviceServices(device.mac)"></el-button>
+                        <el-button icon="el-icon-share" size="mini"></el-button>
+                        <el-button icon="el-icon-delete" size="mini"></el-button>
+                        <el-button icon="el-icon-delete" size="mini"></el-button>
+                      </el-button-group>
+                    </el-col>
+                  </el-row>
+                  <el-row>
+                    <el-collapse>
+                      <el-collapse-item v-for="(service, index) in cache.devicesServiceList[device.mac]" :key="service.uuid">
+                        <template slot="title">
+                          {{ service.name }} ({{ service.uuid }})<i class="header-icon el-icon-info"></i>
+                        </template>
+                        <el-row v-for="(char, index) in service.characteristics" title="char.name" :key="char.name">
+                          <el-row>{{ char.name }}</el-row>
+                          <el-row>UUID: {{ char.uuid }}</el-row>
+                          <el-row>
+                            Properties: 
+                            <el-button v-show="char.propertiesStr.includes('read')" type="plain" size="mini" @Click="propertyClick('read', device.mac, char.handle, char.writeValue)">
+                              read
+                            </el-button>
+                            <el-button v-bind:type="char.notifyStatus === 'on' ? 'primary' : 'plain'" v-show="char.propertiesStr.includes('notify')" size="mini" @Click="propertyClick('notify', device.mac, char.handle, char.notifyStatus)">
+                              notify
+                            </el-button>
+                            </el-switch>
+                            <el-button v-show="char.propertiesStr.includes('write without response')" type="plain" size="mini" @Click="propertyClick('write without response', device.mac, char.handle, char.writeValue)">
+                              write without response
+                            </el-button>
+                            <el-button v-show="char.propertiesStr.includes('write with response')" type="plain" size="mini" @Click="propertyClick('write with response', device.mac, char.handle, char.writeValue)">
+                              write with response
+                            </el-button>
+                            <el-input v-model="char.writeValue" v-show="char.propertiesStr.includes('write without response') || char.propertiesStr.includes('write with response')" placeholder="数据格式：aa00bb11cc22（支持空格）"></el-input>
+                          </el-row>
+                          <el-row v-show="char.readValue.toString().length !== 0">Value: (0x) {{ char.readValue }}</el-row>
+                          <el-divider></el-divider>
+                        </el-row>
+                      </el-collapse-item>
+                    </el-collapse>
+                  </el-row>
+                </el-tab-pane>
+              </el-tabs>
+            </el-tab-pane>
+            <el-tab-pane>
+              <span slot="label"><i class="el-icon-date"></i> 通知列表</span>
+              <el-button>开关</el-button>
+              <el-button>清屏</el-button>
+              <el-row v-for="(notify, index) in cache.notifyResultList" :key="index">
+                <el-col :span="5">{{ notify.mac }}</el-col>
+                <el-col :span="1">{{ notify.handle }}</el-col>
+                <el-col :span="18">{{ notify.value }}</el-col>
+              </el-row>
+            </el-tab-pane>
+          </el-tabs>
+        </el-row>
+        <el-row>
+          <el-divider>日志列表</el-divider>
+        </el-row>
+      </el-col>
+    </el-row>
+  </div>
+</body>
+<script src="./lib/vue-2.6.11/vue.js"></script>
+<script src="./lib/axios-0.19.0/axios.min.js"></script>
+<script src='./lib/element-ui-2.12.0/index.js'></script>
+<script src='./lib/eventsource/eventsource.min.js'></script>
+<script src='./lib/lodash/lodash.js'></script>
+<script src="./js/index.js" type="module"></script>
+
+</html>

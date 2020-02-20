@@ -1,0 +1,48 @@
+
+HTML {
+}
+
+HTML,BODY {
+  font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+  margin: 0px;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+.box {
+  height: 100%;
+}
+
+.col1 {
+  color: #fff;
+  height: 100%;
+  background-color: #0099cc;
+  font-size: 14px;
+}
+
+.server-ip {
+  /* width: 260px; */
+}
+
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
+.button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
+}
