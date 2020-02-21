@@ -5,11 +5,11 @@ const storageKey = 'storageKey';
 
 let storage = {
   devConf: {
-    controlStyle: 'ap', // 连接方式
-    serverURI: 'http://192.168.0.100', // 服务器地址
-    baseURI: 'http://192.168.0.100', //
-    acDevKey: '', // 开发者账号
-    acDevSecret: '', // 开发者密码
+    controlStyle: libEnum.controlStyle.AC, // 连接方式
+    serverURI: 'http://demo.cassia.pro', // 服务器地址
+    baseURI: 'http://demo.cassia.pro', //
+    acDevKey: 'cassia', // 开发者账号
+    acDevSecret: 'cassia', // 开发者密码
     mac: '', // 路由器MAC
     filter_name: [], // 扫描name过滤
     filter_mac: [], // 扫描mac过滤
@@ -27,7 +27,10 @@ let storage = {
 };
 
 let cache = {
-  scanResultList: [], // 扫描结果
+  scanResultList: [
+    {name: '(unknown)', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'public', rssi: -75, adData: '0201061BFF5701009EF50F1E42EA21E883013128A327886A01CB76B8B2656E'},
+    {name: 'MI BAND 3', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'random', rssi: -75, adData: '0201061BFF5701009EF50F1E42EA21E883013128A327886A01CB76B8B2656E'},
+  ], // 扫描结果
   connectedList: [], // 连接列表
   devicesServiceList: {}, // 设备服务列表
   notifyResultList: [

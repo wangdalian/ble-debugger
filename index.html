@@ -16,19 +16,16 @@
 <body>
   <div id="app">
     <el-row class="box">
-      <!-- <el-form ref="form" :model="form" label-width="80px">
-
-      </el-form> -->
-      <el-col :span="8" class="col1">
+      <el-col :span="8" class="col1" style="padding: 10px">
         <el-row>
           <el-divider>连接配置</el-divider>
         </el-row>
-        <el-row>
-          <el-col :span="6">服务器URL</el-col>
-          <el-col :span="10">
+        <el-row style="margin-top: 15px">
+          <el-col :span="4" style="padding-left: 10px; padding-top: 10px">服务URL</el-col>
+          <el-col :span="12" style="padding-left: 10px">
             <el-input v-model="store.devConf.serverURI" class="server-ip" clearable placeholder="http://192.168.0.100"></el-input>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="8" style="padding-left: 10px">
             <el-radio-group v-model="store.devConf.controlStyle">
               <el-radio-button :label="'ap'">AP</el-radio-button>
               <el-radio-button :label="'ac'">AC</el-radio-button>
@@ -36,45 +33,47 @@
           </el-col>
         </el-row>
         <el-row class="ac-dev-conf" v-show="store.devConf.controlStyle === 'ac'">
-          <el-row>
-            <el-col :span="6">
-              开发者账号
+          <el-row style="margin-top: 10px;">
+            <el-col :span="4" style="padding-left: 10px; padding-top: 10px">
+              开发账号
             </el-col>
-            <el-col :span="18">
+            <el-col :span="19"  style="padding-left: 10px">
               <el-input v-model="store.devConf.acDevKey" class="ac-dev-key"></el-input>
             </el-col>
           </el-row>
-          <el-row>
-            <el-col :span="6">
-              开发者密码
+          <el-row style="margin-top: 10px">
+            <el-col :span="4" style="padding-left: 10px; padding-top: 10px">
+              开发密码
             </el-col>
-            <el-col :span="18">
+            <el-col :span="19" style="padding-left: 10px">
               <el-input v-model="store.devConf.acDevSecret" class="ac-dev-secret"></el-input>
             </el-col>
           </el-row>
         </el-row>
-        <el-row v-show="store.devConf.controlStyle === 'ac'">
-          <el-col :span="6">
-            路由器MAC
+        <el-row v-show="store.devConf.controlStyle === 'ac'" style="margin-top: 10px">
+          <el-col :span="4" style="padding-top:10px; padding-left: 10px">
+            AP MAC
           </el-col>
-          <el-col :span="18">
-            <el-input v-model="store.devConf.mac" class="ap-mac"></el-input>
+          <el-col :span="19" style="padding-left: 10px">
+            <el-input v-model="store.devConf.mac" class="ap-mac" placeholder="CC:1B:E0:E0:DD:70"></el-input>
           </el-col>
         </el-row>
-        <el-divider>扫描参数</el-divider>
-        <el-row>
+        <el-row style="margin-top: 20px">
+          <el-divider>扫描配置</el-divider>
+        </el-row>
+        <el-row style="margin-top: 15px">
           <el-row>
-            <el-col :span="6">使用芯片</el-col>
-            <el-col :span="18">
-              <el-radio-group v-model="store.devConf.chip">
+            <el-col :span="4" style="padding-top:10px; padding-left: 10px;">使用芯片</el-col>
+            <el-col :span="19" style="padding-left: 10px">
+              <el-radio-group v-model="store.devConf.chip" size="medium">
                 <el-radio-button :label="0">芯片0</el-radio-button>
                 <el-radio-button :label="1">芯片1</el-radio-button>
               </el-radio-group>
             </el-col>
           </el-row>
-          <el-row>
-            <el-col :span="6">过滤名称</el-col>
-            <el-col :span="18">
+          <el-row style="margin-top: 10px">
+            <el-col :span="4" style="padding-top: 8px; padding-left: 10px">过滤名称</el-col>
+            <el-col :span="20" style="padding-left: 10px">
               <el-tag
                 :key="tag"
                 v-for="tag in store.devConf.filter_name"
@@ -95,9 +94,9 @@
               <el-button v-else class="button-new-tag" @click="scanFilterNamesShowInput">+</el-button>
             </el-col>
           </el-row>
-          <el-row>
-            <el-col :span="6">过滤MAC</el-col>
-            <el-col :span="18">
+          <el-row style="margin-top: 10px">
+            <el-col :span="4" style="padding-top: 8px; padding-left: 10px">过滤MAC</el-col>
+            <el-col :span="20" style="padding-left: 10px">
               <el-tag
                 :key="tag"
                 v-for="tag in store.devConf.filter_mac"
@@ -118,47 +117,96 @@
               <el-button v-else class="button-new-tag" @click="scanFilterMacsShowInput">+</el-button>
             </el-col>
           </el-row>
-          <el-row>
-            <el-col :span="6">过滤RSSI</el-col>
-            <el-col :span="18">
+          <el-row style="margin-top: 10px">
+            <el-col :span="4" style="padding-left: 10px; padding-top: 10px">过滤RSSI</el-col>
+            <el-col :span="19" style="padding-left: 10px">
               <el-slider
                 v-model="store.devConf.filter_rssi"
                 show-stops
-                :step="5"
-                :min="-85"
-                :max="0">
+                :min="0"
+                :max="-85">
               </el-slider>
             </el-col>
           </el-row>
         </el-row>
-        <el-divider>常用操作</el-divider>
-        <el-row>
-          <el-button>重启</el-button>
-          <el-button @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
+        <el-row style="margin-top: 20px">
+          <el-divider>常用操作</el-divider>
+        </el-row>
+        <el-row style="margin-top: 15px">
+          <el-button size="medium" style="margin-left: 10px">AP 信息</el-button>
+          <el-button size="medium" style="margin-left: 10px">重启 AP</el-button>
+          <el-button type="primary" size="medium" @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
           <el-button @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
+          <el-button size="medium" style="margin-left: 10px">其他功能</el-button>
+        </el-row>
+        <el-row style="margin-top: 20px">
+          <el-divider>更多参考</el-divider>
+        </el-row>
+        <el-row style="margin-top: 10px">
+          <el-row style="text-align: center;">
+            <el-link icon="el-icon-link" href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki">Cassia SDK Implementation Guide</el-link>
+          </el-row>
         </el-row>
       </el-col>
-      <el-col :span="16">
-        <el-row>
-          <el-tabs tab-position="left" type="card">
-            <el-tab-pane>
-              <span slot="label"><i class="el-icon-date"></i> 扫描列表</span>
-              <el-row v-for="(item, index) in cache.scanResultList" :key="index">
-                <el-col :span="12">
-                  <el-row>{{ item.name }}</el-row>
-                  <el-row>{{ item.mac }}</el-row>
-                  <el-row>{{ item.bdaddrType }}</el-row>
+      <el-col :span="16" style="height: 100%;">
+        <el-row  style="height: 100%;">
+          <el-col :span="4" style="height: 100%;">
+            <el-menu
+            default-active="2"
+            class="el-menu-vertical-demo"
+            background-color="#545c64"
+            text-color="#fff"
+            active-text-color="#ffd04b"
+            style="height: 100%;">
+            <el-menu-item index="2">
+              <i class="el-icon-menu"></i>
+              <span slot="title">扫描列表</span>
+              
+            </el-menu-item>
+            <el-menu-item index="3">
+              <i class="el-icon-document"></i>
+              <span slot="title"></span>
+            </el-menu-item>
+            <el-menu-item index="4">
+              <i class="el-icon-setting"></i>
+              <span slot="title">导航四</span>
+            </el-menu-item>
+          </el-menu>
+          </el-col>
+          
+          <el-tabs tab-position="left" style="height: 100%; " type="card" stretch="true">
+            <el-tab-pane style="padding: 20px">
+              <span slot="label">
+                <!-- <el-tag type="danger" effect="dark"> -->
+                  <i class="el-icon-search"></i> 
+                  扫描列表
+                <!-- </el-tag> -->
+              </span>
+              <el-row v-for="(item, index) in cache.scanResultList" :key="index" style="margin-bottom: 10px; border-bottom: 1px solid #e3e4ee; padding-left: 10px; padding-bottom: 10px;">
+                <el-col :span="5">
+                  <el-row style="font-size: 16px; font-weight: bold;">{{ item.name }}</el-row>
+                  <el-row style="font-size: 14px; margin-top: 5px; font-style: italic;">{{ item.mac }}</el-row>
+                  <el-row style="font-size: 14px; margin-top: 5px;">{{ item.bdaddrType }}</el-row>
                 </el-col>
-                <el-col :span="6">
-                  {{ item.rssi }}dBm
+                <el-col :span="2" style="font-size: 14px; padding-top: 23px">
+                  {{ item.rssi }}<span style="font-size: 12px;"> dBm</span>
                 </el-col>
-                <el-col :span="6">
-                  <el-button @click="connectDevice(item.mac)">连接</el-button>
+                <el-col :span="14" style="font-size: 12px; padding-top: 24px">
+                  {{ item.adData }}
+                </el-col>
+                <el-col :span="3" style="padding-top: 10px;">
+                  <el-button type="primary" size="medium" @click="connectDevice(item.mac)">连接</el-button>
                 </el-col>
               </el-row>
             </el-tab-pane>
             <el-tab-pane>
-              <span slot="label"><i class="el-icon-date"></i> 连接列表</span>
+              <span slot="label">
+                <!-- <el-tag type="plain" effect="dark"> -->
+                  <i class="el-icon-search"></i> 
+                  扫描列表
+                <!-- </el-tag> -->
+              </span>
+              
               <el-tabs type="card" closable>
                 <el-tab-pane v-for="(device, index) in cache.connectedList" :key="index">
                   <span slot="label"><i class="el-icon-date"></i>{{ device.mac }}</span>
@@ -212,7 +260,12 @@
               </el-tabs>
             </el-tab-pane>
             <el-tab-pane>
-              <span slot="label"><i class="el-icon-date"></i> 通知列表</span>
+              <span slot="label">
+                <!-- <el-tag type="plain" effect="dark"> -->
+                  <i class="el-icon-search"></i> 
+                  扫描列表
+                <!-- </el-tag> -->
+              </span>
               <el-button>开关</el-button>
               <el-button>清屏</el-button>
               <el-row v-for="(notify, index) in cache.notifyResultList" :key="index">
@@ -222,9 +275,6 @@
               </el-row>
             </el-tab-pane>
           </el-tabs>
-        </el-row>
-        <el-row>
-          <el-divider>日志列表</el-divider>
         </el-row>
       </el-col>
     </el-row>

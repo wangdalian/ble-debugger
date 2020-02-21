@@ -21,21 +21,16 @@ HTML,BODY {
 }
 
 .col1 {
-  color: #fff;
   height: 100%;
-  background-color: #0099cc;
+  background-color: #fff;
   font-size: 14px;
-}
-
-.server-ip {
-  /* width: 260px; */
 }
 
 .el-tag + .el-tag {
   margin-left: 10px;
 }
 .button-new-tag {
-  margin-left: 10px;
+  /* margin-left: 10px; */
   height: 32px;
   line-height: 30px;
   padding-top: 0;
@@ -43,6 +38,10 @@ HTML,BODY {
 }
 .input-new-tag {
   width: 90px;
-  margin-left: 10px;
+  /* margin-left: 10px; */
   vertical-align: bottom;
+}
+
+.el-divider__text {
+  font-size: 16px;
 }
