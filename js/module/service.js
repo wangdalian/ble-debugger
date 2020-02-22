@@ -10,8 +10,8 @@ function properties2Str(properties) {
   const operations = [
     libEnum.operation.BROADCASTS,
     libEnum.operation.READ,
-    libEnum.operation.WRITE_WITHOUT_RES,
-    libEnum.operation.WRITE_WITH_RES,
+    libEnum.operation.WRITE_NO_RES,
+    libEnum.operation.WRITE,
     libEnum.operation.NOTIFY,
     libEnum.operation.INDICATE,
     libEnum.operation.AUTHEN,
@@ -33,6 +33,7 @@ function procDeviceServiceList(data) {
       char.readValue = ''; // 辅助前端页面缓存读取的value
       char.writeValue = ''; // 辅助前端页面缓存写入的value
       char.notifyStatus = libEnum.notifyStatus.OFF; // 辅助前端页面缓存notify开关状态
+      char.writeValueType = 'writeValueTypeHex'; // 辅助前端页面缓存选择写入的value类型
     })
   });
   return data;

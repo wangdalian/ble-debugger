@@ -16,9 +16,9 @@
 <body>
   <div id="app">
     <el-row class="box">
-      <el-col :span="8" class="col1" style="padding: 10px">
+      <el-col :span="8" class="col1" style="padding: 10px; ">
         <el-row>
-          <el-divider>连接配置</el-divider>
+          <el-divider>扫描列表</el-divider>
         </el-row>
         <el-row style="margin-top: 15px">
           <el-col :span="4" style="padding-left: 10px; padding-top: 10px">服务URL</el-col>
@@ -137,7 +137,15 @@
           <el-button size="medium" style="margin-left: 10px">重启 AP</el-button>
           <el-button type="primary" size="medium" @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
           <el-button @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
-          <el-button size="medium" style="margin-left: 10px">其他功能</el-button>
+          <el-dropdown style="margin-left: 10px">
+            <el-button size="medium" >
+              简体中文<i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>简体中文</el-dropdown-item>
+              <el-dropdown-item>English</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </el-row>
         <el-row style="margin-top: 20px">
           <el-divider>更多参考</el-divider>
@@ -148,33 +156,135 @@
           </el-row>
         </el-row>
       </el-col>
-      <el-col :span="16" style="height: 100%;">
+      <el-col :span="15" :offset="1" style="height: 100%; padding:30px 30px 30px 10px; border-left: 1px solid #e6e6e6;">
         <el-row  style="height: 100%;">
-          <el-col :span="4" style="height: 100%;">
+          <el-col :span="2" style="height: 100%; padding-left: 10px;">
             <el-menu
-            default-active="2"
-            class="el-menu-vertical-demo"
-            background-color="#545c64"
-            text-color="#fff"
-            active-text-color="#ffd04b"
-            style="height: 100%;">
-            <el-menu-item index="2">
-              <i class="el-icon-menu"></i>
-              <span slot="title">扫描列表</span>
-              
-            </el-menu-item>
-            <el-menu-item index="3">
-              <i class="el-icon-document"></i>
-              <span slot="title"></span>
-            </el-menu-item>
-            <el-menu-item index="4">
-              <i class="el-icon-setting"></i>
-              <span slot="title">导航四</span>
-            </el-menu-item>
-          </el-menu>
+              collapse
+              @select="menuSelect"
+              default-active="scanListMenuItem"
+              class="el-menu-vertical-demo"
+              style="height: 100%;">
+              <el-menu-item index="scanListMenuItem">
+                <i class="el-icon-search"></i>
+                <span slot="title">扫描列表</span>
+              </el-menu-item>
+              <el-menu-item index="connectListMenuItem">
+                <i class="el-icon-connection"></i>
+                <span slot="title">连接列表</span>
+              </el-menu-item>
+              <el-menu-item index="notifyListMenuItem">
+                <i class="el-icon-message-solid"></i>
+                <span slot="title">通知列表</span>
+              </el-menu-item>
+            </el-menu>
+          </el-col>
+          <el-col :span="22" style="height: 100%; overflow: scroll; padding: 0px 20px 20px 20px">
+            <el-row :gutter="2" v-show="store.devConfDisplayVars.activeMenuItem === 'scanListMenuItem'" v-for="(item, index) in cache.scanResultList" :key="index" style="margin-bottom: 5px; font-style: italic; border: 1px solid #e3e4ee; border-bottom: 1px solid #e3e4ee; padding: 15px;">
+              <el-col :span="5">
+                <el-row style="font-size: 16px; font-weight: bold;">{{ item.name }}</el-row>
+                <el-row style="font-size: 14px; margin-top: 5px; font-style: italic; color: #999">{{ item.mac }}</el-row>
+                <el-row style="font-size: 14px; margin-top: 5px; color: #999">{{ item.bdaddrType }}</el-row>
+              </el-col>
+              <el-col :span="3" style="font-size: 14px; padding-top: 23px; color: #999; ">
+                {{ item.rssi }}<span style="font-size: 12px; "> dBm</span>
+              </el-col>
+              <el-col :span="13" style="font-size: 12px; padding-top: 24px; padding-right: 10px; color: #999; overflow-wrap: break-word;">
+                {{ item.adData }}
+              </el-col>
+              <el-col :span="3" style="padding-top: 15px;">
+                <el-button type="primary" size="medium" @click="connectDevice(item.mac)">连接</el-button>
+              </el-col>
+            </el-row>
+            <el-row v-show="store.devConfDisplayVars.activeMenuItem === 'connectListMenuItem'">
+              <el-tabs closable>
+                <el-tab-pane v-for="(device, index) in cache.connectedList" :key="index">
+                  <span slot="label" style="font-size: 16px; padding: 5px; color: #000">{{ device.mac }}</span>
+                  <el-row style="background-color: #2897ff; font-size: 14px; font-style: italic; border-radius: 3px; color: #fff; height: 60px; display: flex; align-items: center; padding-left: 15px; padding-right: 15px;">
+                    <el-col :span="6">
+                      <el-row>{{ device.name }}</el-row>
+                      <el-row style="font-style:italic">{{ device.mac }}</el-row>
+                    </el-col>
+                    <el-col :span="3">{{ device.bdAddrType }}</el-col>
+                    <el-col :span="3">chip{{ device.chip }}</el-col>
+                    <el-col :span="12">
+                      <el-button-group style="float: right; ">
+                        <el-button size="mini" @click="getDeviceServices(device.mac)">服务</el-button>
+                        <el-button type="danger" size="mini" size="medium">断连</el-button>
+                        <el-button size="mini" size="mini" size="medium">配对</el-button>
+                        <el-button type="danger" size="mini" size="medium">取消配对</el-button>
+                      </el-button-group>
+                    </el-col>
+                  </el-row>
+                  <el-row style="padding-left: 0px; margin-top: 15px;">
+                    <el-collapse>
+                      <el-collapse-item v-for="(service, index) in cache.devicesServiceList[device.mac]" :key="service.uuid">
+                        <template slot="title">
+                          <el-col style="padding-left: 5px; font-size: 14px; font-style: italic;">{{ service.uuid }}</el-col>
+                          <el-col style="float: right; font-size: 14px; font-style: italic;">{{ service.name }}</el-col>
+                        </template>
+                        <el-row style="background-color: #e6e6e6; padding: 15px; border-bottom: 1px solid #fff" v-for="(char, index) in service.characteristics" title="char.name" :key="char.uuid">
+                          <el-row style="font-size: 14px; font-weight: bold; font-style: italic;">{{ char.name }}</el-row>
+                          <el-row style="font-size: 1px; font-style: italic;">UUID: {{ char.uuid }}</el-row>
+                          <el-row style="font-size: 12px; font-style: italic; ">
+                            Properties: 
+                            <el-button-group>
+                              <el-button style="font-style: italic; font-weight: bold;" v-show="char.propertiesStr.includes('READ')" type="primary" size="mini" @Click="propertyClick('READ', device.mac, char.handle, char.writeValue)">
+                                READ
+                              </el-button>
+                              <el-button style="font-style: italic; font-weight: bold;" v-bind:type="char.notifyStatus === 'on' ? 'primary' : 'info'" v-show="char.propertiesStr.includes('NOTIFY')" size="mini" @Click="propertyClick('NOTIFY', device.mac, char.handle, char.notifyStatus)">
+                                NOTIFY
+                              </el-button>
+                              </el-switch>
+                              <el-button style="font-style: italic; font-weight: bold;" v-show="char.propertiesStr.includes('WRITE NO RES')" type="primary" size="mini" @Click="propertyClick('WRITE NO RES', device.mac, char.handle, char.writeValue)">
+                                WRITE NO RES
+                              </el-button>
+                              <el-button style="font-style: italic; font-weight: bold;" v-show="char.propertiesStr.includes('WRITE')" type="primary" size="mini" @Click="propertyClick('WRITE', device.mac, char.handle, char.writeValue)">
+                                WRITE
+                              </el-button>
+                            </el-button-group>
+                            <el-radio-group style="float: right" size="mini" v-model="char.writeValueType">
+                              <el-radio-button label="writeValueTypeHex">HEX</el-radio-button>
+                              <el-radio-button label="writeValueTypeText">TEXT</el-radio-button>
+                            </el-radio-group>
+                            <el-input style="width: 250px; float: right; font-size: 12px; font-style: italic;" size="mini" v-model="char.writeValue" :placeholder="char.writeValueType === 'writeValueTypeHex' ? '格式：aa00bb11cc22（支持空格）' : '格式：任意字符'">
+                            </el-input>
+                          </el-row>
+                          <el-row style="font-size: 12px; font-style: italic; color: #2897ff" v-show="char.readValue.toString().length !== 0">Value: (0x) {{ char.readValue }}</el-row>
+                        </el-row>
+                      </el-collapse-item>
+                    </el-collapse>
+                  </el-row>
+                </el-tab-pane>
+              </el-tabs>
+            </el-row>
+            <el-row style="font-style: italic;" v-show="store.devConfDisplayVars.activeMenuItem === 'notifyListMenuItem'">
+              <el-table
+                stripe
+                highlight-current-row
+                :data="cache.notifyResultList"
+                style="width: 100%">
+                <el-table-column
+                  prop="mac"
+                  sortable
+                  label="MAC"
+                  width="240">
+                </el-table-column>
+                <el-table-column
+                  prop="handle"
+                  sortable
+                  label="HANDLE"
+                  width="120">
+                </el-table-column>
+                <el-table-column
+                  prop="value"
+                  label="VALUE">
+                </el-table-column>
+              </el-table>
+            </el-row>
           </el-col>
           
-          <el-tabs tab-position="left" style="height: 100%; " type="card" stretch="true">
+          <el-tabs tab-position="left" style="height: 100%; " type="card" stretch>
             <el-tab-pane style="padding: 20px">
               <span slot="label">
                 <!-- <el-tag type="danger" effect="dark"> -->
@@ -182,22 +292,7 @@
                   扫描列表
                 <!-- </el-tag> -->
               </span>
-              <el-row v-for="(item, index) in cache.scanResultList" :key="index" style="margin-bottom: 10px; border-bottom: 1px solid #e3e4ee; padding-left: 10px; padding-bottom: 10px;">
-                <el-col :span="5">
-                  <el-row style="font-size: 16px; font-weight: bold;">{{ item.name }}</el-row>
-                  <el-row style="font-size: 14px; margin-top: 5px; font-style: italic;">{{ item.mac }}</el-row>
-                  <el-row style="font-size: 14px; margin-top: 5px;">{{ item.bdaddrType }}</el-row>
-                </el-col>
-                <el-col :span="2" style="font-size: 14px; padding-top: 23px">
-                  {{ item.rssi }}<span style="font-size: 12px;"> dBm</span>
-                </el-col>
-                <el-col :span="14" style="font-size: 12px; padding-top: 24px">
-                  {{ item.adData }}
-                </el-col>
-                <el-col :span="3" style="padding-top: 10px;">
-                  <el-button type="primary" size="medium" @click="connectDevice(item.mac)">连接</el-button>
-                </el-col>
-              </el-row>
+              
             </el-tab-pane>
             <el-tab-pane>
               <span slot="label">
@@ -207,57 +302,7 @@
                 <!-- </el-tag> -->
               </span>
               
-              <el-tabs type="card" closable>
-                <el-tab-pane v-for="(device, index) in cache.connectedList" :key="index">
-                  <span slot="label"><i class="el-icon-date"></i>{{ device.mac }}</span>
-                  <el-row>
-                    <el-col :span="3">{{ device.name }}</el-col>
-                    <el-col :span="5">{{ device.mac }}</el-col>
-                    <el-col :span="2">{{ device.bdAddrType }}</el-col>
-                    <el-col :span="2">chip{{ device.chip }}</el-col>
-                    <el-col :span="12">
-                      <el-button-group>
-                        <el-button icon="el-icon-edit" size="mini" @click="getDeviceServices(device.mac)"></el-button>
-                        <el-button icon="el-icon-share" size="mini"></el-button>
-                        <el-button icon="el-icon-delete" size="mini"></el-button>
-                        <el-button icon="el-icon-delete" size="mini"></el-button>
-                      </el-button-group>
-                    </el-col>
-                  </el-row>
-                  <el-row>
-                    <el-collapse>
-                      <el-collapse-item v-for="(service, index) in cache.devicesServiceList[device.mac]" :key="service.uuid">
-                        <template slot="title">
-                          {{ service.name }} ({{ service.uuid }})<i class="header-icon el-icon-info"></i>
-                        </template>
-                        <el-row v-for="(char, index) in service.characteristics" title="char.name" :key="char.name">
-                          <el-row>{{ char.name }}</el-row>
-                          <el-row>UUID: {{ char.uuid }}</el-row>
-                          <el-row>
-                            Properties: 
-                            <el-button v-show="char.propertiesStr.includes('read')" type="plain" size="mini" @Click="propertyClick('read', device.mac, char.handle, char.writeValue)">
-                              read
-                            </el-button>
-                            <el-button v-bind:type="char.notifyStatus === 'on' ? 'primary' : 'plain'" v-show="char.propertiesStr.includes('notify')" size="mini" @Click="propertyClick('notify', device.mac, char.handle, char.notifyStatus)">
-                              notify
-                            </el-button>
-                            </el-switch>
-                            <el-button v-show="char.propertiesStr.includes('write without response')" type="plain" size="mini" @Click="propertyClick('write without response', device.mac, char.handle, char.writeValue)">
-                              write without response
-                            </el-button>
-                            <el-button v-show="char.propertiesStr.includes('write with response')" type="plain" size="mini" @Click="propertyClick('write with response', device.mac, char.handle, char.writeValue)">
-                              write with response
-                            </el-button>
-                            <el-input v-model="char.writeValue" v-show="char.propertiesStr.includes('write without response') || char.propertiesStr.includes('write with response')" placeholder="数据格式：aa00bb11cc22（支持空格）"></el-input>
-                          </el-row>
-                          <el-row v-show="char.readValue.toString().length !== 0">Value: (0x) {{ char.readValue }}</el-row>
-                          <el-divider></el-divider>
-                        </el-row>
-                      </el-collapse-item>
-                    </el-collapse>
-                  </el-row>
-                </el-tab-pane>
-              </el-tabs>
+              
             </el-tab-pane>
             <el-tab-pane>
               <span slot="label">

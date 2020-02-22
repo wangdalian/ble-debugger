@@ -47,7 +47,7 @@ const gattServices = {
 // uuid: 00001800-0000-1000-8000-00805f9b34fb
 function getNameByUuid(uuid) {
   let shortId = parseInt(uuid.split('-')[0], 16).toString(16).toUpperCase();;
-  return gattServices[shortId] || uuid;
+  return gattServices[shortId] || 'Unknown Service';
 }
 
 export default {

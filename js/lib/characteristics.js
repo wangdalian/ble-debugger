@@ -239,7 +239,7 @@ const gattCharacteristics = {
 // uuid: 00001800-0000-1000-8000-00805f9b34fb
 function getNameByUuid(uuid) {
   let shortId = parseInt(uuid.split('-')[0], 16).toString(16).toUpperCase();;
-  return gattCharacteristics[shortId] || uuid;
+  return gattCharacteristics[shortId] || 'Unknown Characteristics';
 }
 
 export default {

@@ -45,3 +45,17 @@ HTML,BODY {
 .el-divider__text {
   font-size: 16px;
 }
+
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+  /* width: 200px; */
+  /* min-height: 400px; */
+}
+
+.el-menu-vertical-demo {
+  /* border-left: 1px solid #e6e6e6; */
+  border-right: 0px;
+}
+
+input::-webkit-input-placeholder {
+  font-style: italic;
+}

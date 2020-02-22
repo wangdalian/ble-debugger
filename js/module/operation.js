@@ -9,8 +9,8 @@ const logger = libLogger.genModuleLogger('operation');
 const operationsHandler = {
   [libEnum.operation.READ]: readHander,
   [libEnum.operation.NOTIFY]: notifyHandler,
-  // [libEnum.operation.WRITE_WITHOUT_RES]: writeWithoutResHandler,
-  [libEnum.operation.WRITE_WITH_RES]: writeWithResHandler,  
+  // [libEnum.operation.WRITE_NO_RES]: writeWithoutResHandler,
+  [libEnum.operation.WRITE]: writeWithResHandler,  
 };
 
 function notifyHandler(operation, deviceMac, handle, notifyStatus) {

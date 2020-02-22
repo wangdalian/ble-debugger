@@ -19,6 +19,7 @@ function scanSseMessageHandler(message) {
     cache.scanResultList.push({
       mac: deviceAddr.bdaddr, 
       name: data.name,
+      adData:  data.adData,
       bdaddrType: deviceAddr.bdaddrType,
       rssi: data.rssi
     });

@@ -4,14 +4,14 @@ const controlStyle = {
 }
 
 const operation = {
-  BROADCASTS: 'broadcasts',
-  READ: 'read',
-  WRITE_WITHOUT_RES: 'write without response',
-  WRITE_WITH_RES: 'write with response',
-  NOTIFY: 'notify',
-  INDICATE: 'indicate',
-  AUTHEN: 'authen',
-  EXTENDED: 'extended',
+  BROADCASTS: 'BROADCASTS',
+  READ: 'READ',
+  WRITE_NO_RES: 'WRITE NO RES',
+  WRITE: 'WRITE',
+  NOTIFY: 'NOTIFY',
+  INDICATE: 'INDICATE',
+  AUTHEN: 'AUTHEN',
+  EXTENDED: 'EXTENDED',
 }
 
 // char通知按钮状态

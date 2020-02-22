@@ -3,6 +3,9 @@ import scanModule from './scan.js';
 import serviceModule from './service.js';
 import operationModule from './operation.js';
 import dbModule from './db.js';
+import libLogger from '../lib/logger.js';
+
+const logger = libLogger.genModuleLogger('vue');
 
 let globalVue = null;
 
@@ -17,6 +20,9 @@ function createVueData(vue) {
 
 function createVueMethods(vue) {
   return {
+    menuSelect(key, keyPath) {
+      this.store.devConfDisplayVars.activeMenuItem = key;
+    },
     propertyClick(operation, deviceMac, handle, writeValueOrNotifyStatus) {
       operationModule.dispatch(operation, deviceMac, handle, writeValueOrNotifyStatus);
     },
