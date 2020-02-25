@@ -2,8 +2,11 @@ import libLogger from '../lib/logger.js';
 import libEnum from '../lib/enum.js';
 import config from '../config/config.js';
 import base64 from '../lib/base64.js';
+import dbModule from './db.js';
 
 const logger = libLogger.genModuleLogger('api');
+
+axios.defaults.headers['Content-Type'] = 'application/json';
 
 function obj2QueryStr(obj) {
   let arr = [];
@@ -46,20 +49,43 @@ function getAccessToken(baseURI, devKey, devSecret) {
 }
 
 function scanSseMessageHandler(message) {
-  logger.info('scan sse message:', message);
+  // logger.info('scan sse message:', message);
 }
 
 function scanSseErrorHandler(error) {
   logger.error('scan sse error:', error);
 }
 
+function getScanUrl(baseURI, params) {
+  return `${baseURI}/gap/nodes?${obj2QueryStr(params)}`;
+}
+
+function getConnectStatusUrl(baseURI, params) {
+  return `${baseURI}/management/nodes/connection-state?${obj2QueryStr(params)}`;
+}
+
 // params -> {chip: 0, filter_mac: '1,2', filter_name: '2,3', filter_rssi: -75, mac: 'aa', access_token: 'bac'}
-function startScan(baseURI, params, messageHandler, errorHandler) {
-  const url = `${baseURI}/gap/nodes?${obj2QueryStr(params)}`;
+function startScan(url, messageHandler, errorHandler) {
   let sse = new EventSource(url);
   sse.onmessage = messageHandler || scanSseMessageHandler;
   sse.onerror = errorHandler || scanSseErrorHandler;
   logger.info('open scan sse:', url);
+  return sse;
+}
+
+function connectStatusSseMessageHandler(message) {
+  logger.info('connect status sse message:', message);
+}
+
+function connectStatusSseErrorHandler(error) {
+  logger.error('connect status sse error:', error);
+}
+
+function connectStatusSse(url, messageHandler, errorHandler) {
+  let sse = new EventSource(url);
+  sse.onmessage = messageHandler || connectStatusSseMessageHandler;
+  sse.onerror = errorHandler || connectStatusSseErrorHandler;
+  logger.info('connect status sse:', url);
   return sse;
 }
 
@@ -81,15 +107,16 @@ function startNotify(baseURI, params, messageHandler, errorHandler) {
   return sse;
 }
 
-function connect(baseURI, params, deviceMac) {
+function connect(baseURI, params, deviceMac, addrType) {
   const url = `${baseURI}/gap/nodes/${deviceMac}/connection/?${obj2QueryStr(params)}`;
   return new Promise((resolve, reject) => {
-    axios.post(url).then(function(response) {
+    axios.post(url, {timeout: config.http.requestTimeout, type: addrType}).then(function(response) {
       logger.info('connect device success:', response);
       resolve(response.data);
     }).catch(function(error) {
-      logger.error('connect device error:', error);
-      reject(error);
+      let info = error.response ? error.response.data : error;
+      logger.error('connect device error:', info);
+      reject(info);
     });
   });
 }
@@ -160,12 +187,28 @@ function writeByHandle(baseURI, params, deviceMac, handle, value, noresponse=fal
   });
 }
 
-function startScanByDevConf(devConf, messageHandler, errorHandler) {
+function getScanUrlByDevConf(devConf) {
   const fields = ['chip', 'filter_mac', 'filter_name', 'filter_rssi'];
   const params = getFields(devConf, fields);
   params.active = 1;
   params.event = 1;
-  return startScan(devConf.baseURI, params, messageHandler, errorHandler);
+  return getScanUrl(devConf.baseURI, params);
+}
+
+function getConnectStatusUrlByDevConf(devConf) {
+  const fields = [];
+  const params = getFields(devConf, fields);
+  return getConnectStatusUrl(devConf.baseURI, params);
+}
+
+function startScanByDevConf(devConf, messageHandler, errorHandler) {
+  const url = getScanUrlByDevConf(devConf);
+  return startScan(url, messageHandler, errorHandler);
+}
+
+function openConnectStatusSseByDevConf(devConf, messageHandler, errorHandler) {
+  const url = getConnectStatusUrlByDevConf(devConf);
+  return connectStatusSse(url, messageHandler, errorHandler);
 }
 
 function startNotifyByDevConf(devConf, messageHandler, errorHandler) {
@@ -177,7 +220,10 @@ function startNotifyByDevConf(devConf, messageHandler, errorHandler) {
 
 function connectByDevConf(devConf, deviceMac) {
   const params = getFields(devConf, []);
-  return connect(devConf.baseURI, params, deviceMac);
+  const scanResultList = dbModule.getCache().scanResultList;
+  const item = _.find(scanResultList, {mac: deviceMac});
+  if (!item) return Promise.reject('can not get addr type');
+  return connect(devConf.baseURI, params, deviceMac, item.bdaddrType);
 }
 
 function getConnectedListByDevConf(devConf) {
@@ -215,4 +261,6 @@ export default {
   getDeviceServiceListByDevConf,
   readByHandleByDevConf,
   writeByHandleByDevConf,
+  getScanUrlByDevConf,
+  openConnectStatusSseByDevConf,
 }

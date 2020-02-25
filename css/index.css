@@ -59,3 +59,10 @@ HTML,BODY {
 input::-webkit-input-placeholder {
   font-style: italic;
 }
+
+pre {
+  font-size: 12px;
+  font-style: italic; 
+  font-family: 'Courier New', Courier, monospace;
+  overflow: scroll;
+}

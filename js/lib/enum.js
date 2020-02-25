@@ -20,8 +20,17 @@ const notifyStatus = {
   OFF: 'off'
 };
 
+// element message类型
+const messageType = {
+  INFO: 'info',
+  SUCCESS: 'success',
+  WARNING: 'warning',
+  ERROR: 'error'
+};
+
 export default {
   operation,
   controlStyle,
-  notifyStatus
+  notifyStatus,
+  messageType
 }

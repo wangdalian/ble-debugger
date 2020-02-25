@@ -5,9 +5,9 @@ const storageKey = 'storageKey';
 
 let storage = {
   devConf: {
-    controlStyle: libEnum.controlStyle.AC, // 连接方式
-    serverURI: 'http://demo.cassia.pro', // 服务器地址
-    baseURI: 'http://demo.cassia.pro', //
+    controlStyle: libEnum.controlStyle.AP, // 连接方式
+    serverURI: 'http://192.168.0.100', // 服务器地址
+    baseURI: 'http://192.168.0.100', //
     acDevKey: 'cassia', // 开发者账号
     acDevSecret: 'cassia', // 开发者密码
     mac: '', // 路由器MAC
@@ -23,43 +23,38 @@ let storage = {
     scanFilterMacsInputVisible: false,
     scanFilterMacsInputValue: '',
     isScanning: false,
-    activeMenuItem: 'scanListMenuItem'
+    activeMenuItem: 'scanListMenuItem',
+    rssiChartSwitch: false, // 是否开启rssi chart，默认关闭
+    rssiChartPeriod: 60, // 单位秒，统计周期
+    rssiChartDataSpan: 2000, // 单位毫秒, 统计间隔, 此毫秒长度认为1个广播点
+    rssiChartDataCount:  (60 * 1000 / 2000) // rssiChartPeriod * 1000 / rssiChartDataSpan;
   }
 };
 
 let cache = {
-  scanResultList: [
-    {name: 'UNKNOWN', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'public', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'MI BAND 3', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'random', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'UNKNOWN', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'public', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'MI BAND 3', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'random', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'UNKNOWN', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'public', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'MI BAND 3', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'random', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'UNKNOWN', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'public', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'MI BAND 3', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'random', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'UNKNOWN', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'public', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'MI BAND 3', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'random', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'UNKNOWN', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'public', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'MI BAND 3', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'random', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'UNKNOWN', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'public', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'MI BAND 3', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'random', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'UNKNOWN', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'public', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'MI BAND 3', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'random', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'UNKNOWN', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'public', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'MI BAND 3', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'random', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'UNKNOWN', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'public', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'MI BAND 3', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'random', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'UNKNOWN', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'public', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-    {name: 'MI BAND 3', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'random', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
-  ], // 扫描结果
-  connectedList: [
-  ], // 连接列表
-  devicesServiceList: {}, // 设备服务列表
-  notifyResultList: [
-    {mac: 'CC:1B:E0:E7:FE:F8', handle: 15, value: '0011223344556677889900112233445566778899'},
-    {mac: 'CC:1B:E0:E7:FE:F8', handle: 15, value: '0011223344556677889900112233445566778899'},
-    {mac: 'CC:1B:E0:E7:FE:F8', handle: 15, value: '0011223344556677889900112233445566778899'}
-  ], // 通知列表
+  devicesConnectLoading: {
+
+  },
+  apiDebuggerResult: { 
+    scanResultList: [],
+    scanCodeCurl: '',
+    scanCodeNodeJS: ''
+  },
+  scanResultList: [ // 扫描结果列表
+    {name: 'UNKNOWN', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'public', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C', rssiHistory: [{time: Date.now(), rssi: -15}, {time: Date.now(), rssi: -75}]},
+    {name: 'MI BAND 3', mac: 'CC:1B:E0:E0:DD:71', bdaddrType: 'random', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C', rssiHistory: [{time: Date.now(), rssi: -25}, {time: Date.now(), rssi: -35}]},
+  ],
+  connectedList: [ // 连接结果列表
+    {name: '123', mac: 'CC:1B:E0:E0:DD:71', bdaddrType: 'random', chip: 0},
+  ],
+  devicesServiceList: { // 设备服务列表
+
+  }, 
+  notifyResultList: [ // 通知列表
+    {mac: 'CC:1B:E0:E7:FE:F8', time: '2020/02/20 01:02:03.666', handle: 15, value: '0011223344556677889900112233445566778899'},
+    {mac: 'CC:1B:E0:E7:FE:F8', time: '2020/02/20 01:02:03.666', handle: 15, value: '0011223344556677889900112233445566778899'},
+    {mac: 'CC:1B:E0:E7:FE:F8', time: '2020/02/20 01:02:03.666', handle: 15, value: '0011223344556677889900112233445566778899'}
+  ], 
 };
 
 function save(key, value) {
@@ -112,12 +107,30 @@ function getDevConf() {
   return storage.devConf;
 }
 
+function getDevConfDisplayVars() {
+  return storage.devConfDisplayVars;
+}
+
 function getCache() {
   return cache;
 }
 
+function getStorage() {
+  return storage;
+}
+
 function loadStorage() {
   storage = JSON.parse(get(storageKey)) || storage;
+}
+
+function listAddOrUpdate(array, filterObj, arrayItem) {
+  let item = _.find(array, filterObj);
+  if (!item) array.push(arrayItem);
+  else {
+    _.forEach(arrayItem, (v, k) => {
+      item[k] = v;
+    });
+  }
 }
 
 export default {
@@ -128,5 +141,8 @@ export default {
   storage,
   cache,
   loadStorage,
-  getCache
+  getCache,
+  getStorage,
+  getDevConfDisplayVars,
+  listAddOrUpdate
 }

@@ -1,6 +1,5 @@
 import libLogger from '../lib/logger.js';
 import db from './db.js';
-import urlModule from './url.js';
 import api from './api.js';
 import dbModule from './db.js';
 
@@ -22,10 +21,7 @@ function notifySseErrorHandler(error) {
 
 // 保存配置 -> 启动扫描
 function startNotify(devConf) {
-  db.saveDevConf(devConf);
-  urlModule.updateURI(devConf).then(function() {
-    sse = api.startNotifyByDevConf(devConf, notifySseMessageHandler, notifySseErrorHandler);
-  });
+  let sse = api.startNotifyByDevConf(devConf, notifySseMessageHandler, notifySseErrorHandler);
   return sse;
 }
 

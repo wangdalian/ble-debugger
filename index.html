@@ -18,7 +18,7 @@
     <el-row class="box">
       <el-col :span="8" class="col1" style="padding: 10px; ">
         <el-row>
-          <el-divider>扫描列表</el-divider>
+          <el-divider>连接配置</el-divider>
         </el-row>
         <el-row style="margin-top: 15px">
           <el-col :span="4" style="padding-left: 10px; padding-top: 10px">服务URL</el-col>
@@ -136,7 +136,7 @@
           <el-button size="medium" style="margin-left: 10px">AP 信息</el-button>
           <el-button size="medium" style="margin-left: 10px">重启 AP</el-button>
           <el-button type="primary" size="medium" @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
-          <el-button @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
+          <el-button type="danger" size="medium" @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
           <el-dropdown style="margin-left: 10px">
             <el-button size="medium" >
               简体中文<i class="el-icon-arrow-down el-icon--right"></i>
@@ -177,35 +177,71 @@
                 <i class="el-icon-message-solid"></i>
                 <span slot="title">通知列表</span>
               </el-menu-item>
+              <el-menu-item index="apiDebugger">
+                <i class="el-icon-service"></i>
+                <span slot="title">接口调试</span>
+              </el-menu-item>
             </el-menu>
           </el-col>
           <el-col :span="22" style="height: 100%; overflow: scroll; padding: 0px 20px 20px 20px">
-            <el-row :gutter="2" v-show="store.devConfDisplayVars.activeMenuItem === 'scanListMenuItem'" v-for="(item, index) in cache.scanResultList" :key="index" style="margin-bottom: 5px; font-style: italic; border: 1px solid #e3e4ee; border-bottom: 1px solid #e3e4ee; padding: 15px;">
-              <el-col :span="5">
-                <el-row style="font-size: 16px; font-weight: bold;">{{ item.name }}</el-row>
-                <el-row style="font-size: 14px; margin-top: 5px; font-style: italic; color: #999">{{ item.mac }}</el-row>
-                <el-row style="font-size: 14px; margin-top: 5px; color: #999">{{ item.bdaddrType }}</el-row>
-              </el-col>
-              <el-col :span="3" style="font-size: 14px; padding-top: 23px; color: #999; ">
-                {{ item.rssi }}<span style="font-size: 12px; "> dBm</span>
-              </el-col>
-              <el-col :span="13" style="font-size: 12px; padding-top: 24px; padding-right: 10px; color: #999; overflow-wrap: break-word;">
-                {{ item.adData }}
-              </el-col>
-              <el-col :span="3" style="padding-top: 15px;">
-                <el-button type="primary" size="medium" @click="connectDevice(item.mac)">连接</el-button>
-              </el-col>
-            </el-row>
+            <el-tabs  v-show="store.devConfDisplayVars.activeMenuItem === 'scanListMenuItem'">
+              <el-tab-pane label="扫描结果">
+                <el-row :gutter="2" v-for="(item, index) in cache.scanResultList" :key="index" style="margin-bottom: 5px; font-style: italic; border-bottom: 1px solid #e3e4ee; border-bottom: 1px solid #e3e4ee; padding: 15px;">
+                  <el-col :span="5">
+                    <el-row style="font-size: 16px; font-weight: bold;">{{ item.name }}</el-row>
+                    <el-row style="font-size: 14px; margin-top: 5px; font-style: italic; color: #999">{{ item.mac }}</el-row>
+                    <el-row style="font-size: 14px; margin-top: 5px; color: #999">{{ item.bdaddrType }}</el-row>
+                  </el-col>
+                  <el-col :span="3" style="font-size: 14px; padding-top: 23px; color: #999; ">
+                    {{ item.rssi }}<span style="font-size: 12px; "> dBm</span>
+                  </el-col>
+                  <el-col :span="13" style="font-size: 12px; padding-top: 24px; padding-right: 10px; color: #999; overflow-wrap: break-word;">
+                    {{ item.adData }}
+                  </el-col>
+                  <el-col :span="3" style="padding-top: 15px;">
+                    <el-button type="primary" size="medium" @click="connectDevice(item.mac)" :loading="cache.devicesConnectLoading[item.mac]">连接</el-button>
+                  </el-col>
+                </el-row>
+              </el-tab-pane>
+              <el-tab-pane label="RSSI Chart" style="height: 100%; width: 100%;">
+                <el-row>
+                  <el-form inline>
+                    <el-form-item label="统计周期">
+                      <el-select v-model="store.devConfDisplayVars.rssiChartPeriod" placeholder="统计周期">
+                        <el-option label="60秒" value="60"></el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="统计间隔">
+                      <el-select v-model="store.devConfDisplayVars.rssiChartDataSpan" placeholder="统计间隔" @change="rssiChartDataSpanChange">
+                        <el-option label="200毫秒" value="200"></el-option>
+                        <el-option label="500毫秒" value="500"></el-option>
+                        <el-option label="1秒" value="1000"></el-option>
+                        <el-option label="2秒" value="2000"></el-option>
+                        <el-option label="5秒" value="5000"></el-option>
+                        <el-option label="10秒" value="10000"></el-option>
+                        <el-option label="30秒" value="30000"></el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item>
+                      <el-button v-show="!store.devConfDisplayVars.rssiChartSwitch" size="medium" @click="rssiChartSwitchChange(true)" type="primary">开启</el-button>
+                      <el-button v-show="store.devConfDisplayVars.rssiChartSwitch" size="medium" @click="rssiChartSwitchChange(false)" type="primary">关闭</el-button>
+                    </el-form-item>
+                  </el-form>
+                </el-row>
+                <el-row id="rssiChart" style="width: 100%; height: 500px; "></el-row>
+              </el-tab-pane>
+            </el-tabs>
+            
             <el-row v-show="store.devConfDisplayVars.activeMenuItem === 'connectListMenuItem'">
-              <el-tabs closable>
-                <el-tab-pane v-for="(device, index) in cache.connectedList" :key="index">
+              <el-tabs closable @tab-remove="connectedListTabRemove">
+                <el-tab-pane v-for="(device, index) in cache.connectedList" :key="index" :name="index.toString()">
                   <span slot="label" style="font-size: 16px; padding: 5px; color: #000">{{ device.mac }}</span>
                   <el-row style="background-color: #2897ff; font-size: 14px; font-style: italic; border-radius: 3px; color: #fff; height: 60px; display: flex; align-items: center; padding-left: 15px; padding-right: 15px;">
                     <el-col :span="6">
                       <el-row>{{ device.name }}</el-row>
                       <el-row style="font-style:italic">{{ device.mac }}</el-row>
                     </el-col>
-                    <el-col :span="3">{{ device.bdAddrType }}</el-col>
+                    <el-col :span="3">{{ device.bdaddrType }}</el-col>
                     <el-col :span="3">chip{{ device.chip }}</el-col>
                     <el-col :span="12">
                       <el-button-group style="float: right; ">
@@ -243,11 +279,11 @@
                                 WRITE
                               </el-button>
                             </el-button-group>
-                            <el-radio-group style="float: right" size="mini" v-model="char.writeValueType">
+                            <el-radio-group v-show="char.propertiesStr.includes('WRITE')" style="float: right" size="mini" v-model="char.writeValueType">
                               <el-radio-button label="writeValueTypeHex">HEX</el-radio-button>
                               <el-radio-button label="writeValueTypeText">TEXT</el-radio-button>
                             </el-radio-group>
-                            <el-input style="width: 250px; float: right; font-size: 12px; font-style: italic;" size="mini" v-model="char.writeValue" :placeholder="char.writeValueType === 'writeValueTypeHex' ? '格式：aa00bb11cc22（支持空格）' : '格式：任意字符'">
+                            <el-input v-show="char.propertiesStr.includes('WRITE')" style="width: 250px; float: right; font-size: 12px; font-style: italic;" size="mini" v-model="char.writeValue" :placeholder="char.writeValueType === 'writeValueTypeHex' ? '格式：aa00bb11cc22（支持空格）' : '格式：任意字符'">
                             </el-input>
                           </el-row>
                           <el-row style="font-size: 12px; font-style: italic; color: #2897ff" v-show="char.readValue.toString().length !== 0">Value: (0x) {{ char.readValue }}</el-row>
@@ -268,7 +304,13 @@
                   prop="mac"
                   sortable
                   label="MAC"
-                  width="240">
+                  width="160">
+                </el-table-column>
+                <el-table-column
+                  prop="time"
+                  sortable
+                  label="TIME"
+                  width="180">
                 </el-table-column>
                 <el-table-column
                   prop="handle"
@@ -282,54 +324,121 @@
                 </el-table-column>
               </el-table>
             </el-row>
+            <el-row v-show="store.devConfDisplayVars.activeMenuItem === 'apiDebugger'">
+              <el-tabs>
+                <el-tab-pane label="扫描设备">
+                  <el-form label-width="80px">
+                    <el-form-item label="使用芯片">
+                      <el-radio-group v-model="store.devConf.chip" size="medium">
+                        <el-radio-button :label="0">芯片0</el-radio-button>
+                        <el-radio-button :label="1">芯片1</el-radio-button>
+                      </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="过滤名称">
+                      <el-tag
+                          :key="tag"
+                          v-for="tag in store.devConf.filter_name"
+                          closable
+                          :disable-transitions="false"
+                          @close="scanFilterNamesHandleClose(tag)">
+                          {{tag}}
+                        </el-tag>
+                        <el-input
+                          class="input-new-tag"
+                          v-if="store.devConfDisplayVars.scanFilterNamesInputVisible"
+                          v-model="store.devConfDisplayVars.scanFilterNamesInputValue"
+                          ref="scanFilterNamesSaveTagInput"
+                          @keyup.enter.native="scanFilterNamesHandleInputConfirm"
+                          @blur="scanFilterNamesHandleInputConfirm"
+                        >
+                        </el-input>
+                        <el-button v-else class="button-new-tag" @click="scanFilterNamesShowInput">+</el-button>
+                    </el-form-item>
+                    <el-form-item label="过滤MAC">
+                      <el-tag
+                          :key="tag"
+                          v-for="tag in store.devConf.filter_mac"
+                          closable
+                          :disable-transitions="false"
+                          @close="scanFilterMacsHandleClose(tag)">
+                          {{tag}}
+                        </el-tag>
+                        <el-input
+                          class="input-new-tag"
+                          v-if="store.devConfDisplayVars.scanFilterMacsInputVisible"
+                          v-model="store.devConfDisplayVars.scanFilterMacsInputValue"
+                          ref="scanFilterMacsSaveTagInput"
+                          @keyup.enter.native="scanFilterMacsHandleInputConfirm"
+                          @blur="scanFilterMacsHandleInputConfirm"
+                        >
+                        </el-input>
+                        <el-button v-else class="button-new-tag" @click="scanFilterMacsShowInput">+</el-button>
+                    </el-form-item>
+                    <el-form-item label="过滤RSSI">
+                      <el-slider
+                      v-model="store.devConf.filter_rssi"
+                      show-stops
+                      :min="0"
+                      :max="-85">
+                    </el-slider>
+                    </el-form-item>
+                    <el-form-item>
+                      <el-button-group>
+                        <el-button type="primary" size="medium" @click="startScan" v-show="!store.devConfDisplayVars.isScanning">立即调试</el-button>
+                        <el-button type="danger" size="medium" @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
+                        <el-button type="primary" size="medium" @click="genCode('scan')">生成代码</el-button>
+                      </el-button-group>
+                    </el-form-item>
+                  </el-form>
+                  <el-row>
+                    <el-tabs>
+                      <el-tab-pane label="调试结果">
+                        <pre>
+                          <!-- {{ cache.apiDebuggerResult.scanResultList.join('\n') }} -->
+                        </pre>
+                      </el-tab-pane>
+                      <el-tab-pane label="cURL代码">
+                        <pre>
+                          {{ cache.apiDebuggerResult.scanCodeCurl }}
+                        </pre>
+                      </el-tab-pane>
+                      <el-tab-pane label="NodeJS代码">
+                        <pre>
+                          {{ cache.apiDebuggerResult.scanCodeNodeJS }}
+                        </pre>
+                      </el-tab-pane>
+                    </el-tabs>
+                  </el-row>
+                </el-tab-pane>
+                <el-tab-pane label="连接设备">
+
+                </el-tab-pane>
+                <el-tab-pane label="读取数据">
+                  
+                </el-tab-pane>
+                <el-tab-pane label="写入数据">
+                  
+                </el-tab-pane>
+                <el-tab-pane label="断开连接">
+                  
+                </el-tab-pane>
+                <el-tab-pane label="连接通知">
+                  
+                </el-tab-pane>
+              </el-tabs>
+            </el-row>
           </el-col>
-          
-          <el-tabs tab-position="left" style="height: 100%; " type="card" stretch>
-            <el-tab-pane style="padding: 20px">
-              <span slot="label">
-                <!-- <el-tag type="danger" effect="dark"> -->
-                  <i class="el-icon-search"></i> 
-                  扫描列表
-                <!-- </el-tag> -->
-              </span>
-              
-            </el-tab-pane>
-            <el-tab-pane>
-              <span slot="label">
-                <!-- <el-tag type="plain" effect="dark"> -->
-                  <i class="el-icon-search"></i> 
-                  扫描列表
-                <!-- </el-tag> -->
-              </span>
-              
-              
-            </el-tab-pane>
-            <el-tab-pane>
-              <span slot="label">
-                <!-- <el-tag type="plain" effect="dark"> -->
-                  <i class="el-icon-search"></i> 
-                  扫描列表
-                <!-- </el-tag> -->
-              </span>
-              <el-button>开关</el-button>
-              <el-button>清屏</el-button>
-              <el-row v-for="(notify, index) in cache.notifyResultList" :key="index">
-                <el-col :span="5">{{ notify.mac }}</el-col>
-                <el-col :span="1">{{ notify.handle }}</el-col>
-                <el-col :span="18">{{ notify.value }}</el-col>
-              </el-row>
-            </el-tab-pane>
-          </el-tabs>
         </el-row>
       </el-col>
     </el-row>
   </div>
 </body>
 <script src="./lib/vue-2.6.11/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@4.1.0/dist/echarts.js"></script>
 <script src="./lib/axios-0.19.0/axios.min.js"></script>
 <script src='./lib/element-ui-2.12.0/index.js'></script>
 <script src='./lib/eventsource/eventsource.min.js'></script>
 <script src='./lib/lodash/lodash.js'></script>
 <script src="./js/index.js" type="module"></script>
-
+</script>
 </html>
