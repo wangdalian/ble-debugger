@@ -28,9 +28,16 @@ const messageType = {
   ERROR: 'error'
 };
 
+// 写入设备指令格式
+const writeDataType = {
+  HEX: 'hex',
+  TEXT: 'text'
+};
+
 export default {
   operation,
   controlStyle,
   notifyStatus,
-  messageType
+  messageType,
+  writeDataType
 }

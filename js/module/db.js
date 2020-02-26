@@ -24,6 +24,7 @@ let storage = {
     scanFilterMacsInputValue: '',
     isScanning: false,
     activeMenuItem: 'scanListMenuItem',
+    rssiChartStopped: false, // 是否暂停了rssi chart
     rssiChartSwitch: false, // 是否开启rssi chart，默认关闭
     rssiChartPeriod: 60, // 单位秒，统计周期
     rssiChartDataSpan: 2000, // 单位毫秒, 统计间隔, 此毫秒长度认为1个广播点

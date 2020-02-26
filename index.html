@@ -207,12 +207,12 @@
                 <el-row>
                   <el-form inline>
                     <el-form-item label="统计周期">
-                      <el-select v-model="store.devConfDisplayVars.rssiChartPeriod" placeholder="统计周期">
+                      <el-select v-model="store.devConfDisplayVars.rssiChartPeriod" placeholder="统计周期" style="width: 100px;">
                         <el-option label="60秒" value="60"></el-option>
                       </el-select>
                     </el-form-item>
                     <el-form-item label="统计间隔">
-                      <el-select v-model="store.devConfDisplayVars.rssiChartDataSpan" placeholder="统计间隔" @change="rssiChartDataSpanChange">
+                      <el-select v-model="store.devConfDisplayVars.rssiChartDataSpan" placeholder="统计间隔" @change="rssiChartDataSpanChange" style="width: 100px;">
                         <el-option label="200毫秒" value="200"></el-option>
                         <el-option label="500毫秒" value="500"></el-option>
                         <el-option label="1秒" value="1000"></el-option>
@@ -223,8 +223,10 @@
                       </el-select>
                     </el-form-item>
                     <el-form-item>
-                      <el-button v-show="!store.devConfDisplayVars.rssiChartSwitch" size="medium" @click="rssiChartSwitchChange(true)" type="primary">开启</el-button>
-                      <el-button v-show="store.devConfDisplayVars.rssiChartSwitch" size="medium" @click="rssiChartSwitchChange(false)" type="primary">关闭</el-button>
+                      <el-button v-show="!store.devConfDisplayVars.rssiChartSwitch" size="medium" @click="destoryAndCreateRssiChart" type="primary">开启</el-button>
+                      <el-button v-show="store.devConfDisplayVars.rssiChartSwitch && !store.devConfDisplayVars.rssiChartStopped" size="medium" @click="stopRssiChart" type="primary">暂停</el-button>
+                      <el-button v-show="store.devConfDisplayVars.rssiChartSwitch && store.devConfDisplayVars.rssiChartStopped" size="medium" @click="startRssiChart" type="primary">继续</el-button>
+                      <el-button v-show="store.devConfDisplayVars.rssiChartSwitch" size="medium" @click="destoryRssiChart" type="primary">关闭</el-button>
                     </el-form-item>
                   </el-form>
                 </el-row>
@@ -246,9 +248,9 @@
                     <el-col :span="12">
                       <el-button-group style="float: right; ">
                         <el-button size="mini" @click="getDeviceServices(device.mac)">服务</el-button>
-                        <el-button type="danger" size="mini" size="medium">断连</el-button>
-                        <el-button size="mini" size="mini" size="medium">配对</el-button>
-                        <el-button type="danger" size="mini" size="medium">取消配对</el-button>
+                        <el-button type="danger" size="mini" @click="disconnectDevice(device.mac)">断连</el-button>
+                        <el-button size="mini" size="mini">配对</el-button>
+                        <el-button type="danger" size="mini">取消配对</el-button>
                       </el-button-group>
                     </el-col>
                   </el-row>
@@ -280,10 +282,10 @@
                               </el-button>
                             </el-button-group>
                             <el-radio-group v-show="char.propertiesStr.includes('WRITE')" style="float: right" size="mini" v-model="char.writeValueType">
-                              <el-radio-button label="writeValueTypeHex">HEX</el-radio-button>
-                              <el-radio-button label="writeValueTypeText">TEXT</el-radio-button>
+                              <el-radio-button label="hex">HEX</el-radio-button>
+                              <el-radio-button label="text">TEXT</el-radio-button>
                             </el-radio-group>
-                            <el-input v-show="char.propertiesStr.includes('WRITE')" style="width: 250px; float: right; font-size: 12px; font-style: italic;" size="mini" v-model="char.writeValue" :placeholder="char.writeValueType === 'writeValueTypeHex' ? '格式：aa00bb11cc22（支持空格）' : '格式：任意字符'">
+                            <el-input v-show="char.propertiesStr.includes('WRITE')" style="width: 250px; float: right; font-size: 12px; font-style: italic;" size="mini" v-model="char.writeValue" :placeholder="char.writeValueType === 'hex' ? '格式：aa00bb11cc22（支持空格）' : '格式：任意字符'">
                             </el-input>
                           </el-row>
                           <el-row style="font-size: 12px; font-style: italic; color: #2897ff" v-show="char.readValue.toString().length !== 0">Value: (0x) {{ char.readValue }}</el-row>

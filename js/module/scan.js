@@ -37,20 +37,19 @@ function scanSseMessageHandler(message) {
 
 function scanSseErrorHandler(error) {
   logger.error('scan sse error:', error);
-  vueModule.notify(error, `扫描SSE异常`, libEnum.messageType.ERROR);
+  vueModule.notify(`扫描SSE异常: ${error}`, `服务异常`, libEnum.messageType.ERROR);
 }
 
 // 保存配置 -> 启动扫描
 function startScan(devConf) {
   db.saveDevConf(devConf);
   sse = api.startScanByDevConf(devConf, scanSseMessageHandler, scanSseErrorHandler);
-  vueModule.notify('开启扫描成功', '开启扫描成功', libEnum.messageType.SUCCESS);
   return sse;
 }
 
 function stopScan() {
   if (sse) sse.close();
-  vueModule.notify('停止扫描成功', '停止扫描成功', libEnum.messageType.SUCCESS);
+  vueModule.notify('停止扫描成功', '操作成功', libEnum.messageType.SUCCESS);
 }
 
 export default {

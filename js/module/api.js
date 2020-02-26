@@ -128,8 +128,9 @@ function disconnect(baseURI, params, deviceMac) {
       logger.info('disconnect device success:', response);
       resolve(response.data);
     }).catch(function(error) {
-      logger.error('disconnect device error:', error);
-      reject(error);
+      let info = error.response ? error.response.data : error;
+      logger.error('disconnect device error:', info);
+      reject(info);
     });
   });
 }
@@ -141,8 +142,9 @@ function getConnectedList(baseURI, params) {
       logger.info('get connected list success:', response);
       resolve(response.data);
     }).catch(function(error) {
-      logger.error('get connected list error:', error);
-      reject(error);
+      let info = error.response ? error.response.data : error;
+      logger.error('get connected list error:', info);
+      reject(info);
     });
   });
 }
@@ -154,8 +156,9 @@ function getDeviceServiceList(baseURI, params, deviceMac) {
       logger.info('get device service list success:', response);
       resolve(response.data);
     }).catch(function(error) {
-      logger.error('get device service list error:', error);
-      reject(error);
+      let info = error.response ? error.response.data : error;
+      logger.error('get device service list error:', info);
+      reject(info);
     });
   });
 }
@@ -167,8 +170,9 @@ function readByHandle(baseURI, params, deviceMac, handle) {
       logger.info('read handle success:', response);
       resolve(response.data);
     }).catch(function(error) {
-      logger.error('read handle error:', error);
-      reject(error);
+      let info = error.response ? error.response.data : error;
+      logger.error('read handle error:', info);
+      reject(info);
     });
   });
 }
@@ -181,8 +185,9 @@ function writeByHandle(baseURI, params, deviceMac, handle, value, noresponse=fal
       logger.info('write handle success:', response);
       resolve(response.data);
     }).catch(function(error) {
-      logger.error('write handle error:', error);
-      reject(error);
+      let info = error.response ? error.response.data : error;
+      logger.error('write handle error:', info);
+      reject(info);
     });
   });
 }

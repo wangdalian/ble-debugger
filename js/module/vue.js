@@ -96,41 +96,57 @@ function createRssiChart() {
 
 function createVueMethods(vue) {
   return {
-    connectedListTabRemove(index) {
-      const deviceMac = this.cache.connectedList[index].mac;
-      apiModule.disconnectByDevConf(this.store.devConf, deviceMac).then(() => {
-        _.pullAt(this.cache.connectedList, index);
-        // notify(`设备 ${deviceMac} 断开连接`, `设备断连成功`, libEnum.messageType.SUCCESS);
-      }).catch(function(ex) {
-        notify(`设备 ${deviceMac} 断连失败: ${ex}`, '设备断连失败', libEnum.messageType.ERROR);
-      });
+    stopRssiChart() { // 停止图表
+      clearInterval(globalVue.rssiChartUpdateInterval);
+      globalVue.rssiChartUpdateInterval = null;
+      this.store.devConfDisplayVars.rssiChartStopped = true;
     },
-    rssiChartDataSpanChange() {
-      if (!this.store.devConfDisplayVars.rssiChartSwitch) {
-        logger.info('rssi chart switch off');
-        this.rssiChart = null;
-        clearInterval(this.rssiChartUpdateInterval);
-        this.rssiChartUpdateInterval = null;
-        notify('关闭RSSI图表成功', '关闭RSSI图表成功', libEnum.messageType.SUCCESS);
+    startRssiChart() {
+      globalVue.rssiChartUpdateInterval = createRssiChartUpdateInterval();
+      this.store.devConfDisplayVars.rssiChartStopped = false;
+    },
+    destoryRssiChart() {
+      clearInterval(globalVue.rssiChartUpdateInterval);
+      globalVue.rssiChart = null;
+      globalVue.rssiChartUpdateInterval = null;
+      this.store.devConfDisplayVars.rssiChartSwitch = false;
+    },
+    destoryAndCreateRssiChart() { // 销毁重建图表
+      if (!this.store.devConfDisplayVars.isScanning) {
+        this.$confirm('此操作需要开启扫描, 是否继续?（请配置合适的扫描过滤参数，过多设备会卡顿）', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => { // 点击确定
+          this.startScan();
+          this.destoryRssiChart();
+          setTimeout(function(that) {
+            globalVue.rssiChart = createRssiChart();
+            globalVue.startRssiChart();
+            notify('开启RSSI图表成功', '操作成功', libEnum.messageType.SUCCESS);
+          }, 100);
+          this.store.devConfDisplayVars.rssiChartSwitch = true;
+        }).catch(() => { // 点击取消
+               
+        });
       } else {
-        if (!this.store.devConfDisplayVars.isScanning) {
-          notify('没有开启扫描，请先开启扫描!', '缺失操作', libEnum.messageType.WARNING);
-          return;
-        }
-        if (this.store.devConfDisplayVars.rssiChartDataSpan < 5000) {
-          notify('设置的统计间隔较短，可能会导致界面卡顿!', '操作告警', libEnum.messageType.WARNING);
-        }
+        this.destoryRssiChart();
         setTimeout(function(that) {
-          clearInterval(that.rssiChartUpdateInterval);
-          that.rssiChart = createRssiChart();
-          that.rssiChartUpdateInterval = createRssiChartUpdateInterval();
-          notify('开启RSSI图表成功', '开启RSSI图表成功', libEnum.messageType.SUCCESS);
-        }, 100, this);
+          globalVue.rssiChart = createRssiChart();
+          globalVue.startRssiChart();
+          notify('开启RSSI图表成功', '操作成功', libEnum.messageType.SUCCESS);
+        }, 100);
+        this.store.devConfDisplayVars.rssiChartSwitch = true;
       }
     },
-    rssiChartSwitchChange(rssiChartSwitch) {
-      this.store.devConfDisplayVars.rssiChartSwitch = rssiChartSwitch;
-      this.rssiChartDataSpanChange();
+    connectedListTabRemove(index) {
+      const deviceMac = this.cache.connectedList[index].mac;
+      this.disconnectDevice(deviceMac);
+    },
+    rssiChartDataSpanChange() { // 统计间隔变化，重建图表
+      if (this.devConfDisplayVars.rssiChartSwitch) {
+        this.destoryAndCreateRssiChart();
+      }
     },
     genCode(apiType) {
       this.cache.apiDebuggerResult.scanCodeCurl = codeModule.genCode(apiType, 'curl');
@@ -150,10 +166,13 @@ function createVueMethods(vue) {
       this.store.devConfDisplayVars.isScanning = true;
       this.cache.scanResultList = [];
       this.store.devConfDisplayVars.activeMenuItem = 'scanListMenuItem'; // 跳转扫描结果tab页面
+      notify('开启扫描成功', '操作成功', libEnum.messageType.SUCCESS);
     },
     stopScan() {
       scanModule.stopScan();
-      this.rssiChartSwitchChange(false);
+      if (this.store.devConfDisplayVars.rssiChartSwitch) { // 如果当前开启了rssi图表，停止
+        this.stopRssiChart();
+      }
       this.store.devConfDisplayVars.isScanning = false;
     },
     connectDevice(deviceMac) { // notify通过连接状态SSE通知
@@ -169,13 +188,19 @@ function createVueMethods(vue) {
           });
         }
       }).catch(ex => {
-        notify(`连接设备 ${deviceMac} 失败: ${ex}`, '连接设备失败', libEnum.messageType.ERROR);
+        notify(`连接设备 ${deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
       }).then(() => {
         setObjProperty(this.cache.devicesConnectLoading, deviceMac, false);
       });
     },
     disconnectDevice(deviceMac) {
-      apiModule.disconnectByDevConf(this.store.devConf, deviceMac);
+      apiModule.disconnectByDevConf(this.store.devConf, deviceMac).then(() => {
+        _.remove(this.cache.connectedList, {mac: deviceMac});
+        // CAUTION: 目前通过连接状态SSE发送通知，暂时不考虑SSE失败的情况
+        // notify(`设备 ${deviceMac} 断开连接`, `操作成功`, libEnum.messageType.SUCCESS);
+      }).catch(function(ex) {
+        notify(`设备 ${deviceMac} 断连失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+      });
     },
     scanFilterNamesHandleClose(tag) {
       this.store.devConf.filter_name.splice(this.store.devConf.filter_name.indexOf(tag), 1);

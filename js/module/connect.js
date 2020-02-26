@@ -28,16 +28,16 @@ function connectStatusSseMessageHandler(message) {
       mac: data.handle,
       chip: data.chipId
     });
-    vueModule.notify(`chip${data.chipId} 连接${data.handle}成功`, `设备连接成功`, libEnum.messageType.SUCCESS);
+    vueModule.notify(`chip${data.chipId} 连接${data.handle}成功`, `操作成功`, libEnum.messageType.SUCCESS);
   } else if (data.connectionState === 'disconnected') { // 断连移除
     _.remove(cache.connectedList, {mac: data.handle});
-    vueModule.notify(`设备 ${data.handle} 断开连接`, '设备断连', libEnum.messageType.WARNING);
+    vueModule.notify(`设备 ${data.handle} 断开连接`, '通知提示', libEnum.messageType.WARNING);
   }
 }
 
 function connectStatusSseErrorHandler(error) {
   logger.error('connect status sse error:', error);
-  vueModule.notify(error, '连接状态SSE异常', libEnum.messageType.ERROR);
+  vueModule.notify(`连接状态SSE异常: ${error}`, '服务异常', libEnum.messageType.ERROR);
 }
 
 function openConnectStatusSse() {

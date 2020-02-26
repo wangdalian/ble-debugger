@@ -33,7 +33,7 @@ function procDeviceServiceList(data) {
       char.readValue = ''; // 辅助前端页面缓存读取的value
       char.writeValue = ''; // 辅助前端页面缓存写入的value
       char.notifyStatus = libEnum.notifyStatus.OFF; // 辅助前端页面缓存notify开关状态
-      char.writeValueType = 'writeValueTypeHex'; // 辅助前端页面缓存选择写入的value类型
+      char.writeValueType = libEnum.writeDataType.HEX; // 辅助前端页面缓存选择写入的value类型
     })
   });
   return data;
