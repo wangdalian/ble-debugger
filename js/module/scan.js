@@ -37,7 +37,7 @@ function scanSseMessageHandler(message) {
 
 function scanSseErrorHandler(error) {
   logger.error('scan sse error:', error);
-  vueModule.notify(`扫描SSE异常: ${error}`, `服务异常`, libEnum.messageType.ERROR);
+  vueModule.notify(`扫描SSE异常: ${error.message || JSON.stringify(error)}`, `服务异常`, libEnum.messageType.ERROR);
 }
 
 // 保存配置 -> 启动扫描

@@ -1,7 +1,8 @@
+import libEnum from '../lib/enum.js';
 import libLogger from '../lib/logger.js';
-import db from './db.js';
 import api from './api.js';
 import dbModule from './db.js';
+import vueModule from './vue.js';
 
 const logger = libLogger.genModuleLogger('notify');
 
@@ -17,12 +18,13 @@ function notifySseMessageHandler(message) {
 
 function notifySseErrorHandler(error) {
   logger.error('notify sse error:', error);
+  vueModule.notify(`Notify SSE异常: ${error.message || JSON.stringify(error)}`, '服务异常', libEnum.messageType.ERROR);
 }
 
 // 保存配置 -> 启动扫描
-function startNotify(devConf) {
-  let sse = api.startNotifyByDevConf(devConf, notifySseMessageHandler, notifySseErrorHandler);
-  return sse;
+function startNotify() {
+  const devConf = dbModule.getDevConf();
+  sse = api.startNotifyByDevConf(devConf, notifySseMessageHandler, notifySseErrorHandler);
 }
 
 function stopNotify() {

@@ -40,7 +40,7 @@ function connectStatusSseMessageHandler(message) {
 
 function connectStatusSseErrorHandler(error) {
   logger.error('connect status sse error:', error);
-  vueModule.notify(`连接状态SSE异常: ${error}`, '服务异常', libEnum.messageType.ERROR);
+  vueModule.notify(`连接状态SSE异常: ${error.message || JSON.stringify(error)}`, '服务异常', libEnum.messageType.ERROR);
 }
 
 function openConnectStatusSse() {

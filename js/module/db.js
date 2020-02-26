@@ -23,6 +23,7 @@ let storage = {
     scanFilterMacsInputVisible: false,
     scanFilterMacsInputValue: '',
     isScanning: false,
+    isNotifyOn: false,
     activeMenuItem: 'scanListMenuItem',
     rssiChartStopped: false, // 是否暂停了rssi chart
     rssiChartSwitch: false, // 是否开启rssi chart，默认关闭

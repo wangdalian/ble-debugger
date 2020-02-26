@@ -6,6 +6,7 @@ import dbModule from './db.js';
 import codeModule from './code.js';
 import libLogger from '../lib/logger.js';
 import libEnum from '../lib/enum.js';
+import notifyModule from './notify.js';
 
 const logger = libLogger.genModuleLogger('vue');
 
@@ -96,6 +97,20 @@ function createRssiChart() {
 
 function createVueMethods(vue) {
   return {
+    clearNotify() {
+      this.cache.notifyResultList.splice(0);
+      notify('清除Notify成功', '操作成功', libEnum.messageType.SUCCESS);
+    },
+    openNotify() {
+      notifyModule.startNotify();
+      this.store.devConfDisplayVars.isNotifyOn = true;
+      notify('开启Notify成功', '操作成功', libEnum.messageType.SUCCESS);
+    },
+    closeNotify() {
+      notifyModule.stopNotify();
+      this.store.devConfDisplayVars.isNotifyOn = false;
+      notify('关闭Notify成功', '操作成功', libEnum.messageType.SUCCESS);
+    },
     stopRssiChart() { // 停止图表
       clearInterval(globalVue.rssiChartUpdateInterval);
       globalVue.rssiChartUpdateInterval = null;

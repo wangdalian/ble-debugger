@@ -292,36 +292,60 @@
                 </el-tab-pane>
               </el-tabs>
             </el-row>
-            <el-row style="font-style: italic;" v-show="store.devConfDisplayVars.activeMenuItem === 'notifyListMenuItem'">
-              <el-table
-                stripe
-                highlight-current-row
-                :data="cache.notifyResultList"
-                style="width: 100%">
-                <el-table-column
-                  prop="mac"
-                  sortable
-                  label="MAC"
-                  width="160">
-                </el-table-column>
-                <el-table-column
-                  prop="time"
-                  sortable
-                  label="TIME"
-                  width="180">
-                </el-table-column>
-                <el-table-column
-                  prop="handle"
-                  sortable
-                  label="HANDLE"
-                  width="120">
-                </el-table-column>
-                <el-table-column
-                  prop="value"
-                  label="VALUE">
-                </el-table-column>
-              </el-table>
+
+            <el-row v-show="store.devConfDisplayVars.activeMenuItem === 'notifyListMenuItem'">
+              <el-tabs>
+                <el-tab-pane>
+                  <span slot="label" style="font-size: 16px; font-weight: bold; "><i class="el-icon-connection"></i> 通知列表</span>
+                    <el-table
+                      :data="cache.notifyResultList"
+                      style="width: 100%; border-radius:3px;"
+                      :cell-style="{'padding-left': '10px', 'font-style': 'italic', 'font-size': '12px', color: '#999'}"
+                      stripe
+                      highlight-current-row
+                      :header-cell-style="{background: '#2897ff', color: '#fff', 'padding-left': '10px'}"
+                      >
+                      <el-table-column
+                        sortable
+                        label="MAC"
+                        width="160">
+                        <template slot-scope="scope">
+                          <span style="font-size: 14px; font-style: normal; font-weight: bold;">{{scope.row.mac}}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        prop="time"
+                        sortable
+                        label="TIME"
+                        width="190">
+                      </el-table-column>
+                      <el-table-column
+                        prop="handle"
+                        sortable
+                        label="HANDLE"
+                        width="120">
+                      </el-table-column>
+                      <el-table-column
+                        prop="value"
+                        label="VALUE"
+                        >
+                        <template slot="header" slot-scope="scope">
+                          <el-button-group>
+                            <el-button v-show="!store.devConfDisplayVars.isNotifyOn" size="mini" @click="openNotify">开启</el-button>
+                            <el-button type="danger" v-show="store.devConfDisplayVars.isNotifyOn" size="mini" @click="closeNotify">关闭</el-button>
+                            <el-button type="danger" size="mini" @click="clearNotify">清空</el-button>
+                          </el-button-group>
+                        </template>
+                        <template slot-scope="scope">
+                          {{ scope.row.value }}
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                </el-tab-pane>
+              </el-tabs>
+              
             </el-row>
+
             <el-row v-show="store.devConfDisplayVars.activeMenuItem === 'apiDebugger'">
               <el-tabs>
                 <el-tab-pane label="扫描设备">
