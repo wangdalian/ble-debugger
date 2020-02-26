@@ -154,7 +154,7 @@
           <el-col :span="22" style="height: 100%; overflow: scroll; padding: 0px 20px 20px 20px">
             <el-tabs  v-show="store.devConfDisplayVars.activeMenuItem === 'scanListMenuItem'"	>
               <el-tab-pane>
-                <h3 slot="label" style="text-align: center;"><i class="el-icon-date"></i> 扫描结果</h3>
+                <span slot="label" style="font-size: 16px; font-weight: bold; "><i class="el-icon-s-data"></i> 扫描结果</span>
                 <el-table
                   :data="cache.scanResultList"
                   style="width: 100%; border-radius:3px;"
@@ -198,7 +198,8 @@
                   </el-table-column>
                 </el-table>
               </el-tab-pane>
-              <el-tab-pane label="RSSI Chart" style="height: 100%; width: 100%;">
+              <el-tab-pane style="height: 100%; width: 100%;">
+                <span slot="label" style="font-size: 16px; font-weight: bold; "><i class="el-icon-pie-chart"></i> RSSI图表</span>
                 <el-row>
                   <el-form inline>
                     <el-form-item label="统计周期">
@@ -232,7 +233,7 @@
             <el-row v-show="store.devConfDisplayVars.activeMenuItem === 'connectListMenuItem'">
               <el-tabs closable @tab-remove="connectedListTabRemove">
                 <el-tab-pane v-for="(device, index) in cache.connectedList" :key="index" :name="index.toString()">
-                  <span slot="label" style="font-size: 16px; padding: 5px; color: #000">{{ device.mac }}</span>
+                  <span slot="label" style="font-size: 16px; font-weight: bold; "><i class="el-icon-connection"></i> {{ device.mac }}</span>
                   <el-row style="background-color: #2897ff; font-size: 14px; font-style: italic; border-radius: 3px; color: #fff; height: 60px; display: flex; align-items: center; padding-left: 15px; padding-right: 15px;">
                     <el-col :span="6">
                       <el-row>{{ device.name }}</el-row>
