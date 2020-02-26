@@ -1,7 +1,10 @@
 import libEnum from '../lib/enum.js';
+import libLogger from '../lib/logger.js';
 import apiModule from './api.js';
 import dbModule from './db.js';
 import vueModule from './vue.js';
+
+const logger = libLogger.genModuleLogger('connect');
 
 function loadConnectedList() {
   const devConf = dbModule.getDevConf();
