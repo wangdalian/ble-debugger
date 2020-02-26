@@ -152,24 +152,51 @@
             </el-menu>
           </el-col>
           <el-col :span="22" style="height: 100%; overflow: scroll; padding: 0px 20px 20px 20px">
-            <el-tabs  v-show="store.devConfDisplayVars.activeMenuItem === 'scanListMenuItem'">
-              <el-tab-pane label="扫描结果">
-                <el-row :gutter="2" v-for="(item, index) in cache.scanResultList" :key="index" style="margin-bottom: 5px; font-style: italic; border-bottom: 1px solid #e3e4ee; border-bottom: 1px solid #e3e4ee; padding: 15px;">
-                  <el-col :span="5">
-                    <el-row style="font-size: 16px; font-weight: bold;">{{ item.name }}</el-row>
-                    <el-row style="font-size: 14px; margin-top: 5px; font-style: italic; color: #999">{{ item.mac }}</el-row>
-                    <el-row style="font-size: 14px; margin-top: 5px; color: #999">{{ item.bdaddrType }}</el-row>
-                  </el-col>
-                  <el-col :span="3" style="font-size: 14px; padding-top: 23px; color: #999; ">
-                    {{ item.rssi }}<span style="font-size: 12px; "> dBm</span>
-                  </el-col>
-                  <el-col :span="13" style="font-size: 12px; padding-top: 24px; padding-right: 10px; color: #999; overflow-wrap: break-word;">
-                    {{ item.adData }}
-                  </el-col>
-                  <el-col :span="3" style="padding-top: 15px;">
-                    <el-button type="primary" size="medium" @click="connectDevice(item.mac)" :loading="cache.devicesConnectLoading[item.mac]">连接</el-button>
-                  </el-col>
-                </el-row>
+            <el-tabs  v-show="store.devConfDisplayVars.activeMenuItem === 'scanListMenuItem'"	>
+              <el-tab-pane>
+                <h3 slot="label" style="text-align: center;"><i class="el-icon-date"></i> 扫描结果</h3>
+                <el-table
+                  :data="cache.scanResultList"
+                  style="width: 100%; border-radius:3px;"
+                  :cell-style="{'padding-left': '10px'}"
+                  stripe
+                  highlight-current-row
+                  :header-cell-style="{background: '#2897ff', color: '#fff', 'padding-left': '10px'}"
+                  >
+                  <el-table-column
+                    label="设备信息"
+                    width="160"
+                  >
+                    <template slot-scope="scope">
+                        <el-row style="font-weight: bold;">{{ scope.row.name }}</el-row>
+                        <el-row style="font-size:12px; font-style: italic; color: #999">{{ scope.row.mac }}</el-row>
+                        <el-row style="font-size:12px; font-style: italic; color: #999">{{ scope.row.bdaddrType }}</el-row>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="RSSI"
+                    sortable
+                  >
+                    <template slot-scope="scope">
+                      <span style="font-size:12px; font-style: italic; color: #999">{{ scope.row.rssi }} dBm</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="广播包"
+                    width="360"
+                  >
+                    <template slot-scope="scope">
+                      <span style="font-size:12px; font-style: italic; color: #999">{{ scope.row.adData }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="操作"
+                  >
+                    <template slot-scope="scope">
+                      <el-button type="primary" size="small" @click="connectDevice(scope.row.mac)" :loading="cache.devicesConnectLoading[scope.row.mac]">连接</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
               </el-tab-pane>
               <el-tab-pane label="RSSI Chart" style="height: 100%; width: 100%;">
                 <el-row>
