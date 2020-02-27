@@ -37,7 +37,8 @@ let storage = {
     apiDebuggerParams: { // 调试工具参数
       [libEnum.apiType.SCAN]: {},
       [libEnum.apiType.CONNECT]: {chip: 0, deviceMac: '', addrType: libEnum.deviceAddrType.PUBLIC},
-      [libEnum.apiType.READ]: {chip: 0, deviceMac: '', handle: ''},
+      [libEnum.apiType.READ]: {deviceMac: '', handle: ''},
+      [libEnum.apiType.WRITE]: {deviceMac: '', handle: '', value: '', noresponse: false},
     }
   }
 };
@@ -62,6 +63,13 @@ let cache = {
       }
     },
     [libEnum.apiType.READ]: {
+      resultList: [],
+      code: {
+        [libEnum.codeType.CURL]: '',
+        [libEnum.codeType.NODEJS]: ''
+      }
+    },
+    [libEnum.apiType.WRITE]: {
       resultList: [],
       code: {
         [libEnum.codeType.CURL]: '',

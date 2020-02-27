@@ -15,6 +15,18 @@ const generater = {
     [libEnum.codeType.CURL]: _genReadCodeCurl,
     [libEnum.codeType.NODEJS]: _genReadCodeNodeJS,
   },
+  [libEnum.apiType.WRITE]: {
+    [libEnum.codeType.CURL]: _genWriteCodeCurl,
+    [libEnum.codeType.NODEJS]: _genWriteCodeNodeJS,
+  },
+}
+
+function _genWriteCodeCurl(apiParams) {
+  const devConf = dbModule.getDevConf();
+  let url = apiModule.getWriteUrlByDevConf(devConf, apiParams.deviceMac, apiParams.handle, apiParams.value, apiParams.noresponse);
+  return `
+  curl --location --request GET '${url}'
+  `;
 }
 
 function _genReadCodeCurl(apiParams) {
@@ -59,6 +71,24 @@ function _genConnectCodeNodeJS(apiParams) {
     },
     body: JSON.stringify({"timeout":5000,"type":"${apiParams.addrType}"})
 
+  };
+  request(options, function (error, response) { 
+    if (error) throw new Error(error);
+    console.log(response.body);
+  });
+  `;
+}
+
+function _genWriteCodeNodeJS(apiParams) {
+  const devConf = dbModule.getDevConf();
+  let url = apiModule.getWriteUrlByDevConf(devConf, apiParams.deviceMac, apiParams.handle, apiParams.value, apiParams.noresponse);
+  return `
+  var request = require('request');
+  var options = {
+    'method': 'GET',
+    'url': '${url}',
+    'headers': {
+    }
   };
   request(options, function (error, response) { 
     if (error) throw new Error(error);

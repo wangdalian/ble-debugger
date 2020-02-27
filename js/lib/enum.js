@@ -38,6 +38,7 @@ const apiType = {
   SCAN: 'scan',
   CONNECT: 'connect',
   READ: 'read',
+  WRITE: 'write'
 }
 
 const codeType = {
