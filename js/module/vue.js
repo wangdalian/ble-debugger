@@ -105,12 +105,22 @@ function createVueMethods(vue) {
   return {
     startDebugApi() {
       const apiType = this.store.devConfDisplayVars.activeApiTabName;
+      const apiParams = this.store.devConfDisplayVars.apiDebuggerParams[apiType];
+      const apiResult = this.cache.apiDebuggerResult[apiType];
       if (apiType === libEnum.apiType.SCAN) {
         scanModule.startScan(this.store.devConf);
         this.store.devConfDisplayVars.isScanning = true;
         this.store.devConfDisplayVars.activeApiOutputTabName = 'output'; // 切换到调试结果页面
         this.cache.scanResultList = [];
         notify('开启API调试成功', '操作成功', libEnum.messageType.SUCCESS);
+      } else if (apiType === libEnum.apiType.CONNECT) {
+        apiModule.connectByDevConf(this.store.devConf, apiParams.deviceMac, apiParams.addrType).then(() => {
+          // notify(`连接设备 ${deviceMac} 成功`, '设备连接成功', libEnum.messageType.SUCCESS);
+          apiResult.resultList.push({time: Date.now(), data: `连接设备成功: ${JSON.stringify(apiParams)}`});
+        }).catch(ex => {
+          notify(`连接设备 ${apiParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+          apiResult.resultList.push({time: Date.now(), data: `连接设备失败: ${JSON.stringify({apiParams, ex})}`});
+        })
       }
     },
     openApiOutputDisplay() {
@@ -193,8 +203,10 @@ function createVueMethods(vue) {
     },
     genCode() {
       let apiType = this.store.devConfDisplayVars.activeApiTabName;
-      this.cache.apiDebuggerResult[apiType].code[libEnum.codeType.CURL] = codeModule.genCode(apiType, libEnum.codeType.CURL);
-      this.cache.apiDebuggerResult[apiType].code[libEnum.codeType.NODEJS] = codeModule.genCode(apiType, libEnum.codeType.NODEJS);
+      const apiParams = this.store.devConfDisplayVars.apiDebuggerParams[apiType];
+      const apiResult = this.cache.apiDebuggerResult[apiType];
+      apiResult.code[libEnum.codeType.CURL] = codeModule.genCode(apiType, libEnum.codeType.CURL, apiParams);
+      apiResult.code[libEnum.codeType.NODEJS] = codeModule.genCode(apiType, libEnum.codeType.NODEJS, apiParams);
       this.store.devConfDisplayVars.activeApiOutputTabName = libEnum.codeType.CURL;
     },
     menuSelect(key, keyPath) {

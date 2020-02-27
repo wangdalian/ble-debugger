@@ -60,6 +60,10 @@ function getScanUrl(baseURI, params) {
   return `${baseURI}/gap/nodes?${obj2QueryStr(params)}`;
 }
 
+function getConnectUrl(baseURI, deviceMac, params) {
+  return `${baseURI}/gap/nodes/${deviceMac}/connection?${obj2QueryStr(params)}`;
+}
+
 function getConnectStatusUrl(baseURI, params) {
   return `${baseURI}/management/nodes/connection-state?${obj2QueryStr(params)}`;
 }
@@ -192,6 +196,12 @@ function writeByHandle(baseURI, params, deviceMac, handle, value, noresponse=fal
   });
 }
 
+function getConnectUrlByDevConf(devConf, deviceMac) {
+  const fields = [];
+  const params = getFields(devConf, fields);
+  return getConnectUrl(devConf.baseURI, deviceMac, params);
+} 
+
 function getScanUrlByDevConf(devConf) {
   const fields = ['chip', 'filter_mac', 'filter_name', 'filter_rssi'];
   const params = getFields(devConf, fields);
@@ -223,12 +233,15 @@ function startNotifyByDevConf(devConf, messageHandler, errorHandler) {
   return startNotify(devConf.baseURI, params, messageHandler, errorHandler);
 }
 
-function connectByDevConf(devConf, deviceMac) {
+function connectByDevConf(devConf, deviceMac, addrType) {
   const params = getFields(devConf, []);
   const scanResultList = dbModule.getCache().scanResultList;
-  const item = _.find(scanResultList, {mac: deviceMac});
-  if (!item) return Promise.reject('can not get addr type');
-  return connect(devConf.baseURI, params, deviceMac, item.bdaddrType);
+  if (!addrType) {
+    const item = _.find(scanResultList, {mac: deviceMac});
+    if (!item) return Promise.reject('can not get addr type');
+    addrType = item.bdaddrType;
+  }
+  return connect(devConf.baseURI, params, deviceMac, addrType);
 }
 
 function getConnectedListByDevConf(devConf) {
@@ -268,4 +281,5 @@ export default {
   writeByHandleByDevConf,
   getScanUrlByDevConf,
   openConnectStatusSseByDevConf,
+  getConnectUrlByDevConf,
 }

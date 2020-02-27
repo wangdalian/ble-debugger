@@ -36,11 +36,17 @@ const writeDataType = {
 
 const apiType = {
   SCAN: 'scan',
+  CONNECT: 'connect'
 }
 
 const codeType = {
   CURL: 'curl',
   NODEJS: 'nodejs'
+};
+
+const deviceAddrType = {
+  PUBLIC: 'public',
+  RANDOM: 'random'
 };
 
 export default {
@@ -50,5 +56,6 @@ export default {
   messageType,
   writeDataType,
   apiType,
-  codeType
+  codeType,
+  deviceAddrType
 }

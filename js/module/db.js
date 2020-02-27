@@ -33,7 +33,11 @@ let storage = {
     rssiChartSwitch: false, // 是否开启rssi chart，默认关闭
     rssiChartPeriod: 60, // 单位秒，统计周期
     rssiChartDataSpan: 2000, // 单位毫秒, 统计间隔, 此毫秒长度认为1个广播点
-    rssiChartDataCount:  (60 * 1000 / 2000) // rssiChartPeriod * 1000 / rssiChartDataSpan;
+    rssiChartDataCount:  (60 * 1000 / 2000), // rssiChartPeriod * 1000 / rssiChartDataSpan;
+    apiDebuggerParams: { // 调试工具参数
+      [libEnum.apiType.SCAN]: {},
+      [libEnum.apiType.CONNECT]: {chip: 0, deviceMac: '', addrType: libEnum.deviceAddrType.PUBLIC},
+    }
   }
 };
 
@@ -44,6 +48,13 @@ let cache = {
   apiDebuggerResult: { 
     [libEnum.apiType.SCAN]: {
       resultList: [{time: '2020/02/20 01:02:03.666', data: '{"name":"(unknown)","evtType":3,"rssi":-80,"adData":"1EFF06000109200262A12A0E18F1516C3D7DABD42556C51B45E9094EB88D2B","bdaddrs":[{"bdaddr":"76:95:9B:89:BB:A5","bdaddrType":"random"}]}'}],
+      code: {
+        [libEnum.codeType.CURL]: '',
+        [libEnum.codeType.NODEJS]: ''
+      }
+    },
+    [libEnum.apiType.CONNECT]: {
+      resultList: [],
       code: {
         [libEnum.codeType.CURL]: '',
         [libEnum.codeType.NODEJS]: ''
