@@ -206,9 +206,10 @@ function getReadUrlByDevConf(devConf, deviceMac, handle) {
   return getReadUrl(devConf.baseURI, deviceMac, handle, params);
 }
 
-function getConnectUrlByDevConf(devConf, deviceMac) {
+function getConnectUrlByDevConf(devConf, deviceMac, chip) {
   const fields = [];
   const params = getFields(devConf, fields);
+  if (chip === 0 || chip === 1) params.chip = chip;
   return getConnectUrl(devConf.baseURI, deviceMac, params);
 } 
 
@@ -243,7 +244,7 @@ function startNotifyByDevConf(devConf, messageHandler, errorHandler) {
   return startNotify(devConf.baseURI, params, messageHandler, errorHandler);
 }
 
-function connectByDevConf(devConf, deviceMac, addrType) {
+function connectByDevConf(devConf, deviceMac, addrType, chip=0) {
   const params = getFields(devConf, []);
   const scanResultList = dbModule.getCache().scanResultList;
   if (!addrType) {
@@ -251,6 +252,7 @@ function connectByDevConf(devConf, deviceMac, addrType) {
     if (!item) return Promise.reject('can not get addr type');
     addrType = item.bdaddrType;
   }
+  if (chip === 0 || chip === 1) params.chip = chip;
   return connect(devConf.baseURI, params, deviceMac, addrType);
 }
 

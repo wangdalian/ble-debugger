@@ -27,12 +27,11 @@ function _genReadCodeCurl(apiParams) {
 
 function _genConnectCodeCurl(apiParams) {
   const devConf = dbModule.getDevConf();
-  let url = apiModule.getConnectUrlByDevConf(devConf, apiParams.deviceMac);
+  let url = apiModule.getConnectUrlByDevConf(devConf, apiParams.deviceMac, apiParams.chip);
   return `
   curl --location --request POST '${url}' \
   --header 'Content-Type: application/json' \
   --data-raw '{
-    "chip": ${apiParams.chip},
     "timeout": 5000,
     "type": "${apiParams.addrType}"
   }'
@@ -41,7 +40,7 @@ function _genConnectCodeCurl(apiParams) {
 
 function _genScanCodeCurl(apiParams) {
   const devConf = dbModule.getDevConf();
-  let url = apiModule.getConnectUrlByDevConf(devConf, apiParams.deviceMac);
+  let url = apiModule.getScanUrlByDevConf(devConf);
   return `
   curl -H "Accept: text/event-stream" '${url}'
   `;
@@ -49,7 +48,7 @@ function _genScanCodeCurl(apiParams) {
 
 function _genConnectCodeNodeJS(apiParams) {
   const devConf = dbModule.getDevConf();
-  let url = apiModule.getConnectUrlByDevConf(devConf, apiParams.deviceMac);
+  let url = apiModule.getConnectUrlByDevConf(devConf, apiParams.deviceMac, apiParams.chip);
   return `
   var request = require('request');
   var options = {
@@ -58,7 +57,7 @@ function _genConnectCodeNodeJS(apiParams) {
     'headers': {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({"chip":${apiParams.chip},"timeout":5000,"type":"${apiParams.addrType}"})
+    body: JSON.stringify({"timeout":5000,"type":"${apiParams.addrType}"})
 
   };
   request(options, function (error, response) { 
