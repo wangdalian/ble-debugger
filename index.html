@@ -18,7 +18,7 @@
   <div id="app">
     <el-row class="box">
       <el-col :span="8" class="col1" style="padding: 10px; overflow-y: scroll;">
-        <el-form label-width="80px">
+        <el-form label-width="80px" size="small">
           <el-row style="margin: 15px 0 0 0;">
             <el-divider>连接配置</el-divider>
           </el-row>
@@ -46,7 +46,7 @@
             <el-divider>扫描配置</el-divider>
           </el-row>
           <el-form-item label="使用芯片">
-            <el-radio-group v-model="store.devConf.chip" size="medium">
+            <el-radio-group v-model="store.devConf.chip" size="small">
               <el-radio-button :label="0">芯片0</el-radio-button>
               <el-radio-button :label="1">芯片1</el-radio-button>
             </el-radio-group>
@@ -104,18 +104,18 @@
           </el-row>
           <el-row>
             <el-col :span="6">
-              <el-button size="medium">AP 信息</el-button>
+              <el-button size="small">AP 信息</el-button>
             </el-col>
             <el-col :span="6">
-              <el-button size="medium">重启 AP</el-button>
+              <el-button size="small">重启 AP</el-button>
             </el-col>
             <el-col :span="6">
-              <el-button type="primary" size="medium" @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
-              <el-button type="danger" size="medium" @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
+              <el-button type="primary" size="small" @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
+              <el-button type="danger" size="small" @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
             </el-col>
             <el-col :span="6">
               <el-dropdown>
-                <el-button size="medium" >
+                <el-button size="small" >
                   简体中文<i class="el-icon-arrow-down el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
@@ -210,7 +210,7 @@
               <el-tab-pane style="height: 100%; width: 100%;">
                 <span slot="label"><i class="el-icon-pie-chart"></i> RSSI图表</span>
                 <el-row>
-                  <el-form inline>
+                  <el-form inline size="small">
                     <el-form-item label="统计周期">
                       <el-select v-model="store.devConfDisplayVars.rssiChartPeriod" placeholder="统计周期" style="width: 100px;">
                         <el-option label="60秒" value="60"></el-option>
@@ -228,10 +228,10 @@
                       </el-select>
                     </el-form-item>
                     <el-form-item>
-                      <el-button v-show="!store.devConfDisplayVars.rssiChartSwitch" size="medium" @click="destoryAndCreateRssiChart" type="primary">开启</el-button>
-                      <el-button v-show="store.devConfDisplayVars.rssiChartSwitch && !store.devConfDisplayVars.rssiChartStopped" size="medium" @click="stopRssiChart" type="primary">暂停</el-button>
-                      <el-button v-show="store.devConfDisplayVars.rssiChartSwitch && store.devConfDisplayVars.rssiChartStopped" size="medium" @click="startRssiChart" type="primary">继续</el-button>
-                      <el-button v-show="store.devConfDisplayVars.rssiChartSwitch" size="medium" @click="destoryRssiChart" type="primary">关闭</el-button>
+                      <el-button v-show="!store.devConfDisplayVars.rssiChartSwitch" size="small" @click="destoryAndCreateRssiChart" type="primary">开启</el-button>
+                      <el-button v-show="store.devConfDisplayVars.rssiChartSwitch && !store.devConfDisplayVars.rssiChartStopped" size="small" @click="stopRssiChart" type="primary">暂停</el-button>
+                      <el-button v-show="store.devConfDisplayVars.rssiChartSwitch && store.devConfDisplayVars.rssiChartStopped" size="small" @click="startRssiChart" type="primary">继续</el-button>
+                      <el-button v-show="store.devConfDisplayVars.rssiChartSwitch" size="small" @click="destoryRssiChart" type="primary">关闭</el-button>
                     </el-form-item>
                   </el-form>
                 </el-row>
@@ -252,10 +252,10 @@
                     <el-col :span="3">chip{{ device.chip }}</el-col>
                     <el-col :span="12">
                       <el-button-group style="float: right; ">
-                        <el-button size="mini" @click="getDeviceServices(device.mac)">服务</el-button>
-                        <el-button type="danger" size="mini" @click="disconnectDevice(device.mac)">断连</el-button>
-                        <el-button size="mini" size="mini">配对</el-button>
-                        <el-button type="danger" size="mini">取消配对</el-button>
+                        <el-button size="small" @click="getDeviceServices(device.mac)">服务</el-button>
+                        <el-button type="danger" size="small" @click="disconnectDevice(device.mac)">断连</el-button>
+                        <el-button size="small" size="small">配对</el-button>
+                        <el-button type="danger" size="small">取消配对</el-button>
                       </el-button-group>
                     </el-col>
                   </el-row>
@@ -272,25 +272,25 @@
                           <el-row style="font-size: 12px; font-style: italic; ">
                             Properties: 
                             <el-button-group>
-                              <el-button style="font-style: italic; font-weight: bold;" v-show="char.propertiesStr.includes('READ')" type="primary" size="mini" @Click="propertyClick('READ', device.mac, char.handle, char.writeValue)">
+                              <el-button style="font-style: italic; font-weight: bold;" v-show="char.propertiesStr.includes('READ')" type="primary" size="small" @Click="propertyClick('READ', device.mac, char.handle, char.writeValue)">
                                 READ
                               </el-button>
-                              <el-button style="font-style: italic; font-weight: bold;" v-bind:type="char.notifyStatus === 'on' ? 'primary' : 'info'" v-show="char.propertiesStr.includes('NOTIFY')" size="mini" @Click="propertyClick('NOTIFY', device.mac, char.handle, char.notifyStatus)">
+                              <el-button style="font-style: italic; font-weight: bold;" v-bind:type="char.notifyStatus === 'on' ? 'primary' : 'info'" v-show="char.propertiesStr.includes('NOTIFY')" size="small" @Click="propertyClick('NOTIFY', device.mac, char.handle, char.notifyStatus)">
                                 NOTIFY
                               </el-button>
                               </el-switch>
-                              <el-button style="font-style: italic; font-weight: bold;" v-show="char.propertiesStr.includes('WRITE NO RES')" type="primary" size="mini" @Click="propertyClick('WRITE NO RES', device.mac, char.handle, char.writeValue)">
+                              <el-button style="font-style: italic; font-weight: bold;" v-show="char.propertiesStr.includes('WRITE NO RES')" type="primary" size="small" @Click="propertyClick('WRITE NO RES', device.mac, char.handle, char.writeValue)">
                                 WRITE NO RES
                               </el-button>
-                              <el-button style="font-style: italic; font-weight: bold;" v-show="char.propertiesStr.includes('WRITE')" type="primary" size="mini" @Click="propertyClick('WRITE', device.mac, char.handle, char.writeValue)">
+                              <el-button style="font-style: italic; font-weight: bold;" v-show="char.propertiesStr.includes('WRITE')" type="primary" size="small" @Click="propertyClick('WRITE', device.mac, char.handle, char.writeValue)">
                                 WRITE
                               </el-button>
                             </el-button-group>
-                            <el-radio-group v-show="char.propertiesStr.includes('WRITE')" style="float: right" size="mini" v-model="char.writeValueType">
+                            <el-radio-group v-show="char.propertiesStr.includes('WRITE')" style="float: right" size="small" v-model="char.writeValueType">
                               <el-radio-button label="hex">HEX</el-radio-button>
                               <el-radio-button label="text">TEXT</el-radio-button>
                             </el-radio-group>
-                            <el-input v-show="char.propertiesStr.includes('WRITE')" style="width: 250px; float: right; font-size: 12px; font-style: italic;" size="mini" v-model="char.writeValue" :placeholder="char.writeValueType === 'hex' ? '格式：aa00bb11cc22（支持空格）' : '格式：任意字符'">
+                            <el-input v-show="char.propertiesStr.includes('WRITE')" style="width: 250px; float: right; font-size: 12px; font-style: italic;" size="small" v-model="char.writeValue" :placeholder="char.writeValueType === 'hex' ? '格式：aa00bb11cc22（支持空格）' : '格式：任意字符'">
                             </el-input>
                           </el-row>
                           <el-row style="font-size: 12px; font-style: italic; color: #2897ff" v-show="char.readValue.toString().length !== 0">Value: (0x) {{ char.readValue }}</el-row>
@@ -319,7 +319,7 @@
                         label="MAC"
                         width="160">
                         <template slot-scope="scope">
-                          <span style="font-size: 14px; font-style: normal; font-weight: bold;">{{scope.row.mac}}</span>
+                          <span style="font-style: normal; font-weight: bold;">{{scope.row.mac}}</span>
                         </template>
                       </el-table-column>
                       <el-table-column
@@ -340,9 +340,9 @@
                         >
                         <template slot="header" slot-scope="scope">
                           <el-button-group>
-                            <el-button v-show="!store.devConfDisplayVars.isNotifyOn" size="mini" @click="openNotify">开启</el-button>
-                            <el-button type="danger" v-show="store.devConfDisplayVars.isNotifyOn" size="mini" @click="closeNotify">关闭</el-button>
-                            <el-button type="danger" size="mini" @click="clearNotify">清空</el-button>
+                            <el-button v-show="!store.devConfDisplayVars.isNotifyOn" size="small" @click="openNotify">开启</el-button>
+                            <el-button type="danger" v-show="store.devConfDisplayVars.isNotifyOn" size="small" @click="closeNotify">关闭</el-button>
+                            <el-button type="danger" size="small" @click="clearNotify">清空</el-button>
                           </el-button-group>
                         </template>
                         <template slot-scope="scope">
@@ -355,13 +355,13 @@
               
             </el-row>
 
-            <el-row v-show="store.devConfDisplayVars.activeMenuItem === 'apiDebuggerMenuItem'" style="height: 60%;">
+            <el-row v-show="store.devConfDisplayVars.activeMenuItem === 'apiDebuggerMenuItem'" style="height: 60%;  margin-top: 15px;">
               <el-tabs v-model="store.devConfDisplayVars.activeApiTabName">
                 <el-tab-pane name="scan">
                   <span slot="label"><i class="el-icon-search"></i> 扫描设备</span>
-                  <el-form label-width="80px" style="margin-top: 15px;">
+                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="使用芯片">
-                      <el-radio-group v-model="store.devConf.chip" size="medium">
+                      <el-radio-group v-model="store.devConf.chip" size="small">
                         <el-radio-button :label="0">芯片0</el-radio-button>
                         <el-radio-button :label="1">芯片1</el-radio-button>
                       </el-radio-group>
@@ -428,13 +428,13 @@
                   <span slot="label"><i class="el-icon-connection"></i> 连接设备</span>
                   <el-form label-width="80px" style="margin-top: 15px;">
                     <el-form-item label="使用芯片">
-                      <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].chip" size="medium">
+                      <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].chip" size="small">
                         <el-radio-button label="0">芯片0</el-radio-button>
                         <el-radio-button label="1">芯片1</el-radio-button>
                       </el-radio-group>
                     </el-form-item>
                     <el-form-item label="地址类型">
-                      <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].addrType" size="medium">
+                      <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].addrType" size="small">
                         <el-radio-button label="public">PUBLIC</el-radio-button>
                         <el-radio-button label="random">RANDOM</el-radio-button>
                       </el-radio-group>
@@ -479,7 +479,7 @@
                       <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].value"></el-input>
                     </el-form-item>
                     <el-form-item label="写入方式">
-                      <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].noresponse" size="medium">
+                      <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].noresponse" size="small">
                         <el-radio-button label="false">等待</el-radio-button>
                         <el-radio-button label="true">不等待</el-radio-button>
                       </el-radio-group>
@@ -520,7 +520,7 @@
                   <el-row v-show="store.devConfDisplayVars.activeApiTabName === 'scan'">
                     <el-col :span="16">
                       <span style="font-size: 12px">设置最多显示行数</span>
-                      <el-select v-model="store.devConfDisplayVars.apiOutputDisplayCount" size="mini" placeholder="请选择显示条数">
+                      <el-select v-model="store.devConfDisplayVars.apiOutputDisplayCount" size="small" placeholder="请选择显示条数">
                         <el-option label="20" value="20"></el-option>
                         <el-option label="50" value="50"></el-option>
                         <el-option label="100" value="100"></el-option>
@@ -528,9 +528,9 @@
                     </el-col>
                     <el-col :span="4" style="float: right;">
                       <el-button-group>
-                        <el-button v-show="!store.devConfDisplayVars.isApiScanResultDisplayOn" size="mini" @click="openApiOutputDisplay">开启</el-button>
-                        <el-button type="danger" v-show="store.devConfDisplayVars.isApiScanResultDisplayOn" size="mini" @click="closeApiOutputDisplay">关闭</el-button>
-                        <el-button type="danger" size="mini" @click="clearApiOutputDisplay">清空</el-button>
+                        <el-button v-show="!store.devConfDisplayVars.isApiScanResultDisplayOn" size="small" @click="openApiOutputDisplay">开启</el-button>
+                        <el-button type="danger" v-show="store.devConfDisplayVars.isApiScanResultDisplayOn" size="small" @click="closeApiOutputDisplay">关闭</el-button>
+                        <el-button type="danger" size="small" @click="clearApiOutputDisplay">清空</el-button>
                       </el-button-group>
                     </el-col>
                   </el-row>
