@@ -19,6 +19,18 @@ const generater = {
     [libEnum.codeType.CURL]: _genWriteCodeCurl,
     [libEnum.codeType.NODEJS]: _genWriteCodeNodeJS,
   },
+  [libEnum.apiType.DISCONNECT]: {
+    [libEnum.codeType.CURL]: _genDisconnectCodeCurl,
+    [libEnum.codeType.NODEJS]: _genDisconnectCodeNodeJS,
+  },
+}
+
+function _genDisconnectCodeCurl(apiParams) {
+  const devConf = dbModule.getDevConf();
+  let url = apiModule.getDisconnectUrlByDevConf(devConf, apiParams.deviceMac);
+  return `
+  curl --location --request DELETE '${url}'
+  `;
 }
 
 function _genWriteCodeCurl(apiParams) {
@@ -55,6 +67,24 @@ function _genScanCodeCurl(apiParams) {
   let url = apiModule.getScanUrlByDevConf(devConf);
   return `
   curl -H "Accept: text/event-stream" '${url}'
+  `;
+}
+
+function _genDisconnectCodeNodeJS(apiParams) {
+  const devConf = dbModule.getDevConf();
+  let url = apiModule.getConnectUrlByDevConf(devConf, apiParams.deviceMac);
+  return `
+  var request = require('request');
+  var options = {
+    'method': 'DELETE',
+    'url': '${url}',
+    'headers': {
+    }
+  };
+  request(options, function (error, response) { 
+    if (error) throw new Error(error);
+    console.log(response.body);
+  });
   `;
 }
 

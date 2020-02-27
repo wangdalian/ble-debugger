@@ -137,6 +137,14 @@ function createVueMethods(vue) {
           notify(`写入数据 ${apiParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
           apiResult.resultList.push({time: Date.now(), data: `写入数据失败: ${JSON.stringify({apiParams, ex})}`});
         });
+      } else if (apiType === libEnum.apiType.DISCONNECT) {
+        apiModule.disconnectByDevConf(this.store.devConf, apiParams.deviceMac).then(() => {
+          notify(`断连设备 ${deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
+          apiResult.resultList.push({time: Date.now(), data: `断连设备成功: ${JSON.stringify(apiParams)}`});
+        }).catch(ex => {
+          notify(`断连设备 ${apiParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+          apiResult.resultList.push({time: Date.now(), data: `断连设备失败: ${JSON.stringify({apiParams, ex})}`});
+        });
       }
     },
     openApiOutputDisplay() {

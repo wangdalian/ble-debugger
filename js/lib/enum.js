@@ -38,7 +38,8 @@ const apiType = {
   SCAN: 'scan',
   CONNECT: 'connect',
   READ: 'read',
-  WRITE: 'write'
+  WRITE: 'write',
+  DISCONNECT: 'disconnect'
 }
 
 const codeType = {

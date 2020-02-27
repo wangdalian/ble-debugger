@@ -72,6 +72,10 @@ function getWriteUrl(baseURI, deviceMac, handle, value, params) {
   return `${baseURI}/gatt/nodes/${deviceMac}/handle/${handle}/value/${value}?${obj2QueryStr(params)}`;
 }
 
+function getDisconnectUrl(baseURI, deviceMac, params) {
+  return `${baseURI}/gap/nodes/${deviceMac}/connection?${obj2QueryStr(params)}`;
+}
+
 function getConnectStatusUrl(baseURI, params) {
   return `${baseURI}/management/nodes/connection-state?${obj2QueryStr(params)}`;
 }
@@ -210,6 +214,12 @@ function getReadUrlByDevConf(devConf, deviceMac, handle) {
   return getReadUrl(devConf.baseURI, deviceMac, handle, params);
 }
 
+function getDisconnectUrlByDevConf(devConf, deviceMac) {
+  const fields = [];
+  const params = getFields(devConf, fields);
+  return getDisconnectUrl(devConf.baseURI, deviceMac, params);
+}
+
 function getWriteUrlByDevConf(devConf, deviceMac, handle, value, noresponse) {
   const fields = [];
   const params = getFields(devConf, fields);
@@ -306,5 +316,6 @@ export default {
   openConnectStatusSseByDevConf,
   getConnectUrlByDevConf,
   getReadUrlByDevConf,
-  getWriteUrlByDevConf
+  getWriteUrlByDevConf,
+  getDisconnectUrlByDevConf
 }

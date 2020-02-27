@@ -39,6 +39,7 @@ let storage = {
       [libEnum.apiType.CONNECT]: {chip: 0, deviceMac: '', addrType: libEnum.deviceAddrType.PUBLIC},
       [libEnum.apiType.READ]: {deviceMac: '', handle: ''},
       [libEnum.apiType.WRITE]: {deviceMac: '', handle: '', value: '', noresponse: false},
+      [libEnum.apiType.DISCONNECT]: {deviceMac: ''},
     }
   }
 };
@@ -70,6 +71,13 @@ let cache = {
       }
     },
     [libEnum.apiType.WRITE]: {
+      resultList: [],
+      code: {
+        [libEnum.codeType.CURL]: '',
+        [libEnum.codeType.NODEJS]: ''
+      }
+    },
+    [libEnum.apiType.DISCONNECT]: {
       resultList: [],
       code: {
         [libEnum.codeType.CURL]: '',

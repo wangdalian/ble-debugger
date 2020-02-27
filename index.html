@@ -496,11 +496,20 @@
                     </el-form-item>
                   </el-form>
                 </el-tab-pane>
-                <el-tab-pane label="断开连接">
-                  
-                </el-tab-pane>
-                <el-tab-pane label="连接通知">
-                  
+                <el-tab-pane name="disconnect">
+                  <span slot="label" style="font-size: 16px; font-weight: bold; "><i class="el-icon-connection"></i> 断开连接</span>
+                  <el-form label-width="80px" style="margin-top: 15px;">
+                    <el-form-item label="设备地址">
+                      <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].deviceMac"></el-input>
+                    </el-form-item>
+                    <el-form-item align="left">
+                      <el-button-group>
+                        <el-button type="primary" size="small" @click="startDebugApi" v-show="!store.devConfDisplayVars.isScanning">开始调试</el-button>
+                        <el-button type="danger" size="small" @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
+                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                      </el-button-group>
+                    </el-form-item>
+                  </el-form>
                 </el-tab-pane>
               </el-tabs>
             </el-row>
