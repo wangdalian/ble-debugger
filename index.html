@@ -178,8 +178,8 @@
                   >
                     <template slot-scope="scope">
                         <el-row style="font-weight: bold;">{{ scope.row.name }}</el-row>
-                        <el-row style="font-size:12px; font-style: italic; color: #999">{{ scope.row.mac }}</el-row>
-                        <el-row style="font-size:12px; font-style: italic; color: #999">{{ scope.row.bdaddrType }}</el-row>
+                        <el-row style="font-size:12px; font-style: normal; color: #999">{{ scope.row.mac }}</el-row>
+                        <el-row style="font-size:12px; font-style: normal; color: #999">{{ scope.row.bdaddrType }}</el-row>
                     </template>
                   </el-table-column>
                   <el-table-column
@@ -187,7 +187,7 @@
                     sortable
                   >
                     <template slot-scope="scope">
-                      <span style="font-size:12px; font-style: italic; color: #999">{{ scope.row.rssi }} dBm</span>
+                      <span style="font-size:12px; font-style: normal; color: #999">{{ scope.row.rssi }} dBm</span>
                     </template>
                   </el-table-column>
                   <el-table-column
@@ -195,7 +195,7 @@
                     width="360"
                   >
                     <template slot-scope="scope">
-                      <span style="font-size:12px; font-style: italic; color: #999">{{ scope.row.adData }}</span>
+                      <span style="font-size:12px; font-style: normal; color: #999">{{ scope.row.adData }}</span>
                     </template>
                   </el-table-column>
                   <el-table-column
@@ -243,10 +243,10 @@
               <el-tabs closable @tab-remove="connectedListTabRemove">
                 <el-tab-pane v-for="(device, index) in cache.connectedList" :key="index" :name="index.toString()">
                   <span slot="label"><i class="el-icon-connection"></i> {{ device.mac }}</span>
-                  <el-row style="background-color: #2897ff; font-size: 14px; font-style: italic; border-radius: 3px; color: #fff; height: 60px; display: flex; align-items: center; padding-left: 15px; padding-right: 15px;">
+                  <el-row style="background-color: #2897ff; font-size: 14px; font-style: normal; border-radius: 3px; color: #fff; height: 60px; display: flex; align-items: center; padding-left: 15px; padding-right: 15px;">
                     <el-col :span="6">
                       <el-row>{{ device.name }}</el-row>
-                      <el-row style="font-style:italic">{{ device.mac }}</el-row>
+                      <el-row style="font-style:normal">{{ device.mac }}</el-row>
                     </el-col>
                     <el-col :span="3">{{ device.bdaddrType }}</el-col>
                     <el-col :span="3">chip{{ device.chip }}</el-col>
@@ -263,26 +263,26 @@
                     <el-collapse>
                       <el-collapse-item v-for="(service, index) in cache.devicesServiceList[device.mac]" :key="service.uuid">
                         <template slot="title">
-                          <el-col style="padding-left: 5px; font-size: 14px; font-style: italic;">{{ service.uuid }}</el-col>
-                          <el-col style="float: right; font-size: 14px; font-style: italic;">{{ service.name }}</el-col>
+                          <el-col style="padding-left: 5px; font-size: 14px; font-style: normal;">{{ service.uuid }}</el-col>
+                          <el-col style="float: right; font-size: 14px; font-style: normal;">{{ service.name }}</el-col>
                         </template>
                         <el-row style="background-color: #e6e6e6; padding: 15px; border-bottom: 1px solid #fff" v-for="(char, index) in service.characteristics" title="char.name" :key="char.uuid">
-                          <el-row style="font-size: 14px; font-weight: bold; font-style: italic;">{{ char.name }}</el-row>
-                          <el-row style="font-size: 1px; font-style: italic;">UUID: {{ char.uuid }}</el-row>
-                          <el-row style="font-size: 12px; font-style: italic; ">
+                          <el-row style="font-size: 14px; font-weight: bold; font-style: normal;">{{ char.name }}</el-row>
+                          <el-row style="font-size: 1px; font-style: normal;">UUID: {{ char.uuid }}</el-row>
+                          <el-row style="font-size: 12px; font-style: normal; ">
                             Properties: 
                             <el-button-group>
-                              <el-button style="font-style: italic; font-weight: bold;" v-show="char.propertiesStr.includes('READ')" type="primary" size="small" @Click="propertyClick('READ', device.mac, char.handle, char.writeValue)">
+                              <el-button style="font-style: normal; font-weight: bold;" v-show="char.propertiesStr.includes('READ')" type="primary" size="small" @Click="propertyClick('READ', device.mac, char.handle, char.writeValue)">
                                 READ
                               </el-button>
-                              <el-button style="font-style: italic; font-weight: bold;" v-bind:type="char.notifyStatus === 'on' ? 'primary' : 'info'" v-show="char.propertiesStr.includes('NOTIFY')" size="small" @Click="propertyClick('NOTIFY', device.mac, char.handle, char.notifyStatus)">
+                              <el-button style="font-style: normal; font-weight: bold;" v-bind:type="char.notifyStatus === 'on' ? 'primary' : 'info'" v-show="char.propertiesStr.includes('NOTIFY')" size="small" @Click="propertyClick('NOTIFY', device.mac, char.handle, char.notifyStatus)">
                                 NOTIFY
                               </el-button>
                               </el-switch>
-                              <el-button style="font-style: italic; font-weight: bold;" v-show="char.propertiesStr.includes('WRITE NO RES')" type="primary" size="small" @Click="propertyClick('WRITE NO RES', device.mac, char.handle, char.writeValue)">
+                              <el-button style="font-style: normal; font-weight: bold;" v-show="char.propertiesStr.includes('WRITE NO RES')" type="primary" size="small" @Click="propertyClick('WRITE NO RES', device.mac, char.handle, char.writeValue)">
                                 WRITE NO RES
                               </el-button>
-                              <el-button style="font-style: italic; font-weight: bold;" v-show="char.propertiesStr.includes('WRITE')" type="primary" size="small" @Click="propertyClick('WRITE', device.mac, char.handle, char.writeValue)">
+                              <el-button style="font-style: normal; font-weight: bold;" v-show="char.propertiesStr.includes('WRITE')" type="primary" size="small" @Click="propertyClick('WRITE', device.mac, char.handle, char.writeValue)">
                                 WRITE
                               </el-button>
                             </el-button-group>
@@ -290,10 +290,10 @@
                               <el-radio-button label="hex">HEX</el-radio-button>
                               <el-radio-button label="text">TEXT</el-radio-button>
                             </el-radio-group>
-                            <el-input v-show="char.propertiesStr.includes('WRITE')" style="width: 250px; float: right; font-size: 12px; font-style: italic;" size="small" v-model="char.writeValue" :placeholder="char.writeValueType === 'hex' ? '格式：aa00bb11cc22（支持空格）' : '格式：任意字符'">
+                            <el-input v-show="char.propertiesStr.includes('WRITE')" style="width: 250px; float: right; font-size: 12px; font-style: normal;" size="small" v-model="char.writeValue" :placeholder="char.writeValueType === 'hex' ? '格式：aa00bb11cc22（支持空格）' : '格式：任意字符'">
                             </el-input>
                           </el-row>
-                          <el-row style="font-size: 12px; font-style: italic; color: #2897ff" v-show="char.readValue.toString().length !== 0">Value: (0x) {{ char.readValue }}</el-row>
+                          <el-row style="font-size: 12px; font-style: normal; color: #2897ff" v-show="char.readValue.toString().length !== 0">Value: (0x) {{ char.readValue }}</el-row>
                         </el-row>
                       </el-collapse-item>
                     </el-collapse>
@@ -309,7 +309,7 @@
                     <el-table
                       :data="cache.notifyResultList"
                       style="width: 100%; border-radius:3px;"
-                      :cell-style="{'padding-left': '10px', 'font-style': 'italic', 'font-size': '12px', color: '#999'}"
+                      :cell-style="{'padding-left': '10px', 'font-style': 'normal', 'font-size': '12px', color: '#999'}"
                       stripe
                       highlight-current-row
                       :header-cell-style="{background: '#2897ff', color: '#fff', 'padding-left': '10px'}"
@@ -539,7 +539,7 @@
                     :data="cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].resultList"
                     style="width: 100%; border-radius:3px; margin-top: 15px"
                     class="apiDebuggerOutputTable"
-                    :cell-style="{'padding-left': '10px', 'font-style': 'italic', 'font-size': '12px', color: '#999'}"
+                    :cell-style="{'padding-left': '10px', 'font-style': 'normal', 'font-size': '12px', color: '#999'}"
                     :header-cell-style="{'padding-left': '10px', 'line-height': '40px'}"
                     stripe
                     highlight-current-row

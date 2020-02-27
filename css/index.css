@@ -3,7 +3,7 @@ HTML {
 }
 
 HTML,BODY {
-  font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+  font-family: "Courier New", "Monaco", "monospace", "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
   margin: 0px;
   padding: 0;
   width: 100%;
