@@ -21,6 +21,12 @@ function createVueData(vue) {
   };
 }
 
+function initHighlightingRefresh() {
+  document.querySelectorAll('pre code').forEach((block) => {
+    hljs.highlightBlock(block);
+  });
+}
+
 function message(message, type=libEnum.messageType.INFO) {
   globalVue.$message({message, type, showClose: true});
 }
@@ -97,6 +103,28 @@ function createRssiChart() {
 
 function createVueMethods(vue) {
   return {
+    startDebugApi() {
+      const apiType = this.store.devConfDisplayVars.activeApiTabName;
+      if (apiType === libEnum.apiType.SCAN) {
+        scanModule.startScan(this.store.devConf);
+        this.store.devConfDisplayVars.isScanning = true;
+        this.store.devConfDisplayVars.activeApiOutputTabName = 'output'; // 切换到调试结果页面
+        this.cache.scanResultList = [];
+        notify('开启API调试成功', '操作成功', libEnum.messageType.SUCCESS);
+      }
+    },
+    openApiOutputDisplay() {
+      this.store.devConfDisplayVars.isApiScanResultDisplayOn = true;
+      notify('开启API结果成功', '操作成功', libEnum.messageType.SUCCESS);
+    },
+    closeApiOutputDisplay() {
+      this.store.devConfDisplayVars.isApiScanResultDisplayOn = false;
+      notify('关闭API结果成功', '操作成功', libEnum.messageType.SUCCESS);
+    },
+    clearApiOutputDisplay() {
+      this.cache.apiDebuggerResult[this.store.devConfDisplayVars.activeApiTabName].resultList.splice(0);
+      notify('清除API结果成功', '操作成功', libEnum.messageType.SUCCESS);
+    },
     clearNotify() {
       this.cache.notifyResultList.splice(0);
       notify('清除Notify成功', '操作成功', libEnum.messageType.SUCCESS);
@@ -163,9 +191,11 @@ function createVueMethods(vue) {
         this.destoryAndCreateRssiChart();
       }
     },
-    genCode(apiType) {
-      this.cache.apiDebuggerResult.scanCodeCurl = codeModule.genCode(apiType, 'curl');
-      this.cache.apiDebuggerResult.scanCodeNodeJS = codeModule.genCode(apiType, 'nodejs');
+    genCode() {
+      let apiType = this.store.devConfDisplayVars.activeApiTabName;
+      this.cache.apiDebuggerResult[apiType].code[libEnum.codeType.CURL] = codeModule.genCode(apiType, libEnum.codeType.CURL);
+      this.cache.apiDebuggerResult[apiType].code[libEnum.codeType.NODEJS] = codeModule.genCode(apiType, libEnum.codeType.NODEJS);
+      this.store.devConfDisplayVars.activeApiOutputTabName = libEnum.codeType.CURL;
     },
     menuSelect(key, keyPath) {
       this.store.devConfDisplayVars.activeMenuItem = key;
@@ -299,14 +329,60 @@ function createRssiChartUpdateInterval() {
   }, devConfDisplayVars.rssiChartDataSpan);
 }
 
+function createHighlightUserCmd() {
+  Vue.directive('highlightjs', {
+    deep: true,
+    bind: function bind(el, binding) {
+      // on first bind, highlight all targets
+      var targets = el.querySelectorAll('code');
+      var target;
+      var i;
+
+      for (i = 0; i < targets.length; i += 1) {
+        target = targets[i];
+
+        if (typeof binding.value === 'string') {
+          // if a value is directly assigned to the directive, use this
+          // instead of the element content.
+          target.textContent = binding.value;
+        }
+
+        hljs.highlightBlock(target);
+      }
+    },
+    componentUpdated: function componentUpdated(el, binding) {
+      // after an update, re-fill the content and then highlight
+      var targets = el.querySelectorAll('code');
+      var target;
+      var i;
+
+      for (i = 0; i < targets.length; i += 1) {
+        target = targets[i];
+        if (typeof binding.value === 'string') {
+          target.textContent = binding.value;
+          hljs.highlightBlock(target);
+        }
+      }
+    },
+  });
+}
+
 function createVue(divId) {
   globalVue = new Vue({
     el: `#${divId}`,
     methods: createVueMethods(),
     data: createVueData(),
     mounted() {
+      // hljs.initHighlightingOnLoad();
+    },
+    watch: {
+      'cache.apiDebuggerResult.scanCodeCurl': function(val, oldVal) {
+        console.log('xxxxxxxxxxxx', val, oldVal);
+        initHighlightingRefresh();
+      }
     }
   });
+  createHighlightUserCmd();
 }
 
 function getGlobalVue() {

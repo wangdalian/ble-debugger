@@ -24,7 +24,11 @@ let storage = {
     scanFilterMacsInputValue: '',
     isScanning: false,
     isNotifyOn: false,
+    isApiScanResultDisplayOn: true,
+    apiOutputDisplayCount: 20,
     activeMenuItem: 'scanListMenuItem',
+    activeApiTabName: 'scan', // scan | connect | disconnect | read | write | writeNoRes ...
+    activeApiOutputTabName: 'output', // output | curl | nodejs
     rssiChartStopped: false, // 是否暂停了rssi chart
     rssiChartSwitch: false, // 是否开启rssi chart，默认关闭
     rssiChartPeriod: 60, // 单位秒，统计周期
@@ -38,9 +42,16 @@ let cache = {
 
   },
   apiDebuggerResult: { 
-    scanResultList: [],
-    scanCodeCurl: '',
-    scanCodeNodeJS: ''
+    [libEnum.apiType.SCAN]: {
+      resultList: [{time: '2020/02/20 01:02:03.666', data: '{"name":"(unknown)","evtType":3,"rssi":-80,"adData":"1EFF06000109200262A12A0E18F1516C3D7DABD42556C51B45E9094EB88D2B","bdaddrs":[{"bdaddr":"76:95:9B:89:BB:A5","bdaddrType":"random"}]}'}],
+      code: {
+        [libEnum.codeType.CURL]: '',
+        [libEnum.codeType.NODEJS]: ''
+      }
+    }
+    // scanResultList: [{time: '2020/02/20 01:02:03.666', data: '{"name":"(unknown)","evtType":3,"rssi":-80,"adData":"1EFF06000109200262A12A0E18F1516C3D7DABD42556C51B45E9094EB88D2B","bdaddrs":[{"bdaddr":"76:95:9B:89:BB:A5","bdaddrType":"random"}]}'}],
+    // scanCodeCurl: '',
+    // scanCodeNodeJS: ''
   },
   scanResultList: [ // 扫描结果列表
     {name: 'UNKNOWN', mac: 'CC:1B:E0:E0:DD:70', bdaddrType: 'public', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C', rssiHistory: [{time: Date.now(), rssi: -15}, {time: Date.now(), rssi: -75}]},

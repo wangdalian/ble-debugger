@@ -12,9 +12,15 @@ let sse = null;
 // 更新扫描结果
 function scanSseMessageHandler(message) {
   const cache = dbModule.getCache();
-  // 追加到api扫描调试结果里面
-  if (cache.apiDebuggerResult.scanResultList.length > 15) cache.apiDebuggerResult.scanResultList.shift();
-  cache.apiDebuggerResult.scanResultList.push(message.data);
+  const store = dbModule.getStorage();
+  
+  if (store.devConfDisplayVars.isApiScanResultDisplayOn) { // 追加到api扫描调试结果里面
+    if (cache.apiDebuggerResult[libEnum.apiType.SCAN].resultList.length > store.devConfDisplayVars.apiOutputDisplayCount) {
+      cache.apiDebuggerResult[libEnum.apiType.SCAN].resultList.shift();
+    }
+    cache.apiDebuggerResult[libEnum.apiType.SCAN].resultList.push({time: Date.now(), data: message.data.trim()});
+  }
+  
   const data = JSON.parse(message.data);
   const deviceAddr = data.bdaddrs[0];
   // logger.info('scan sse message:', message);
@@ -42,13 +48,17 @@ function scanSseErrorHandler(error) {
 
 // 保存配置 -> 启动扫描
 function startScan(devConf) {
+  if (sse) return sse;
   db.saveDevConf(devConf);
   sse = api.startScanByDevConf(devConf, scanSseMessageHandler, scanSseErrorHandler);
   return sse;
 }
 
 function stopScan() {
-  if (sse) sse.close();
+  if (sse) {
+    sse.close();
+    sse = null;
+  }
   vueModule.notify('停止扫描成功', '操作成功', libEnum.messageType.SUCCESS);
 }
 

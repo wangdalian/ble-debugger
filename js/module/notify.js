@@ -23,12 +23,16 @@ function notifySseErrorHandler(error) {
 
 // 保存配置 -> 启动扫描
 function startNotify() {
+  if (sse) return sse;
   const devConf = dbModule.getDevConf();
   sse = api.startNotifyByDevConf(devConf, notifySseMessageHandler, notifySseErrorHandler);
 }
 
 function stopNotify() {
-  if (sse) sse.close();
+  if (sse) {
+    sse.close();
+    sse = null;
+  }
 }
 
 export default {

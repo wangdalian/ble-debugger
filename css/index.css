@@ -60,9 +60,10 @@ input::-webkit-input-placeholder {
   font-style: italic;
 }
 
-pre {
-  font-size: 12px;
-  font-style: italic; 
-  font-family: 'Courier New', Courier, monospace;
-  overflow: scroll;
+div::-webkit-scrollbar {
+  width: 0;
+}
+
+pre::-webkit-scrollbar {
+  width: 0;
 }

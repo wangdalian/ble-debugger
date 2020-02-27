@@ -34,10 +34,21 @@ const writeDataType = {
   TEXT: 'text'
 };
 
+const apiType = {
+  SCAN: 'scan',
+}
+
+const codeType = {
+  CURL: 'curl',
+  NODEJS: 'nodejs'
+};
+
 export default {
   operation,
   controlStyle,
   notifyStatus,
   messageType,
-  writeDataType
+  writeDataType,
+  apiType,
+  codeType
 }
