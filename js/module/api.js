@@ -64,6 +64,10 @@ function getConnectUrl(baseURI, deviceMac, params) {
   return `${baseURI}/gap/nodes/${deviceMac}/connection?${obj2QueryStr(params)}`;
 }
 
+function getReadUrl(baseURI, deviceMac, handle, params) {
+  return `${baseURI}/gatt/nodes/${deviceMac}/handle/${handle}/value?${obj2QueryStr(params)}`;
+}
+
 function getConnectStatusUrl(baseURI, params) {
   return `${baseURI}/management/nodes/connection-state?${obj2QueryStr(params)}`;
 }
@@ -196,6 +200,12 @@ function writeByHandle(baseURI, params, deviceMac, handle, value, noresponse=fal
   });
 }
 
+function getReadUrlByDevConf(devConf, deviceMac, handle) {
+  const fields = [];
+  const params = getFields(devConf, fields);
+  return getReadUrl(devConf.baseURI, deviceMac, handle, params);
+}
+
 function getConnectUrlByDevConf(devConf, deviceMac) {
   const fields = [];
   const params = getFields(devConf, fields);
@@ -282,4 +292,5 @@ export default {
   getScanUrlByDevConf,
   openConnectStatusSseByDevConf,
   getConnectUrlByDevConf,
+  getReadUrlByDevConf,
 }

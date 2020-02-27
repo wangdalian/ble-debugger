@@ -115,11 +115,19 @@ function createVueMethods(vue) {
         notify('开启API调试成功', '操作成功', libEnum.messageType.SUCCESS);
       } else if (apiType === libEnum.apiType.CONNECT) {
         apiModule.connectByDevConf(this.store.devConf, apiParams.deviceMac, apiParams.addrType).then(() => {
-          // notify(`连接设备 ${deviceMac} 成功`, '设备连接成功', libEnum.messageType.SUCCESS);
+          // notify(`连接设备 ${deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
           apiResult.resultList.push({time: Date.now(), data: `连接设备成功: ${JSON.stringify(apiParams)}`});
         }).catch(ex => {
           notify(`连接设备 ${apiParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
           apiResult.resultList.push({time: Date.now(), data: `连接设备失败: ${JSON.stringify({apiParams, ex})}`});
+        })
+      } else if (apiType === libEnum.apiType.READ) {
+        apiModule.readByHandleByDevConf(this.store.devConf, apiParams.deviceMac, apiParams.handle).then(() => {
+          notify(`读取设备 ${deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
+          apiResult.resultList.push({time: Date.now(), data: `读取设备成功: ${JSON.stringify(apiParams)}`});
+        }).catch(ex => {
+          notify(`读取设备 ${apiParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+          apiResult.resultList.push({time: Date.now(), data: `读取设备失败: ${JSON.stringify({apiParams, ex})}`});
         })
       }
     },
