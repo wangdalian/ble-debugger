@@ -163,7 +163,7 @@
           <el-col :span="22" style="height: 100%; overflow: scroll; padding: 0px 20px 20px 20px">
             <el-tabs  v-show="store.devConfDisplayVars.activeMenuItem === 'scanListMenuItem'"	>
               <el-tab-pane>
-                <span slot="label" style="font-size: 16px; font-weight: bold; "><i class="el-icon-s-data"></i> 扫描结果</span>
+                <span slot="label"><i class="el-icon-s-data"></i> 扫描结果</span>
                 <el-table
                   :data="cache.scanResultList"
                   style="width: 100%; border-radius:3px;"
@@ -208,7 +208,7 @@
                 </el-table>
               </el-tab-pane>
               <el-tab-pane style="height: 100%; width: 100%;">
-                <span slot="label" style="font-size: 16px; font-weight: bold; "><i class="el-icon-pie-chart"></i> RSSI图表</span>
+                <span slot="label"><i class="el-icon-pie-chart"></i> RSSI图表</span>
                 <el-row>
                   <el-form inline>
                     <el-form-item label="统计周期">
@@ -242,7 +242,7 @@
             <el-row v-show="store.devConfDisplayVars.activeMenuItem === 'connectListMenuItem'">
               <el-tabs closable @tab-remove="connectedListTabRemove">
                 <el-tab-pane v-for="(device, index) in cache.connectedList" :key="index" :name="index.toString()">
-                  <span slot="label" style="font-size: 16px; font-weight: bold; "><i class="el-icon-connection"></i> {{ device.mac }}</span>
+                  <span slot="label"><i class="el-icon-connection"></i> {{ device.mac }}</span>
                   <el-row style="background-color: #2897ff; font-size: 14px; font-style: italic; border-radius: 3px; color: #fff; height: 60px; display: flex; align-items: center; padding-left: 15px; padding-right: 15px;">
                     <el-col :span="6">
                       <el-row>{{ device.name }}</el-row>
@@ -305,7 +305,7 @@
             <el-row v-show="store.devConfDisplayVars.activeMenuItem === 'notifyListMenuItem'">
               <el-tabs>
                 <el-tab-pane>
-                  <span slot="label" style="font-size: 16px; font-weight: bold; "><i class="el-icon-connection"></i> 通知列表</span>
+                  <span slot="label"><i class="el-icon-connection"></i> 通知列表</span>
                     <el-table
                       :data="cache.notifyResultList"
                       style="width: 100%; border-radius:3px;"
@@ -358,7 +358,7 @@
             <el-row v-show="store.devConfDisplayVars.activeMenuItem === 'apiDebuggerMenuItem'">
               <el-tabs v-model="store.devConfDisplayVars.activeApiTabName">
                 <el-tab-pane name="scan">
-                  <span slot="label" style="font-size: 16px; font-weight: bold; "><i class="el-icon-search"></i> 扫描设备</span>
+                  <span slot="label"><i class="el-icon-search"></i> 扫描设备</span>
                   <el-form label-width="80px" style="margin-top: 15px;">
                     <el-form-item label="使用芯片">
                       <el-radio-group v-model="store.devConf.chip" size="medium">
@@ -425,7 +425,7 @@
                   
                 </el-tab-pane>
                 <el-tab-pane name="connect">
-                  <span slot="label" style="font-size: 16px; font-weight: bold; "><i class="el-icon-connection"></i> 连接设备</span>
+                  <span slot="label"><i class="el-icon-connection"></i> 连接设备</span>
                   <el-form label-width="80px" style="margin-top: 15px;">
                     <el-form-item label="使用芯片">
                       <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].chip" size="medium">
@@ -452,7 +452,7 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="read">
-                  <span slot="label" style="font-size: 16px; font-weight: bold; "><i class="el-icon-connection"></i> 读取数据</span>
+                  <span slot="label"><i class="el-icon-reading"></i> 读取数据</span>
                   <el-form label-width="80px" style="margin-top: 15px;">
                     <el-form-item label="HANDLE">
                       <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].handle"></el-input>
@@ -470,7 +470,7 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="write">
-                  <span slot="label" style="font-size: 16px; font-weight: bold; "><i class="el-icon-connection"></i> 写入数据</span>
+                  <span slot="label"><i class="el-icon-edit-outline"></i> 写入数据</span>
                   <el-form label-width="80px" style="margin-top: 15px;">
                     <el-form-item label="HANDLE">
                       <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].handle"></el-input>
@@ -497,7 +497,7 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="disconnect">
-                  <span slot="label" style="font-size: 16px; font-weight: bold; "><i class="el-icon-connection"></i> 断开连接</span>
+                  <span slot="label"><i class="el-icon-scissors"></i> 断开连接</span>
                   <el-form label-width="80px" style="margin-top: 15px;">
                     <el-form-item label="设备地址">
                       <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].deviceMac"></el-input>
