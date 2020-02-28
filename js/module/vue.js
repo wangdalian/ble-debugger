@@ -103,6 +103,25 @@ function createRssiChart() {
 
 function createVueMethods(vue) {
   return {
+    loadApiDebuggerResult() {
+      const apiType = this.store.devConfDisplayVars.activeApiTabName;
+      if (apiType === libEnum.apiType.SCAN) {
+        const loadPageSize = 5;
+        this.cache.isApiDebuggerLoading = true;
+        let pageList = this.cache.apiDebuggerResult[libEnum.apiType.SCAN].resultList.splice(0, loadPageSize);
+        let pageJsonList = _.map(pageList, item => `${new Date(item.time).toISOString()}: ${item.data}`);
+        if (pageList.length !== 0) {
+          let index = this.cache.apiDebuggerResult[libEnum.apiType.SCAN].displayResultList.length;
+          this.cache.apiDebuggerResult[libEnum.apiType.SCAN].displayResultList.splice(index, pageJsonList.length, ...pageJsonList);
+          this.cache.isApiDebuggerLoading = false;
+        } else {
+          setTimeout(function(that) {
+            that.cache.isApiDebuggerLoading = false;
+            that.loadApiDebuggerResult();
+          }, 500, this);
+        }
+      }
+    },
     startDebugApi() {
       const apiType = this.store.devConfDisplayVars.activeApiTabName;
       const apiParams = this.store.devConfDisplayVars.apiDebuggerParams[apiType];
@@ -116,34 +135,34 @@ function createVueMethods(vue) {
       } else if (apiType === libEnum.apiType.CONNECT) {
         apiModule.connectByDevConf(this.store.devConf, apiParams.deviceMac, apiParams.addrType).then(() => {
           // notify(`连接设备 ${deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
-          apiResult.resultList.push({time: Date.now(), data: `连接设备成功: ${JSON.stringify(apiParams)}`});
+          apiResult.resultList.push(`${new Date().toISOString()}: 连接设备成功, ${JSON.stringify(apiParams)}`);
         }).catch(ex => {
           notify(`连接设备 ${apiParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
-          apiResult.resultList.push({time: Date.now(), data: `连接设备失败: ${JSON.stringify({apiParams, ex})}`});
+          apiResult.resultList.push(`${new Date().toISOString()}: 连接设备失败, ${JSON.stringify({apiParams, ex})}`);
         });
       } else if (apiType === libEnum.apiType.READ) {
         apiModule.readByHandleByDevConf(this.store.devConf, apiParams.deviceMac, apiParams.handle).then(() => {
           notify(`读取数据 ${deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
-          apiResult.resultList.push({time: Date.now(), data: `读取数据成功: ${JSON.stringify(apiParams)}`});
+          apiResult.resultList.push(`${new Date().toISOString()}: 读取数据成功, ${JSON.stringify(apiParams)}`);
         }).catch(ex => {
           notify(`读取数据 ${apiParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
-          apiResult.resultList.push({time: Date.now(), data: `读取数据失败: ${JSON.stringify({apiParams, ex})}`});
+          apiResult.resultList.push(`${new Date().toISOString()}: 读取数据失败, ${JSON.stringify({apiParams, ex})}`);
         });
       } else if (apiType === libEnum.apiType.WRITE) {
         apiModule.writeByHandleByDevConf(this.store.devConf, apiParams.deviceMac, apiParams.handle, apiParams.value, apiParams.noresponse).then(() => {
           notify(`写入数据 ${deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
-          apiResult.resultList.push({time: Date.now(), data: `写入数据成功: ${JSON.stringify(apiParams)}`});
+          apiResult.resultList.push(`${new Date().toISOString()}: 写入数据成功, ${JSON.stringify(apiParams)}`);
         }).catch(ex => {
           notify(`写入数据 ${apiParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
-          apiResult.resultList.push({time: Date.now(), data: `写入数据失败: ${JSON.stringify({apiParams, ex})}`});
+          apiResult.resultList.push(`${new Date().toISOString()}: 写入数据失败, ${JSON.stringify({apiParams, ex})}`);
         });
       } else if (apiType === libEnum.apiType.DISCONNECT) {
         apiModule.disconnectByDevConf(this.store.devConf, apiParams.deviceMac).then(() => {
           notify(`断连设备 ${deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
-          apiResult.resultList.push({time: Date.now(), data: `断连设备成功: ${JSON.stringify(apiParams)}`});
+          apiResult.resultList.push(`${new Date().toISOString()}: 断连设备成功, ${JSON.stringify(apiParams)}`);
         }).catch(ex => {
           notify(`断连设备 ${apiParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
-          apiResult.resultList.push({time: Date.now(), data: `断连设备失败: ${JSON.stringify({apiParams, ex})}`});
+          apiResult.resultList.push(`${new Date().toISOString()}: 断连设备失败, ${JSON.stringify({apiParams, ex})}`);
         });
       }
     },
@@ -155,7 +174,14 @@ function createVueMethods(vue) {
       this.store.devConfDisplayVars.isApiScanResultDisplayOn = false;
       notify('关闭API结果成功', '操作成功', libEnum.messageType.SUCCESS);
     },
+    exportApiOutputDisplay() {
+      notify('功能待添加', '操作失败', libEnum.messageType.ERROR);
+    },
     clearApiOutputDisplay() {
+      const apiType = this.store.devConfDisplayVars.activeApiTabName;
+      if (apiType === libEnum.apiType.SCAN) {
+        this.cache.apiDebuggerResult[this.store.devConfDisplayVars.activeApiTabName].displayResultList.splice(0);
+      }
       this.cache.apiDebuggerResult[this.store.devConfDisplayVars.activeApiTabName].resultList.splice(0);
       notify('清除API结果成功', '操作成功', libEnum.messageType.SUCCESS);
     },

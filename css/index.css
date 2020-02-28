@@ -67,3 +67,8 @@ div::-webkit-scrollbar {
 pre::-webkit-scrollbar {
   width: 0;
 }
+
+code {
+  height: 260px;
+  overflow-y: scroll;
+}

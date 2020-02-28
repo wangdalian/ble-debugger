@@ -15,9 +15,9 @@ function scanSseMessageHandler(message) {
   const store = dbModule.getStorage();
   
   if (store.devConfDisplayVars.isApiScanResultDisplayOn) { // 追加到api扫描调试结果里面
-    if (cache.apiDebuggerResult[libEnum.apiType.SCAN].resultList.length > store.devConfDisplayVars.apiOutputDisplayCount) {
-      cache.apiDebuggerResult[libEnum.apiType.SCAN].resultList.shift();
-    }
+    // if (cache.apiDebuggerResult[libEnum.apiType.SCAN].resultList.length > store.devConfDisplayVars.apiOutputDisplayCount) {
+    //   cache.apiDebuggerResult[libEnum.apiType.SCAN].resultList.shift();
+    // }
     cache.apiDebuggerResult[libEnum.apiType.SCAN].resultList.push({time: Date.now(), data: message.data.trim()});
   }
   

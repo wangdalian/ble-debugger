@@ -45,12 +45,14 @@ let storage = {
 };
 
 let cache = {
+  isApiDebuggerLoading: false,
   devicesConnectLoading: {
 
   },
   apiDebuggerResult: { 
     [libEnum.apiType.SCAN]: {
-      resultList: [{time: '2020/02/20 01:02:03.666', data: '{"name":"(unknown)","evtType":3,"rssi":-80,"adData":"1EFF06000109200262A12A0E18F1516C3D7DABD42556C51B45E9094EB88D2B","bdaddrs":[{"bdaddr":"76:95:9B:89:BB:A5","bdaddrType":"random"}]}'}],
+      resultList: [{time: 1582882186095, data: '{"name":"(unknown)","evtType":3,"rssi":-80,"adData":"1EFF06000109200262A12A0E18F1516C3D7DABD42556C51B45E9094EB88D2B","bdaddrs":[{"bdaddr":"76:95:9B:89:BB:A5","bdaddrType":"random"}]}'}],
+      displayResultList: [],
       code: {
         [libEnum.codeType.CURL]: '',
         [libEnum.codeType.NODEJS]: ''
