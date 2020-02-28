@@ -13,7 +13,7 @@ function notifySseMessageHandler(message) {
   const data = JSON.parse(message.data);
   logger.info('notify sse message:', message);
   const cache = dbModule.getCache();
-  cache.notifyResultList.push({mac: data.node, handle: data.handle, value: data.value});
+  cache.notifyResultList.push({time: Date.now(), data: message.data});
 }
 
 function notifySseErrorHandler(error) {

@@ -103,6 +103,22 @@ function createRssiChart() {
 
 function createVueMethods(vue) {
   return {
+    loadNotifyResult() {
+      const loadPageSize = 5;
+      this.cache.isNotifyLoading = true;
+      let pageList = this.cache.notifyResultList.splice(0, loadPageSize);
+      let pageJsonList = _.map(pageList, item => `${new Date(item.time).toISOString()}: ${item.data}`);
+      if (pageList.length !== 0) {
+        let index = this.cache.notifyDisplayResultList.length;
+        this.cache.notifyDisplayResultList.splice(index, pageJsonList.length, ...pageJsonList);
+        this.cache.isNotifyLoading = false;
+      } else {
+        setTimeout(function(that) {
+          that.cache.isNotifyLoading = false;
+          that.loadNotifyResult();
+        }, 500, this);
+      }
+    },
     loadApiDebuggerResult() {
       const apiType = this.store.devConfDisplayVars.activeApiTabName;
       if (apiType === libEnum.apiType.SCAN) {
@@ -187,6 +203,7 @@ function createVueMethods(vue) {
     },
     clearNotify() {
       this.cache.notifyResultList.splice(0);
+      this.cache.notifyDisplayResultList.splice(0);
       notify('清除Notify成功', '操作成功', libEnum.messageType.SUCCESS);
     },
     openNotify() {

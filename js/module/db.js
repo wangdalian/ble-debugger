@@ -46,6 +46,7 @@ let storage = {
 
 let cache = {
   isApiDebuggerLoading: false,
+  isNotifyLoading: false,
   devicesConnectLoading: {
 
   },
@@ -98,10 +99,11 @@ let cache = {
 
   }, 
   notifyResultList: [ // 通知列表
-    {mac: 'CC:1B:E0:E7:FE:F8', time: '2020/02/20 01:02:03.666', handle: 15, value: '0011223344556677889900112233445566778899'},
-    {mac: 'CC:1B:E0:E7:FE:F8', time: '2020/02/20 01:02:03.666', handle: 15, value: '0011223344556677889900112233445566778899'},
-    {mac: 'CC:1B:E0:E7:FE:F8', time: '2020/02/20 01:02:03.666', handle: 15, value: '0011223344556677889900112233445566778899'}
+    {time: Date.now(), data: JSON.stringify({mac: 'CC:1B:E0:E7:FE:F8', time: '2020/02/20 01:02:03.666', handle: 15, value: '0011223344556677889900112233445566778899'})},
+    {time: Date.now(), data: JSON.stringify({mac: 'CC:1B:E0:E7:FE:F8', time: '2020/02/20 01:02:03.666', handle: 15, value: '0011223344556677889900112233445566778899'})},
+    {time: Date.now(), data: JSON.stringify({mac: 'CC:1B:E0:E7:FE:F8', time: '2020/02/20 01:02:03.666', handle: 15, value: '0011223344556677889900112233445566778899'})},
   ], 
+  notifyDisplayResultList: []
 };
 
 function save(key, value) {
