@@ -64,7 +64,12 @@ function _genConnectCodeCurl(apiParams) {
 
 function _genScanCodeCurl(apiParams) {
   const devConf = dbModule.getDevConf();
-  let url = apiModule.getScanUrlByDevConf(devConf);
+  let _devConf = _.cloneDeep(devConf);
+  _.forEach(apiParams, (v, k) => { // 更新为自定义的api参数配置
+    if (v !== undefined && v !== null) _devConf[k] = v;
+  });
+  let url = apiModule.getScanUrlByDevConf(_devConf);
+
   return `
   curl -H "Accept: text/event-stream" '${url}'
   `;
@@ -147,7 +152,12 @@ function _genReadCodeNodeJS(apiParams) {
 
 function _genScanCodeNodeJS(apiParams) {
   const devConf = dbModule.getDevConf();
-  let url = apiModule.getScanUrlByDevConf(devConf);
+  let _devConf = _.cloneDeep(devConf);
+  _.forEach(apiParams, (v, k) => { // 更新为自定义的api参数配置
+    if (v !== undefined && v !== null) _devConf[k] = v;
+  });
+  let url = apiModule.getScanUrlByDevConf(_devConf);
+
   return `
   const EventSource = require('eventsource');
 

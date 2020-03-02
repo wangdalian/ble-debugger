@@ -9,8 +9,8 @@ function main() {
   Vue.nextTick(function() {
     hljs.initHighlightingOnLoad();
   });
-  connectModule.loadConnectedList();
-  connectModule.openConnectStatusSse();
+  // connectModule.loadConnectedList();
+  // connectModule.openConnectStatusSse();
 }
 
 main();

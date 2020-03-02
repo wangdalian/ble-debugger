@@ -18,7 +18,9 @@ function notifySseMessageHandler(message) {
 
 function notifySseErrorHandler(error) {
   logger.error('notify sse error:', error);
-  vueModule.notify(`Notify SSE异常: ${error.message || JSON.stringify(error)}`, '服务异常', libEnum.messageType.ERROR);
+  vueModule.notify(`关闭设备通知SSE，SSE异常: ${error.message || JSON.stringify(error)}`, '服务异常', libEnum.messageType.ERROR);
+  sse.close();
+  sse = null;
 }
 
 // 保存配置 -> 启动扫描

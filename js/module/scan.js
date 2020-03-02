@@ -1,6 +1,5 @@
 import libEnum from '../lib/enum.js';
 import libLogger from '../lib/logger.js';
-import db from './db.js';
 import api from './api.js';
 import dbModule from './db.js';
 import vueModule from './vue.js';
@@ -14,42 +13,46 @@ function scanSseMessageHandler(message) {
   const cache = dbModule.getCache();
   const store = dbModule.getStorage();
   
-  if (store.devConfDisplayVars.isApiScanResultDisplayOn) { // 追加到api扫描调试结果里面
-    // if (cache.apiDebuggerResult[libEnum.apiType.SCAN].resultList.length > store.devConfDisplayVars.apiOutputDisplayCount) {
-    //   cache.apiDebuggerResult[libEnum.apiType.SCAN].resultList.shift();
-    // }
-    cache.apiDebuggerResult[libEnum.apiType.SCAN].resultList.push({time: Date.now(), data: message.data.trim()});
-  }
-  
   const data = JSON.parse(message.data);
   const deviceAddr = data.bdaddrs[0];
+  const deviceMac = deviceAddr.bdaddr;
+  const deviceAddrType = deviceAddr.bdaddrType;
   // logger.info('scan sse message:', message);
-  let device = _.find(cache.scanResultList, {mac: deviceAddr.bdaddr});
-  if (!device) {
+
+  // 更新扫描结果
+  let result = _.find(cache.scanResultList, {mac: deviceMac});
+  if (!result) {
     cache.scanResultList.push({
-      mac: deviceAddr.bdaddr, 
+      mac: deviceMac, 
       name: data.name,
       adData:  data.adData,
-      bdaddrType: deviceAddr.bdaddrType,
+      bdaddrType: deviceAddrType,
       rssi: data.rssi,
-      rssiHistory: [{time: Date.now(), rssi: data.rssi}]
     });
   } else {
-    if (data.name !== '(unknown)') device.name = data.name;
-    device.rssi = data.rssi;
-    device.rssiHistory.push({time: Date.now(), rssi: data.rssi});
+    if (data.name !== '(unknown)') result.name = data.name;
+    result.rssi = data.rssi;
+  }
+
+  // 记录历史rssi
+  if (!store.devConfDisplayVars.rssiChartSwitch) return; // 没有开启rssi图表则不记录数据
+  if (!cache.scanDevicesRssiHistory[deviceMac]) {
+    vueModule.setObjProperty(cache.scanDevicesRssiHistory, deviceMac, [{time: Date.now(), rssi: data.rssi}]);
+  } else {
+    cache.scanDevicesRssiHistory[deviceMac].push({time: Date.now(), rssi: data.rssi});
   }
 }
 
 function scanSseErrorHandler(error) {
   logger.error('scan sse error:', error);
-  vueModule.notify(`扫描SSE异常: ${error.message || JSON.stringify(error)}`, `服务异常`, libEnum.messageType.ERROR);
+  vueModule.notify(`停止扫描，扫描SSE异常: ${error.message || JSON.stringify(error)}`, `服务异常`, libEnum.messageType.ERROR);
+  sse.close();
+  sse = null;
 }
 
 // 保存配置 -> 启动扫描
 function startScan(devConf) {
   if (sse) return sse;
-  db.saveDevConf(devConf);
   sse = api.startScanByDevConf(devConf, scanSseMessageHandler, scanSseErrorHandler);
   return sse;
 }

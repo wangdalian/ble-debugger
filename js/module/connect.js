@@ -6,17 +6,26 @@ import vueModule from './vue.js';
 
 const logger = libLogger.genModuleLogger('connect');
 
+let sse = null;
+
 function loadConnectedList() {
   const devConf = dbModule.getDevConf();
+  // const cache = dbModule.getCache();
+  // cache.connectedList.splice(0); // 清空连接列表
   apiModule.getConnectedListByDevConf(devConf).then((data) => {
     const cache = dbModule.getCache();
-    cache.connectedList = _.map(data.nodes, item => {
-      return {
-        name: item.name || '(unknown)',
-        mac: item.id, 
-        bdaddrType: item.type, 
-        chip: item.chipId
-      };
+    _.forEach(data.nodes, item => {
+      let connectItem = _.find(cache.connectedList, {mac: item.id});
+      if (connectItem) { // 已存在则更新连接的chip
+        connectItem.chip = item.chipId;
+      } else { // 不存在的则追加
+        cache.connectedList.push({
+          name: item.name || '(unknown)',
+          mac: item.id, 
+          bdaddrType: item.type, 
+          chip: item.chipId
+        });
+      }
     });
   });
 }
@@ -40,15 +49,31 @@ function connectStatusSseMessageHandler(message) {
 
 function connectStatusSseErrorHandler(error) {
   logger.error('connect status sse error:', error);
-  vueModule.notify(`连接状态SSE异常: ${error.message || JSON.stringify(error)}`, '服务异常', libEnum.messageType.ERROR);
+  vueModule.notify(`关闭连接状态SSE，SSE异常: ${error.message || JSON.stringify(error)}`, '服务异常', libEnum.messageType.ERROR);
+  sse.close();
+  sse = null;
 }
 
 function openConnectStatusSse() {
   const devConf = dbModule.getDevConf();
-  apiModule.openConnectStatusSseByDevConf(devConf, connectStatusSseMessageHandler, connectStatusSseErrorHandler);
+  sse = apiModule.openConnectStatusSseByDevConf(devConf, connectStatusSseMessageHandler, connectStatusSseErrorHandler);
+}
+
+function closeConnectStatusSse() {
+  if (sse) {
+    sse.close();
+    sse = null;
+  }
+}
+
+function reopenConnectStatusSse() {
+  closeConnectStatusSse();
+  openConnectStatusSse();
 }
 
 export default {
   loadConnectedList,
   openConnectStatusSse,
+  closeConnectStatusSse,
+  reopenConnectStatusSse
 }

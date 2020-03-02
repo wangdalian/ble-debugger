@@ -11,15 +11,22 @@ axios.defaults.headers['Content-Type'] = 'application/json';
 function obj2QueryStr(obj) {
   let arr = [];
   _.forEach(obj, (value, key) => {
+    if (_.isArray(value)) value = value.join(',');
     arr.push(`${key}=${value}`);
   })
   return arr.join('&');
 }
 
+function isValidValue(value) {
+  if (value === undefined || value === null) return false;
+  if (_.isArray(value) && value.length === 0) return false;
+  return true;
+}
+
 function getFields(devConf, fields) {
   let param = {};
   _.forEach(devConf, (value, key) => {
-    if (_.includes(fields, key)) param[key] = value;
+    if (_.includes(fields, key) && isValidValue(value)) param[key] = value;
   });
   if (devConf.controlStyle === libEnum.controlStyle.AC) {
     param.mac = devConf.mac;
@@ -253,6 +260,15 @@ function startScanByDevConf(devConf, messageHandler, errorHandler) {
   return startScan(url, messageHandler, errorHandler);
 }
 
+function startScanByUserParams(devConf, chip, filter_mac, filter_name, filter_rssi, messageHandler, errorHandler) {
+  const _devConf = _.cloneDeep(devConf);
+  _devConf.chip = chip;
+  _devConf.filter_mac = filter_mac;
+  _devConf.filter_name = filter_name;
+  _devConf.filter_rssi = filter_rssi;
+  return startScanByDevConf(_devConf, messageHandler, errorHandler);
+}
+
 function openConnectStatusSseByDevConf(devConf, messageHandler, errorHandler) {
   const url = getConnectStatusUrlByDevConf(devConf);
   return connectStatusSse(url, messageHandler, errorHandler);
@@ -267,9 +283,9 @@ function startNotifyByDevConf(devConf, messageHandler, errorHandler) {
 
 function connectByDevConf(devConf, deviceMac, addrType, chip=0) {
   const params = getFields(devConf, []);
-  const scanResultList = dbModule.getCache().scanResultList;
+  const scanDisplayResultList = dbModule.getCache().scanDisplayResultList;
   if (!addrType) {
-    const item = _.find(scanResultList, {mac: deviceMac});
+    const item = _.find(scanDisplayResultList, {mac: deviceMac});
     if (!item) return Promise.reject('can not get addr type');
     addrType = item.bdaddrType;
   }
@@ -317,5 +333,6 @@ export default {
   getConnectUrlByDevConf,
   getReadUrlByDevConf,
   getWriteUrlByDevConf,
-  getDisconnectUrlByDevConf
+  getDisconnectUrlByDevConf,
+  startScanByUserParams
 }
