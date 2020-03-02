@@ -6,14 +6,14 @@ const storageKey = 'storageKey';
 let storage = {
   devConf: {
     controlStyle: libEnum.controlStyle.AP, // 连接方式
-    serverURI: 'http://192.168.5.103', // 服务器地址
-    baseURI: 'http://192.168.5.103', //
+    serverURI: 'http://192.168.0.38', // 服务器地址
+    baseURI: 'http://192.168.0.38', //
     acDevKey: 'cassia', // 开发者账号
     acDevSecret: 'cassia', // 开发者密码
     mac: '', // 路由器MAC
     filter_name: [], // 扫描name过滤
     filter_mac: [], // 扫描mac过滤
-    filter_rssi: -65,
+    filter_rssi: -75,
     chip: 0, // 扫描使用的芯片
     access_token: '' // ac连接方式token
   },

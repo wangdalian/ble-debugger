@@ -105,7 +105,7 @@ function createVueMethods(vue) {
   return {
     scanTabsClick(x) {
       this.$refs.refScanDisplayResultGrid.updateData();
-      // this.$refs.refScanDisplayResultGrid.refreshScroll();
+      this.$refs.refScanDisplayResultGrid.refreshScroll();
     },
     scanDisplayResultClear() {
       this.cache.scanDisplayResultList.splice(0);
@@ -114,7 +114,7 @@ function createVueMethods(vue) {
       this.cache.notifyDisplayResultList.splice(0);
     },
     scanDisplayResultExport () {
-      this.$refs.refNotifyDisplayResultGrid.exportData({ type: 'csv' })
+      this.$refs.refScanDisplayResultGrid.exportData({ type: 'csv' })
     },
     notifyDisplayResultExport () {
       this.$refs.refNotifyDisplayResultGrid.exportData({ type: 'csv' })
@@ -310,6 +310,7 @@ function createVueMethods(vue) {
         this.$refs.refNotifyDisplayResultGrid.recalculate();
       } else if (key === 'scanListMenuItem') {
         this.$refs.refScanDisplayResultGrid.recalculate();
+        this.$refs.refScanDisplayResultGrid.updateData();
       }
     },
     propertyClick(operation, deviceMac, handle, writeValueOrNotifyStatus) {
