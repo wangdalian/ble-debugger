@@ -1,5 +1,6 @@
 import libEnum from '../lib/enum.js';
 import libLogger from '../lib/logger.js';
+import libCharReadParser from '../lib/characteristics_read_parser.js';
 import apiModule from './api.js';
 import dbModule from './db.js';
 import serviceMoudle from './service.js';
@@ -118,6 +119,7 @@ function readHander(operation, deviceMac, handle, _) {
   }
   apiModule.readByHandleByDevConf(devConf, deviceMac, handle).then((data) => { // 成功了更新显示值
     char.readValue = data.value;
+    char.parsedReadValues = libCharReadParser.getParsedValues(char.name, char.readValue);
     vueModule.notify(`读取设备 ${deviceMac} handle ${handle} 成功`, '操作成功', libEnum.messageType.SUCCESS);
   }).catch(ex => {
     vueModule.notify(`读取设备 ${deviceMac} handle ${handle} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);

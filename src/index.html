@@ -285,7 +285,41 @@
                             <el-input v-show="char.propertiesStr.includes('WRITE') || char.propertiesStr.includes('WRITE NO RES')" style="width: 220px; float: right; font-size: 12px; font-style: normal;" size="small" v-model="char.writeValue" :placeholder="char.writeValueType === 'hex' ? '格式：aa00bb11cc22（支持空格）' : '格式：任意字符'">
                             </el-input>
                           </el-row>
-                          <el-row style="font-size: 12px; font-style: normal; color: #2897ff" v-show="char.readValue.toString().length !== 0">Value: (0x) {{ char.readValue }}</el-row>
+                          <el-row style="font-size: 12px; font-style: normal; color: #2897ff" v-show="char.readValue.toString().length !== 0">
+                            Value: (0x) 
+                            <el-popover trigger="hover" width="600">
+                              <el-table :data="char.parsedReadValues" width="100%" stripe border>
+                                <el-table-column label="名称" width="180">
+                                  <template slot-scope="scope">
+                                    <span>{{ scope.row.name }}</span>
+                                  </template>
+                                </el-table-column>
+                                <el-table-column label="解析" width="300">
+                                  <template slot-scope="scope">
+                                    <span>{{ scope.row.parsed }}</span>
+                                  </template>
+                                </el-table-column>
+                                <el-table-column label="原始(HEX)" width="120">
+                                  <template slot-scope="scope">
+                                    <span>{{ scope.row.raw }}</span>
+                                  </template>
+                                </el-table-column>
+                              </el-table>
+                              <!-- <el-row>
+                                <el-col :span="8">名称</el-col>
+                                <el-col :span="8">解析</el-col>
+                                <el-col :span="8">原始</el-col>
+                              </el-row>
+                              <el-row v-for="(value, key) in char.parsedReadValues">
+                                <el-col :span="8">{{ key }}</el-col>
+                                <el-col :span="8">{{ value.raw }}</el-col>
+                                <el-col :span="8">{{ value.parsed }}</el-col>
+                              </el-row> -->
+                              <el-button slot="reference" type="text">
+                                {{ char.readValue }}
+                              </el-button>
+                            </el-popover>
+                          </el-row>
                         </el-row>
                       </el-collapse-item>
                     </el-collapse>
@@ -520,6 +554,7 @@
 <script src='./lib/highlight.js/9.18.1/highlight.min.js'></script>
 <script src='./lib/highlight.js/9.18.1/languages/bash.min.js'></script>
 <script src='./lib/echarts/echarts.min.js'></script>
+<script src='./lib/buffer-5.4.3/buffer.js'></script>
 <script src='./lib/lodash/lodash.min.js'></script>
 <script src="./lib/vxe-table/xe-utils.js"></script>
 <script src="./lib/vxe-table/vxe-table.js"></script>

@@ -1,5 +1,6 @@
 // https://www.bluetooth.com/specifications/gatt/characteristics/
-const gattCharacteristics = {
+
+const gattCharacteristicsUUID = {
   '2A7E': 'Aerobic Heart Rate Lower Limit',
   '2A84': 'Aerobic Heart Rate Upper Limit',
   '2A7F': 'Aerobic Threshold',
@@ -239,7 +240,7 @@ const gattCharacteristics = {
 // uuid: 00001800-0000-1000-8000-00805f9b34fb
 function getNameByUuid(uuid) {
   let shortId = parseInt(uuid.split('-')[0], 16).toString(16).toUpperCase();;
-  return gattCharacteristics[shortId] || 'Unknown Characteristics';
+  return gattCharacteristicsUUID[shortId] || 'Unknown Characteristics';
 }
 
 export default {
