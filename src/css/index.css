@@ -77,3 +77,8 @@ code {
   height: 260px;
   overflow-y: scroll;
 }
+
+/* 当页面加载完再显示 */
+[v-cloak]{
+  display: none;
+}
