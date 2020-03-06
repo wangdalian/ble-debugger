@@ -186,8 +186,8 @@
                     :sort-config="{trigger: 'cell'}"
                     :data="getComputedScanDisplayResultList">
                     <vxe-table-column field="mac" title="MAC" type="html" width="30%" fixed="left" show-overflow></vxe-table-column>
-                    <vxe-table-column field="name" title="NAME" type="html" width="25%"></vxe-table-column>
-                    <vxe-table-column field="bdaddrType" title="类型" width="15%"></vxe-table-column>
+                    <vxe-table-column field="name" title="NAME" type="html" width="25%" sortable></vxe-table-column>
+                    <vxe-table-column field="bdaddrType" title="类型" width="15%" sortable></vxe-table-column>
                     <vxe-table-column field="rssi" title="信号" width="15%" sortable></vxe-table-column>
                     <!-- 暂时不显示广播包了，没有找到合适位置，上面的字段自定义slot，数据量大的话会卡顿 -->
                     <!-- <vxe-table-column field="adData" title="广播包" width="40%" show-overflow></vxe-table-column> -->

@@ -27,7 +27,79 @@ const parsers = {
   'Exact Time 256': exactTime256,
   'Manufacturer Name String': manufacturerNameString,
   'IEEE 11073-20601 Regulatory Certification Data List': iEEE1107320601RegulatoryCertificationDataList,
+  'Body Sensor Location': bodySensorLocation,
+  'Battery Level': batteryLevel,
+  'Alert Level': alertLevel,
 };
+
+const alertLevelEnum = {
+  '0': 'No Alert',
+  '1': 'Mild Alert',
+  '2': 'High Alert'
+};
+
+function alertLevel(readCharValue) {
+  let result = [];
+  try {
+    const _buffer = buffer.Buffer.from(readCharValue, 'hex');
+    const level = _buffer.readUInt8(0);
+    result.push({
+      name: 'Level',
+      raw: _buffer.slice(0, 1).toString('hex'),
+      parsed: alertLevelEnum[level] || `Reserved`,
+    });
+  } catch (ex) {
+    logger.error(ex);
+  }
+  return result;
+}
+
+function batteryLevel(readCharValue) {
+  let result = [];
+  try {
+    const _buffer = buffer.Buffer.from(readCharValue, 'hex');
+    const level = _buffer.readUInt8(0);
+    result.push({
+      name: 'Level',
+      raw: _buffer.slice(0, 1).toString('hex'),
+      parsed: `${level}%, [0, 100]`,
+    });
+  } catch (ex) {
+    logger.error(ex);
+  }
+  return result;
+}
+
+const bodySensorLocationEnum = {
+  '0': 'Other',
+  '1': 'Chest',
+  '2': 'Wrist',
+  '3': 'Finger',
+  '4': 'Hand',
+  '5': 'Ear Lobe',
+  '6': 'Foot'
+};
+
+function getBodySensorLocationStr(value) {
+  if (value >= 7 && value <= 255) return 'ReservedForFutureUse';
+  return bodySensorLocationEnum[value] || value;
+}
+
+function bodySensorLocation(readCharValue) {
+  let result = [];
+  try {
+    const _buffer = buffer.Buffer.from(readCharValue, 'hex');
+    const location = _buffer.readUInt8(0);
+    result.push({
+      name: 'Body Sensor Location',
+      raw: _buffer.slice(0, 1).toString('hex'),
+      parsed: getBodySensorLocationStr(location),
+    });
+  } catch (ex) {
+    logger.error(ex);
+  }
+  return result;
+}
 
 function iEEE1107320601RegulatoryCertificationDataList(readCharValue) {
   let result = [];
