@@ -121,7 +121,7 @@ function notifySseErrorHandler(error) {
 }
 
 // params -> {chip: 0, filter_mac: '1,2', filter_name: '2,3', filter_rssi: -75, mac: 'aa', access_token: 'bac'}
-function startNotify(baseURI, params, messageHandler, errorHandler) {
+function openNotifySse(baseURI, params, messageHandler, errorHandler) {
   const url = `${baseURI}/gatt/nodes?${obj2QueryStr(params)}`;
   let sse = new EventSource(url);
   sse.onmessage = messageHandler || notifySseMessageHandler;
@@ -278,7 +278,7 @@ function startNotifyByDevConf(devConf, messageHandler, errorHandler) {
   const fields = [];
   const params = getFields(devConf, fields);
   params.event = 1;
-  return startNotify(devConf.baseURI, params, messageHandler, errorHandler);
+  return openNotifySse(devConf.baseURI, params, messageHandler, errorHandler);
 }
 
 function connectByDevConf(devConf, deviceMac, addrType, chip=0) {

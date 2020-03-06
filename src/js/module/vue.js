@@ -103,7 +103,7 @@ function createRssiChart() {
 
 function createVueMethods(vue) {
   return {
-    scanTabsClick(x) {
+    scanTabsClick(x) { // 修正表格变形问题
       this.$refs.refScanDisplayResultGrid.updateData();
       this.$refs.refScanDisplayResultGrid.refreshScroll();
     },
@@ -232,12 +232,12 @@ function createVueMethods(vue) {
       notify('清除Notify成功', '操作成功', libEnum.messageType.SUCCESS);
     },
     openNotify() {
-      notifyModule.startNotify();
+      notifyModule.openNotifySse();
       this.store.devConfDisplayVars.isNotifyOn = true;
       notify('开启Notify成功', '操作成功', libEnum.messageType.SUCCESS);
     },
     closeNotify() {
-      notifyModule.stopNotify();
+      notifyModule.closeNotifySse();
       this.store.devConfDisplayVars.isNotifyOn = false;
       notify('关闭Notify成功', '操作成功', libEnum.messageType.SUCCESS);
     },
@@ -307,14 +307,15 @@ function createVueMethods(vue) {
         connectModule.loadConnectedList();
         connectModule.reopenConnectStatusSse();
       } else if (key === 'notifyListMenuItem') {
+        // notifyModule.reopenNotifySse(); // 手动打开
         this.$refs.refNotifyDisplayResultGrid.recalculate();
       } else if (key === 'scanListMenuItem') {
         this.$refs.refScanDisplayResultGrid.recalculate();
         this.$refs.refScanDisplayResultGrid.updateData();
       }
     },
-    propertyClick(operation, deviceMac, handle, writeValueOrNotifyStatus) {
-      operationModule.dispatch(operation, deviceMac, handle, writeValueOrNotifyStatus);
+    propertyClick(operation, deviceMac, char) {
+      operationModule.dispatch(operation, deviceMac, char);
     },
     getDeviceServices(deviceMac) {
       serviceModule.getDeviceServiceList(deviceMac);

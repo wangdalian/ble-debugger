@@ -264,17 +264,17 @@
                           <el-row style="font-size: 12px; font-style: normal; ">
                             Properties: 
                             <el-button-group>
-                              <el-button style="font-style: normal; font-weight: bold;" v-show="char.propertiesStr.includes('READ')" type="primary" size="small" @Click="propertyClick('READ', device.mac, char.handle, char.writeValue)">
+                              <el-button style="font-style: normal; font-weight: bold;" v-show="char.propertiesStr.includes('READ')" type="primary" size="small" @Click="propertyClick('READ', device.mac, char)">
                                 READ
                               </el-button>
-                              <el-button style="font-style: normal; font-weight: bold;" v-bind:type="char.notifyStatus === 'on' ? 'primary' : 'info'" v-show="char.propertiesStr.includes('NOTIFY')" size="small" @Click="propertyClick('NOTIFY', device.mac, char.handle, char.notifyStatus)">
+                              <el-button style="font-style: normal; font-weight: bold;" v-bind:type="char.notifyStatus === 'on' ? 'primary' : 'info'" v-show="char.propertiesStr.includes('NOTIFY')" size="small" @Click="propertyClick('NOTIFY', device.mac, char)">
                                 NOTIFY
                               </el-button>
                               </el-switch>
-                              <el-button style="font-style: normal; font-weight: bold;" v-show="char.propertiesStr.includes('WRITE NO RES')" type="primary" size="small" @Click="propertyClick('WRITE NO RES', device.mac, char.handle, char.writeValue)">
+                              <el-button style="font-style: normal; font-weight: bold;" v-show="char.propertiesStr.includes('WRITE NO RES')" type="primary" size="small" @Click="propertyClick('WRITE NO RES', device.mac, char)">
                                 WRITE NO RES
                               </el-button>
-                              <el-button style="font-style: normal; font-weight: bold;" v-show="char.propertiesStr.includes('WRITE')" type="primary" size="small" @Click="propertyClick('WRITE', device.mac, char.handle, char.writeValue)">
+                              <el-button style="font-style: normal; font-weight: bold;" v-show="char.propertiesStr.includes('WRITE')" type="primary" size="small" @Click="propertyClick('WRITE', device.mac, char)">
                                 WRITE
                               </el-button>
                             </el-button-group>
@@ -332,11 +332,14 @@
               <el-tabs style="height: 100%;">
                 <el-tab-pane  style="height: 100%;">
                   <span slot="label"><i class="el-icon-connection"></i> 通知列表</span>
-                  <el-row v-show="getComputedNotifyDisplayResultList.length > 0">
+                  <el-row>
                     <vxe-toolbar>
                       <template v-slot:buttons>
                         <span>设备通知数量:<span style="font-weight: bold; color: #2897ff">{{ getComputedNotifyDisplayResultList.length }}</span></span>
                         <vxe-input v-model="cache.notifyDisplayFilterContent" type="search" placeholder="搜索mac" size="small"></vxe-input>
+                        <vxe-button @click="openNotify" status="primary" size="small" v-show="!store.devConfDisplayVars.isNotifyOn">开启</vxe-button>
+                        <vxe-button @click="closeNotify" status="danger" size="small" v-show="store.devConfDisplayVars.isNotifyOn">关闭</vxe-button>
+                        <vxe-button @click="notifyDisplayResultClear" status="danger" size="small">清空</vxe-button>
                         <vxe-button @click="notifyDisplayResultClear" status="danger" size="small">清空</vxe-button>
                         <vxe-button @click="notifyDisplayResultExport" status="primary" size="small">导出</vxe-button>
                       </template>

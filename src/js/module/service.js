@@ -30,6 +30,10 @@ function procDeviceServiceList(data) {
     _.forEach(service.characteristics, char => {
       char.name = charLib.getNameByUuid(char.uuid);
       char.propertiesStr = properties2Str(char.properties);
+      if (_.includes(char.propertiesStr, libEnum.operation.NOTIFY)) {
+        const descriptor = _.find(char.descriptors, d => d.uuid.startsWith('00002902'));
+        if (descriptor) char.notifyHandle = descriptor.handle;
+      }
       char.readValue = ''; // 辅助前端页面缓存读取的value
       char.writeValue = ''; // 辅助前端页面缓存写入的value
       char.notifyStatus = libEnum.notifyStatus.OFF; // 辅助前端页面缓存notify开关状态
