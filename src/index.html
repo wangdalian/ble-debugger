@@ -287,8 +287,8 @@
                           </el-row>
                           <el-row style="font-size: 12px; font-style: normal; color: #2897ff" v-show="char.readValue.toString().length !== 0">
                             Value: (0x) 
-                            <el-popover trigger="hover" width="600">
-                              <el-table :data="char.parsedReadValues" width="100%" stripe border>
+                            <el-popover trigger="click" width="600">
+                              <el-table :data="char.parsedReadValues" width="100%" stripe border empty-text="暂未添加解析">
                                 <el-table-column label="名称" width="180">
                                   <template slot-scope="scope">
                                     <span>{{ scope.row.name }}</span>

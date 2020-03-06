@@ -25,7 +25,39 @@ const parsers = {
   'Day Date Time': dayDateTime,
   'Day of Week': dayofWeek,
   'Exact Time 256': exactTime256,
+  'Manufacturer Name String': manufacturerNameString,
+  'IEEE 11073-20601 Regulatory Certification Data List': iEEE1107320601RegulatoryCertificationDataList,
 };
+
+function iEEE1107320601RegulatoryCertificationDataList(readCharValue) {
+  let result = [];
+  try {
+    const _buffer = buffer.Buffer.from(readCharValue, 'hex');
+    // result.push({
+    //   name: 'Manufacturer Name',
+    //   raw: readCharValue,
+    //   parsed: _buffer.toString(),
+    // });
+  } catch (ex) {
+    logger.error(ex);
+  }
+  return result;
+}
+
+function manufacturerNameString(readCharValue) {
+  let result = [];
+  try {
+    const _buffer = buffer.Buffer.from(readCharValue, 'hex');
+    result.push({
+      name: 'Manufacturer Name',
+      raw: readCharValue,
+      parsed: _buffer.toString(),
+    });
+  } catch (ex) {
+    logger.error(ex);
+  }
+  return result;
+}
 
 function exactTime256(readCharValue) {
   let result = [];

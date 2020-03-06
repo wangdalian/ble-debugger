@@ -118,11 +118,14 @@ function readHander(operation, deviceMac, handle, _) {
     return;
   }
   apiModule.readByHandleByDevConf(devConf, deviceMac, handle).then((data) => { // 成功了更新显示值
-    char.readValue = data.value;
+    char.readValue = data.value || 'No Data'; // CAUTION: 有时候返回的结果没有value字段
     char.parsedReadValues = libCharReadParser.getParsedValues(char.name, char.readValue);
     vueModule.notify(`读取设备 ${deviceMac} handle ${handle} 成功`, '操作成功', libEnum.messageType.SUCCESS);
   }).catch(ex => {
+    char.readValue = '';
+    char.parsedReadValues = [];
     vueModule.notify(`读取设备 ${deviceMac} handle ${handle} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+    logger.error(ex);
   });
 }
 
