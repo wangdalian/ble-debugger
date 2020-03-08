@@ -36,7 +36,7 @@ function trimHexValue(value) {
 function writeWithResHandler(operation, deviceMac, char) {
   const devConf = dbModule.getDevConf();
   const handle = char.handle;
-  const value = char.writeValue;
+  let value = char.writeValue;
   if (char.writeValueType === libEnum.writeDataType.TEXT) {
     value = textToHex(value);
   }
@@ -51,7 +51,7 @@ function writeWithResHandler(operation, deviceMac, char) {
 function writeWithoutResHandler(operation, deviceMac, char) {
   const devConf = dbModule.getDevConf();
   const handle = char.handle;
-  const value = char.writeValue;
+  let value = char.writeValue;
   if (char.writeValueType === libEnum.writeDataType.TEXT) {
     value = buffer.Buffer.from(value).toString('hex');
   }
