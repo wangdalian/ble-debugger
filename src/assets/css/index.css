@@ -1,0 +1,80 @@
+
+HTML {
+}
+
+HTML, BODY {
+  font-family: "Courier New", "Monaco", "monospace", "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+  margin: 0px;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+}
+
+* {
+  font-family: "Courier New", "Monaco", "monospace", "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+.box {
+  height: 100%;
+}
+
+.col1 {
+  height: 100%;
+  background-color: #fff;
+  font-size: 14px;
+}
+
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
+.button-new-tag {
+  /* margin-left: 10px; */
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.input-new-tag {
+  width: 90px;
+  /* margin-left: 10px; */
+  vertical-align: bottom;
+}
+
+.el-divider__text {
+  font-size: 16px;
+}
+
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+  /* width: 200px; */
+  /* min-height: 400px; */
+}
+
+.el-menu-vertical-demo {
+  /* border-left: 1px solid #e6e6e6; */
+  border-right: 0px;
+}
+
+input::-webkit-input-placeholder {
+  font-style: italic;
+}
+
+div::-webkit-scrollbar {
+  width: 0;
+}
+
+code {
+  font-size: "12px";
+  height: 260px;
+  overflow-y: scroll;
+}
+
+/* 当页面加载完再显示 */
+[v-cloak]{
+  display: none;
+}
