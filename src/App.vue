@@ -177,7 +177,7 @@
                     <template v-slot:buttons>
                       <span>连接设备数量:<span style="font-weight: bold; color: #409eff">{{ getComputedConnectDisplayResultList().length }} </span></span>
                       <vxe-input v-model="cache.connectDisplayFilterContent" type="search" placeholder="搜索mac或name" size="small"></vxe-input>
-                      <vxe-button @click="scanDisplayResultExport" status="primary" size="small">导出</vxe-button>
+                      <vxe-button @click="connectDisplayResultExport" status="primary" size="small">导出</vxe-button>
                     </template>
                   </vxe-toolbar>
                   <!-- 注意设置为固定高度，否则页面在过多的数据时候会造成卡顿，TODO: 是否考虑使用分页优化? -->
@@ -221,6 +221,7 @@
                         <el-button size="small" @click="disconnectDevice(device.mac)" style="color: #2897ff">断连</el-button>
                         <el-button size="small" style="color: #2897ff">配对</el-button>
                         <el-button size="small" style="color: #2897ff">取消配对</el-button>
+                        <el-button size="small" style="color: #2897ff">导出</el-button>
                       </el-button-group>
                     </el-col>
                   </el-row>
@@ -233,7 +234,8 @@
                         </template>
                         <el-row style="background-color: #e6e6e6; padding: 15px; border-bottom: 1px solid #fff" v-for="(char, index) in service.characteristics" title="char.name" :key="char.uuid">
                           <el-row style="font-size: 14px; font-weight: bold; font-style: normal;">{{ char.name }}</el-row>
-                          <el-row style="font-size: 1px; font-style: normal;">UUID: {{ char.uuid }}</el-row>
+                          <el-row style="font-size: 12px; font-style: normal;">UUID: {{ char.uuid }}</el-row>
+                          <el-row style="font-size: 12px; font-style: normal;">HANDLE: {{ char.handle }}</el-row>
                           <el-row style="font-size: 12px; font-style: normal; ">
                             Properties: 
                             <el-button-group>
@@ -570,7 +572,7 @@ code {
   padding-left: 30px;
   vertical-align: middle;
   line-height: 70px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #000;
 }
 
 </style>

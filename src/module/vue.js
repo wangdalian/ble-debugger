@@ -138,6 +138,9 @@ function createVueMethods(vue) {
     scanDisplayResultExport () {
       this.$refs.refScanDisplayResultGrid.exportData({ type: 'csv' })
     },
+    connectDisplayResultExport () {
+      this.$refs.refConnectDisplayResultGrid.exportData({ type: 'csv' })
+    },
     notifyDisplayResultExport () {
       this.$refs.refNotifyDisplayResultGrid.exportData({ type: 'csv' })
     },
