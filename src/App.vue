@@ -1,0 +1,632 @@
+<template>
+  <div id="app">
+    <el-row class="box" v-cloak>
+      <el-col :span="8" class="col1" style="padding: 10px; overflow-y: scroll;">
+        <el-form label-width="80px" size="small">
+          <el-row style="margin: 15px 0 0 0;">
+            <el-divider>连接配置</el-divider>
+          </el-row>
+          <el-form-item label="服务URL">
+            <el-col :span="15">
+              <el-input v-model="store.devConf.serverURI" class="server-ip" clearable placeholder="http://192.168.0.100"></el-input>
+            </el-col>
+            <el-col :span="8" :offset="1">
+              <el-radio-group v-model="store.devConf.controlStyle">
+                <el-radio-button :label="'ap'">AP</el-radio-button>
+                <el-radio-button :label="'ac'">AC</el-radio-button>
+              </el-radio-group>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="开发账号" v-show="store.devConf.controlStyle === 'ac'">
+            <el-input v-model="store.devConf.acDevKey" class="ac-dev-key"></el-input>
+          </el-form-item>
+          <el-form-item label="开发密码" v-show="store.devConf.controlStyle === 'ac'">
+            <el-input v-model="store.devConf.acDevSecret" class="ac-dev-secret"></el-input>
+          </el-form-item>
+          <el-form-item label="AP MAC" v-show="store.devConf.controlStyle === 'ac'">
+            <el-input v-model="store.devConf.mac" class="ap-mac" placeholder="CC:1B:E0:E0:DD:70"></el-input>
+          </el-form-item>
+          <el-row style="margin: 15px 0 0 0;">
+            <el-divider>扫描配置</el-divider>
+          </el-row>
+          <el-form-item label="使用芯片">
+            <el-radio-group v-model="store.devConf.chip" size="small">
+              <el-radio-button :label="0">芯片0</el-radio-button>
+              <el-radio-button :label="1">芯片1</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="过滤名称">
+            <el-tag
+              :key="tag"
+              v-for="tag in store.devConf.filter_name"
+              closable
+              :disable-transitions="false"
+              @close="scanFilterNamesHandleClose(tag)">
+              {{tag}}
+            </el-tag>
+            <el-input
+              class="input-new-tag"
+              v-if="store.devConfDisplayVars.scanFilterNamesInputVisible"
+              v-model="store.devConfDisplayVars.scanFilterNamesInputValue"
+              ref="scanFilterNamesSaveTagInput"
+              @keyup.enter.native="scanFilterNamesHandleInputConfirm"
+              @blur="scanFilterNamesHandleInputConfirm"
+            >
+            </el-input>
+            <el-button v-else class="button-new-tag" @click="scanFilterNamesShowInput">+</el-button>
+          </el-form-item>
+          <el-form-item label="过滤MAC">
+            <el-tag
+                :key="tag"
+                v-for="tag in store.devConf.filter_mac"
+                closable
+                :disable-transitions="false"
+                @close="scanFilterMacsHandleClose(tag)">
+                {{tag}}
+              </el-tag>
+              <el-input
+                class="input-new-tag"
+                v-if="store.devConfDisplayVars.scanFilterMacsInputVisible"
+                v-model="store.devConfDisplayVars.scanFilterMacsInputValue"
+                ref="scanFilterMacsSaveTagInput"
+                @keyup.enter.native="scanFilterMacsHandleInputConfirm"
+                @blur="scanFilterMacsHandleInputConfirm"
+              >
+              </el-input>
+              <el-button v-else class="button-new-tag" @click="scanFilterMacsShowInput">+</el-button>
+          </el-form-item>
+          <el-form-item label="过滤RSSI">
+            <el-slider
+                v-model="store.devConf.filter_rssi"
+                show-input
+                :min="-85"
+                :max="0">
+              </el-slider>
+          </el-form-item>
+          <el-row style="margin: 15px 0 0 0;">
+            <el-divider>常用操作</el-divider>
+          </el-row>
+          <el-row>
+            <el-col :span="6">
+              <el-button size="small">AP 信息</el-button>
+            </el-col>
+            <el-col :span="6">
+              <el-button size="small">重启 AP</el-button>
+            </el-col>
+            <el-col :span="6">
+              <el-button type="primary" size="small" @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
+              <el-button type="danger" size="small" @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
+            </el-col>
+            <el-col :span="6">
+              <el-dropdown>
+                <el-button size="small" >
+                  简体中文<i class="el-icon-arrow-down el-icon--right"></i>
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item>简体中文</el-dropdown-item>
+                  <el-dropdown-item>English</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </el-col>
+          </el-row>
+          <el-row style="margin: 15px 0 0 0;">
+            <el-divider>更多参考</el-divider>
+          </el-row>
+          <el-row style="text-align: center;">
+            <el-link icon="el-icon-link" href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki">Cassia SDK Implementation Guide</el-link>
+          </el-row>
+        </el-form>
+      </el-col>
+      <el-col :span="15" :offset="1" style="height: 100%; padding:30px 30px 30px 10px; border-left: 1px solid #e6e6e6;">
+        <el-row  style="height: 100%;">
+          <el-col :span="2" style="height: 100%; padding-left: 10px;">
+            <el-menu
+              collapse
+              @select="menuSelect"
+              default-active="scanListMenuItem"
+              class="el-menu-vertical-demo"
+              style="height: 100%;">
+              <el-menu-item index="scanListMenuItem">
+                <i class="el-icon-search"></i>
+                <span slot="title">扫描列表</span>
+              </el-menu-item>
+              <el-menu-item index="connectListMenuItem">
+                <i class="el-icon-connection"></i>
+                <span slot="title">连接列表</span>
+              </el-menu-item>
+              <el-menu-item index="notifyListMenuItem">
+                <i class="el-icon-message-solid"></i>
+                <span slot="title">通知列表</span>
+              </el-menu-item>
+              <el-menu-item index="apiDebuggerMenuItem">
+                <i class="el-icon-service"></i>
+                <span slot="title">接口调试</span>
+              </el-menu-item>
+            </el-menu>
+          </el-col>
+          <el-col :span="22" style="height: 100%; overflow-y: scroll; padding: 0px 20px 20px 20px">
+            <el-tabs  v-show="store.devConfDisplayVars.activeMenuItem === 'scanListMenuItem'"	@tab-click="scanTabsClick">
+              <el-tab-pane style="height: 100%;">
+                <span slot="label"><i class="el-icon-s-data"></i> 扫描结果</span>
+                <el-row>
+                  <vxe-toolbar>
+                    <template v-slot:buttons>
+                      <span>扫描设备数量:<span style="font-weight: bold; color: #2897ff">{{ getComputedScanDisplayResultList.length }}</span></span>
+                      <vxe-input v-model="cache.scanDisplayFilterContent" type="search" placeholder="搜索mac或name" size="small"></vxe-input>
+                      <vxe-button @click="scanDisplayResultClear" status="danger" size="small">清空</vxe-button>
+                      <vxe-button @click="scanDisplayResultExport" status="primary" size="small">导出</vxe-button>
+                    </template>
+                  </vxe-toolbar>
+                  <el-row>
+                    
+                  </el-row>
+                  <!-- 注意设置为固定高度，否则页面在过多的数据时候会造成卡顿，TODO: 是否考虑使用分页优化? -->
+                  <vxe-grid 
+                    border="none"
+                    show-overflow
+                    stripe
+                    highlight-hover-row
+                    height="600px"
+                    ref="refScanDisplayResultGrid"
+                    :sort-config="{trigger: 'cell'}"
+                    :data="getComputedScanDisplayResultList">
+                    <vxe-table-column field="mac" title="MAC" type="html" width="30%" fixed="left" show-overflow></vxe-table-column>
+                    <vxe-table-column field="name" title="NAME" type="html" width="25%" sortable></vxe-table-column>
+                    <vxe-table-column field="bdaddrType" title="类型" width="15%" sortable></vxe-table-column>
+                    <vxe-table-column field="rssi" title="信号" width="15%" sortable></vxe-table-column>
+                    <!-- 暂时不显示广播包了，没有找到合适位置，上面的字段自定义slot，数据量大的话会卡顿 -->
+                    <!-- <vxe-table-column field="adData" title="广播包" width="40%" show-overflow></vxe-table-column> -->
+                    <vxe-table-column title="操作" width="15%">
+                      <template v-slot="{ row }">
+                        <vxe-button status="primary" size="small" @click="connectDevice(row, row.mac)" :loading="cache.devicesConnectLoading[row.mac]">连接</vxe-button>
+                      </template>
+                    </vxe-table-column>
+                  </vxe-grid>
+                </el-row>
+              </el-tab-pane>
+              <el-tab-pane style="height: 100%; width: 100%;">
+                <span slot="label"><i class="el-icon-pie-chart"></i> RSSI图表</span>
+                <el-row>
+                  <el-form inline size="small">
+                    <el-form-item label="统计周期">
+                      <el-select v-model="store.devConfDisplayVars.rssiChartPeriod" placeholder="统计周期" style="width: 100px;">
+                        <el-option label="60秒" value="60"></el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="统计间隔">
+                      <el-select v-model="store.devConfDisplayVars.rssiChartDataSpan" placeholder="统计间隔" @change="rssiChartDataSpanChange" style="width: 100px;">
+                        <el-option label="200毫秒" value="200"></el-option>
+                        <el-option label="500毫秒" value="500"></el-option>
+                        <el-option label="1秒" value="1000"></el-option>
+                        <el-option label="2秒" value="2000"></el-option>
+                        <el-option label="5秒" value="5000"></el-option>
+                        <el-option label="10秒" value="10000"></el-option>
+                        <el-option label="30秒" value="30000"></el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item>
+                      <el-button v-show="!store.devConfDisplayVars.rssiChartSwitch" size="small" @click="destoryAndCreateRssiChart" type="primary">开启</el-button>
+                      <el-button v-show="store.devConfDisplayVars.rssiChartSwitch && !store.devConfDisplayVars.rssiChartStopped" size="small" @click="stopRssiChart" type="primary">暂停</el-button>
+                      <el-button v-show="store.devConfDisplayVars.rssiChartSwitch && store.devConfDisplayVars.rssiChartStopped" size="small" @click="startRssiChart" type="primary">继续</el-button>
+                      <el-button v-show="store.devConfDisplayVars.rssiChartSwitch" size="small" @click="destoryRssiChart" type="primary">关闭</el-button>
+                    </el-form-item>
+                  </el-form>
+                </el-row>
+                <v-chart :options="chartOptions" ref="rssiChart" style="width: 800px; height: 500px; "></v-chart>
+              </el-tab-pane>
+            </el-tabs>
+            
+            <el-row v-show="store.devConfDisplayVars.activeMenuItem === 'connectListMenuItem'">
+              <el-tabs closable @tab-remove="connectedListTabRemove">
+                <el-tab-pane v-for="(device, index) in cache.connectedList" :key="device.mac" :name="index.toString()">
+                  <span slot="label"><i class="el-icon-connection"></i> {{ device.mac }}</span>
+                  <el-row style="background-color: #2897ff; font-size: 14px; font-style: normal; border-radius: 3px; color: #fff; height: 60px; display: flex; align-items: center; padding-left: 15px; padding-right: 15px;">
+                    <el-col :span="6">
+                      <el-row>{{ device.name }}</el-row>
+                      <el-row style="font-style:normal">{{ device.mac }}</el-row>
+                    </el-col>
+                    <el-col :span="3">{{ device.bdaddrType }}</el-col>
+                    <el-col :span="3">chip{{ device.chip }}</el-col>
+                    <el-col :span="12">
+                      <el-button-group style="float: right; ">
+                        <el-button size="small" @click="getDeviceServices(device.mac)">服务</el-button>
+                        <el-button type="danger" size="small" @click="disconnectDevice(device.mac)">断连</el-button>
+                        <el-button size="small">配对</el-button>
+                        <el-button type="danger" size="small">取消配对</el-button>
+                      </el-button-group>
+                    </el-col>
+                  </el-row>
+                  <el-row style="padding-left: 0px; margin-top: 15px;">
+                    <el-collapse>
+                      <el-collapse-item v-for="(service, index) in cache.devicesServiceList[device.mac]" :key="service.uuid">
+                        <template slot="title">
+                          <el-col style="padding-left: 5px; font-size: 14px; font-style: normal;">{{ service.uuid }}</el-col>
+                          <el-col style="float: right; font-size: 14px; font-style: normal;">{{ service.name }}</el-col>
+                        </template>
+                        <el-row style="background-color: #e6e6e6; padding: 15px; border-bottom: 1px solid #fff" v-for="(char, index) in service.characteristics" title="char.name" :key="char.uuid">
+                          <el-row style="font-size: 14px; font-weight: bold; font-style: normal;">{{ char.name }}</el-row>
+                          <el-row style="font-size: 1px; font-style: normal;">UUID: {{ char.uuid }}</el-row>
+                          <el-row style="font-size: 12px; font-style: normal; ">
+                            Properties: 
+                            <el-button-group>
+                              <el-button style="font-style: normal; font-weight: bold;" v-show="char.propertiesStr.includes('READ')" type="primary" size="small" @click="propertyClick('READ', device.mac, char)">
+                                READ
+                              </el-button>
+                              <el-button style="font-style: normal; font-weight: bold;" v-bind:type="char.notifyStatus === 'on' ? 'primary' : 'info'" v-show="char.propertiesStr.includes('NOTIFY')" size="small" @click="propertyClick('NOTIFY', device.mac, char)">
+                                NOTIFY
+                              </el-button>
+                              </el-switch>
+                              <el-button style="font-style: normal; font-weight: bold;" v-show="char.propertiesStr.includes('WRITE NO RES')" type="primary" size="small" @click="propertyClick('WRITE NO RES', device.mac, char)">
+                                WRITE NO RES
+                              </el-button>
+                              <el-button style="font-style: normal; font-weight: bold;" v-show="char.propertiesStr.includes('WRITE')" type="primary" size="small" @click="propertyClick('WRITE', device.mac, char)">
+                                WRITE
+                              </el-button>
+                            </el-button-group>
+                            <el-radio-group v-show="char.propertiesStr.includes('WRITE') || char.propertiesStr.includes('WRITE NO RES')" style="float: right" size="small" v-model="char.writeValueType">
+                              <el-radio-button label="hex">HEX</el-radio-button>
+                              <el-radio-button label="text">TEXT</el-radio-button>
+                            </el-radio-group>
+                            <el-input v-show="char.propertiesStr.includes('WRITE') || char.propertiesStr.includes('WRITE NO RES')" style="width: 220px; float: right; font-size: 12px; font-style: normal;" size="small" v-model="char.writeValue" :placeholder="char.writeValueType === 'hex' ? '格式：aa00bb11cc22（支持空格）' : '格式：任意字符'">
+                            </el-input>
+                          </el-row>
+                          <el-row style="font-size: 12px; font-style: normal; color: #2897ff" v-show="char.readValue.toString().length !== 0">
+                            Value: (0x) 
+                            <el-popover trigger="click" width="600">
+                              <el-table :data="char.parsedReadValues" width="100%" stripe border empty-text="暂未添加解析">
+                                <el-table-column label="名称" width="180">
+                                  <template slot-scope="scope">
+                                    <span>{{ scope.row.name }}</span>
+                                  </template>
+                                </el-table-column>
+                                <el-table-column label="解析" width="300">
+                                  <template slot-scope="scope">
+                                    <span>{{ scope.row.parsed }}</span>
+                                  </template>
+                                </el-table-column>
+                                <el-table-column label="原始(HEX)" width="120">
+                                  <template slot-scope="scope">
+                                    <span>{{ scope.row.raw }}</span>
+                                  </template>
+                                </el-table-column>
+                              </el-table>
+                              <!-- <el-row>
+                                <el-col :span="8">名称</el-col>
+                                <el-col :span="8">解析</el-col>
+                                <el-col :span="8">原始</el-col>
+                              </el-row>
+                              <el-row v-for="(value, key) in char.parsedReadValues">
+                                <el-col :span="8">{{ key }}</el-col>
+                                <el-col :span="8">{{ value.raw }}</el-col>
+                                <el-col :span="8">{{ value.parsed }}</el-col>
+                              </el-row> -->
+                              <el-button slot="reference" type="text">
+                                {{ char.readValue }}
+                              </el-button>
+                            </el-popover>
+                          </el-row>
+                        </el-row>
+                      </el-collapse-item>
+                    </el-collapse>
+                  </el-row>
+                </el-tab-pane>
+              </el-tabs>
+            </el-row>
+
+            <el-row v-show="store.devConfDisplayVars.activeMenuItem === 'notifyListMenuItem'"  style="height: 100%;">
+              <el-tabs style="height: 100%;">
+                <el-tab-pane  style="height: 100%;">
+                  <span slot="label"><i class="el-icon-connection"></i> 通知列表</span>
+                  <el-row>
+                    <vxe-toolbar>
+                      <template v-slot:buttons>
+                        <span>设备通知数量:<span style="font-weight: bold; color: #2897ff">{{ getComputedNotifyDisplayResultList.length }}</span></span>
+                        <vxe-input v-model="cache.notifyDisplayFilterContent" type="search" placeholder="搜索mac" size="small"></vxe-input>
+                        <vxe-button @click="openNotify" status="primary" size="small" v-show="!store.devConfDisplayVars.isNotifyOn">开启</vxe-button>
+                        <vxe-button @click="closeNotify" status="danger" size="small" v-show="store.devConfDisplayVars.isNotifyOn">关闭</vxe-button>
+                        <vxe-button @click="notifyDisplayResultClear" status="danger" size="small">清空</vxe-button>
+                        <vxe-button @click="notifyDisplayResultExport" status="primary" size="small">导出</vxe-button>
+                      </template>
+                    </vxe-toolbar>
+                    <!-- 注意设置为固定高度，否则页面在过多的数据时候会造成卡顿，TODO: 是否考虑使用分页优化? -->
+                    <vxe-grid 
+                      border="none"
+                      show-overflow
+                      stripe
+                      height="600px"
+                      highlight-hover-row
+                      ref="refNotifyDisplayResultGrid"
+                      :sort-config="{trigger: 'cell'}"
+                      :data="getComputedNotifyDisplayResultList">
+                      <vxe-table-column field="time" title="TIME" type="html" width="20%" sortable></vxe-table-column>
+                      <vxe-table-column field="mac" title="MAC" type="html" width="30%" show-overflow></vxe-table-column>
+                      <vxe-table-column field="handle" title="HANDLE" width="10%" ></vxe-table-column>
+                      <vxe-table-column field="value" title="VALUE" width="40%" show-overflow></vxe-table-column>
+                    </vxe-grid>
+                  </el-row>
+                </el-tab-pane>
+              </el-tabs>
+              
+            </el-row>
+
+            <el-row v-show="store.devConfDisplayVars.activeMenuItem === 'apiDebuggerMenuItem'" style="margin-top: 15px;">
+              <el-tabs v-model="store.devConfDisplayVars.activeApiTabName">
+                <el-tab-pane name="scan">
+                  <span slot="label"><i class="el-icon-search"></i> 扫描设备</span>
+                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                    <el-form-item label="使用芯片">
+                      <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].chip" size="small">
+                        <el-radio-button :label="0">芯片0</el-radio-button>
+                        <el-radio-button :label="1">芯片1</el-radio-button>
+                      </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="过滤名称">
+                      <el-tag
+                          :key="tag"
+                          v-for="tag in store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].filter_name"
+                          closable
+                          :disable-transitions="false"
+                          @close="apiScanFilterNamesHandleClose(tag)">
+                          {{tag}}
+                        </el-tag>
+                        <el-input
+                          class="input-new-tag"
+                          v-if="store.devConfDisplayVars.apiScanFilterNamesInputVisible"
+                          v-model="store.devConfDisplayVars.apiScanFilterNamesInputValue"
+                          ref="apiScanFilterNamesSaveTagInput"
+                          @keyup.enter.native="apiScanFilterNamesHandleInputConfirm"
+                          @blur="apiScanFilterNamesHandleInputConfirm"
+                        >
+                        </el-input>
+                        <el-button v-else class="button-new-tag" @click="apiScanFilterNamesShowInput">+</el-button>
+                    </el-form-item>
+                    <el-form-item label="过滤MAC">
+                      <el-tag
+                          :key="tag"
+                          v-for="tag in store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].filter_mac"
+                          closable
+                          :disable-transitions="false"
+                          @close="apiScanFilterMacsHandleClose(tag)">
+                          {{tag}}
+                        </el-tag>
+                        <el-input
+                          class="input-new-tag"
+                          v-if="store.devConfDisplayVars.apiScanFilterMacsInputVisible"
+                          v-model="store.devConfDisplayVars.apiScanFilterMacsInputValue"
+                          ref="apiScanFilterMacsSaveTagInput"
+                          @keyup.enter.native="apiScanFilterMacsHandleInputConfirm"
+                          @blur="apiScanFilterMacsHandleInputConfirm"
+                        >
+                        </el-input>
+                        <el-button v-else class="button-new-tag" @click="apiScanFilterMacsShowInput">+</el-button>
+                    </el-form-item>
+                    <el-form-item label="过滤RSSI">
+                      <el-slider
+                      v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].filter_rssi"
+                      show-input
+                      :min="-85"
+                      :max="0">
+                    </el-slider>
+                    </el-form-item>
+                    <el-form-item align="left">
+                      <el-button-group>
+                        <el-button type="primary" size="small" @click="startDebugApi" v-show="!store.devConfDisplayVars.isApiScanning">开始调试</el-button>
+                        <el-button type="danger" size="small" @click="stopApiScan" v-show="store.devConfDisplayVars.isApiScanning">停止扫描</el-button>
+                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                      </el-button-group>
+                    </el-form-item>
+                  </el-form>
+                  
+                </el-tab-pane>
+                <el-tab-pane name="connect">
+                  <span slot="label"><i class="el-icon-connection"></i> 连接设备</span>
+                  <el-form label-width="80px" style="margin-top: 15px;">
+                    <el-form-item label="使用芯片">
+                      <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].chip" size="small">
+                        <el-radio-button label="0">芯片0</el-radio-button>
+                        <el-radio-button label="1">芯片1</el-radio-button>
+                      </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="地址类型">
+                      <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].addrType" size="small">
+                        <el-radio-button label="public">PUBLIC</el-radio-button>
+                        <el-radio-button label="random">RANDOM</el-radio-button>
+                      </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="设备地址">
+                      <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].deviceMac"></el-input>
+                    </el-form-item>
+                    <el-form-item align="left">
+                      <el-button-group>
+                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
+                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                      </el-button-group>
+                    </el-form-item>
+                  </el-form>
+                </el-tab-pane>
+                <el-tab-pane name="read">
+                  <span slot="label"><i class="el-icon-reading"></i> 读取数据</span>
+                  <el-form label-width="80px" style="margin-top: 15px;">
+                    <el-form-item label="HANDLE">
+                      <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].handle"></el-input>
+                    </el-form-item>
+                    <el-form-item label="设备地址">
+                      <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].deviceMac"></el-input>
+                    </el-form-item>
+                    <el-form-item align="left">
+                      <el-button-group>
+                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
+                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                      </el-button-group>
+                    </el-form-item>
+                  </el-form>
+                </el-tab-pane>
+                <el-tab-pane name="write">
+                  <span slot="label"><i class="el-icon-edit-outline"></i> 写入数据</span>
+                  <el-form label-width="80px" style="margin-top: 15px;">
+                    <el-form-item label="HANDLE">
+                      <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].handle"></el-input>
+                    </el-form-item>
+                    <el-form-item label="VALUE">
+                      <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].value"></el-input>
+                    </el-form-item>
+                    <el-form-item label="写入方式">
+                      <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].noresponse" size="small">
+                        <el-radio-button label="false">等待</el-radio-button>
+                        <el-radio-button label="true">不等待</el-radio-button>
+                      </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="设备地址">
+                      <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].deviceMac"></el-input>
+                    </el-form-item>
+                    <el-form-item align="left">
+                      <el-button-group>
+                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
+                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                      </el-button-group>
+                    </el-form-item>
+                  </el-form>
+                </el-tab-pane>
+                <el-tab-pane name="disconnect">
+                  <span slot="label"><i class="el-icon-scissors"></i> 断开连接</span>
+                  <el-form label-width="80px" style="margin-top: 15px;">
+                    <el-form-item label="设备地址">
+                      <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].deviceMac"></el-input>
+                    </el-form-item>
+                    <el-form-item align="left">
+                      <el-button-group>
+                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
+                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                      </el-button-group>
+                    </el-form-item>
+                  </el-form>
+                </el-tab-pane>
+              </el-tabs>
+            </el-row>
+            
+            <el-row style="margin-top: 15px;" v-show="store.devConfDisplayVars.activeMenuItem === 'apiDebuggerMenuItem'">
+              <el-tabs v-model="store.devConfDisplayVars.activeApiOutputTabName">
+                <el-tab-pane name="output">
+                  <span slot="label"><i class="el-icon-circle-check"></i> 调试结果</span>
+                  <el-button-group>
+                    <el-button size="small" type="primary" @click="exportApiOutputDisplay">导出</el-button>
+                    <el-button size="small" type="danger" @click="clearApiOutputDisplay">清空</el-button>
+                  </el-button-group>
+                  <highlight-code lang="javascript" v-if="store.devConfDisplayVars.activeApiTabName === 'scan'" v-infinite-scroll="loadApiDebuggerResult" infinite-scroll-distance="20px" :infinite-scroll-disabled="cache.isApiDebuggerLoading">
+                    {{ cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].displayResultList.join('\n') }}
+                  </highlight-code>
+                </el-tab-pane>
+                <el-tab-pane name="curl">
+                  <span slot="label"><i class="el-icon-circle-plus-outline"></i> cURL代码</span>
+                  <highlight-code lang="bash">
+                    {{ cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].code['curl'] }}
+                  </highlight-code>
+                </el-tab-pane>
+                <el-tab-pane name="nodejs">
+                  <span slot="label"><i class="el-icon-circle-plus-outline"></i> NodeJS代码</span>
+                  <highlight-code lang="js">
+                    {{ cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].code['nodejs'] }}
+                  </highlight-code>
+                </el-tab-pane>
+              </el-tabs>
+            </el-row>
+          </el-col>
+        </el-row>
+      </el-col>
+    </el-row>
+  </div>
+</template>
+
+<script>
+
+import vueModule from './module/vue.js';
+export default vueModule.createVue();
+
+</script>
+
+<style>
+
+HTML {
+}
+
+HTML, BODY {
+  font-family: "Courier New", "Monaco", "monospace", "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+  margin: 0px;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+}
+
+* {
+  font-family: "Courier New", "Monaco", "monospace", "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+.box {
+  height: 100%;
+}
+
+.col1 {
+  height: 100%;
+  background-color: #fff;
+  font-size: 14px;
+}
+
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
+.button-new-tag {
+  /* margin-left: 10px; */
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.input-new-tag {
+  width: 90px;
+  /* margin-left: 10px; */
+  vertical-align: bottom;
+}
+
+.el-divider__text {
+  font-size: 16px;
+}
+
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+  /* width: 200px; */
+  /* min-height: 400px; */
+}
+
+.el-menu-vertical-demo {
+  /* border-left: 1px solid #e6e6e6; */
+  border-right: 0px;
+}
+
+input::-webkit-input-placeholder {
+  font-style: italic;
+}
+
+div::-webkit-scrollbar {
+  width: 0;
+}
+
+pre::-webkit-scrollbar {
+  width: 0;
+}
+
+code {
+  font-size: "12px";
+  height: 260px;
+  overflow-y: scroll;
+}
+
+/* 当页面加载完再显示 */
+[v-cloak]{
+  display: none;
+}
+</style>
