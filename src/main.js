@@ -1,7 +1,6 @@
 
 import Vue from 'vue';
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
+import './plugins/element.js';
 import 'xe-utils';
 import VXETable from 'vxe-table';
 import 'vxe-table/lib/index.css';
@@ -19,7 +18,6 @@ let globalVue = null;
 
 function registerComponent() {
   Vue.use(VXETable);
-  Vue.use(ElementUI);
   Vue.use(VueHighlightJS, {
     languages: {javascript, bash}
   });

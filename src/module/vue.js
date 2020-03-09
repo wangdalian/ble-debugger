@@ -56,14 +56,15 @@ function createRssiChart() {
     title: {
       show: false
     },
+    autoresize: true,
     grid: { 
-      right: '20%' 
+      // right: '20%' 
     },
     legend: {
       type: 'scroll',
-      orient: 'vertical',
-      x: 'right',
-      y: 'center',
+      // orient: 'vertical',
+      // x: 'right',
+      // y: 'center',
     },
     // tooltip: {
     //   trigger: 'axis',
@@ -301,17 +302,38 @@ function createVueMethods(vue) {
       this.store.devConfDisplayVars.activeApiOutputTabName = libEnum.codeType.CURL;
     },
     menuSelect(key, keyPath) {
-      this.store.devConfDisplayVars.activeMenuItem = key;
       if (key === 'connectListMenuItem') { // 点击连接列表，重新加载连接列表，和连接SSE
+        this.store.devConfDisplayVars.activeMenuItem = key;
         connectModule.loadConnectedList();
         connectModule.reopenConnectStatusSse();
       } else if (key === 'notifyListMenuItem') {
         // notifyModule.reopenNotifySse(); // 手动打开
-        this.$refs.refNotifyDisplayResultGrid.recalculate();
+        this.store.devConfDisplayVars.activeMenuItem = key;
+        this.notifyVuxTableForceResize();
       } else if (key === 'scanListMenuItem') {
-        this.$refs.refScanDisplayResultGrid.recalculate();
-        this.$refs.refScanDisplayResultGrid.updateData();
+        this.store.devConfDisplayVars.activeMenuItem = key;
+        this.scanVuxTableForceResize();
+      } else if (key === 'configMenuItem') {
+        if (this.store.devConfDisplayVars.isConfigMenuItemOpen) {
+          this.store.devConfDisplayVars.isConfigMenuItemOpen = false;
+          this.store.devConfDisplayVars.mainWidth = 24;
+        } else {
+          this.store.devConfDisplayVars.isConfigMenuItemOpen = true;
+          this.store.devConfDisplayVars.mainWidth = 18;
+        }
+        this.scanVuxTableForceResize();
+        this.notifyVuxTableForceResize();
+      } else if (key === 'apiDebuggerMenuItem') {
+        this.store.devConfDisplayVars.activeMenuItem = key;
       }
+    },
+    scanVuxTableForceResize() {
+      let data = this.cache.scanDisplayResultList.pop();
+      if (data) this.cache.scanDisplayResultList.push(data);
+    },
+    notifyVuxTableForceResize() {
+      let data = this.cache.notifyDisplayResultList.pop();
+      if (data) this.cache.notifyDisplayResultList.push(data);
     },
     propertyClick(operation, deviceMac, char) {
       operationModule.dispatch(operation, deviceMac, char);

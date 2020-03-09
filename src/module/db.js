@@ -19,6 +19,9 @@ let storage = {
     access_token: '' // ac连接方式token
   },
   devConfDisplayVars: {
+    language: '中文',
+    mainWidth: 18,
+    isConfigMenuItemOpen: true,
     scanFilterNamesInputVisible: false,
     scanFilterNamesInputValue: '',
     scanFilterMacsInputVisible: false,
