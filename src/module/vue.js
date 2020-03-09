@@ -103,9 +103,31 @@ function createRssiChart() {
 
 function createVueMethods(vue) {
   return {
-    scanTabsClick(x) { // 修正表格变形问题
-      this.$refs.refScanDisplayResultGrid.updateData();
-      this.$refs.refScanDisplayResultGrid.refreshScroll();
+    getComputedConnectDisplayResultList () { // 全局搜索扫描列表
+      const filterName = XEUtils.toString(this.cache.connectDisplayFilterContent).trim().toLowerCase();
+      if (filterName) {
+        const filterRE = new RegExp(filterName, 'gi');
+        const searchProps = ['mac', 'name'];
+        const rest = this.cache.connectedList.filter(item => {
+          return searchProps.some(key => {
+            return XEUtils.toString(item[key]).toLowerCase().indexOf(filterName) > -1;
+          });
+        });
+        return rest.map(row => {
+          const item = Object.assign({}, row);
+          searchProps.forEach(key => {
+            item[key] = XEUtils.toString(item[key]).replace(filterRE, match => `<span class="keyword-lighten">${match}</span>`)
+          });
+          return item;
+        });
+      }
+      return this.cache.connectedList;
+    },
+    connectTabsClick() {
+      this.connectVuxTableForceResize();
+    },
+    scanTabsClick() {
+      this.scanVuxTableForceResize();
     },
     scanDisplayResultClear() {
       this.cache.scanDisplayResultList.splice(0);
@@ -284,8 +306,10 @@ function createVueMethods(vue) {
         this.store.devConfDisplayVars.rssiChartSwitch = true;
       }
     },
-    connectedListTabRemove(index) {
-      const deviceMac = this.cache.connectedList[index].mac;
+    connectedListTabRemove(deviceMac) {
+      if (deviceMac === 'invalidDeviceMac') {
+        return;
+      }
       this.disconnectDevice(deviceMac);
     },
     rssiChartDataSpanChange() { // 统计间隔变化，重建图表
@@ -306,6 +330,7 @@ function createVueMethods(vue) {
         this.store.devConfDisplayVars.activeMenuItem = key;
         connectModule.loadConnectedList();
         connectModule.reopenConnectStatusSse();
+        this.connectVuxTableForceResize();
       } else if (key === 'notifyListMenuItem') {
         // notifyModule.reopenNotifySse(); // 手动打开
         this.store.devConfDisplayVars.activeMenuItem = key;
@@ -323,9 +348,14 @@ function createVueMethods(vue) {
         }
         this.scanVuxTableForceResize();
         this.notifyVuxTableForceResize();
+        this.connectVuxTableForceResize();
       } else if (key === 'apiDebuggerMenuItem') {
         this.store.devConfDisplayVars.activeMenuItem = key;
       }
+    },
+    connectVuxTableForceResize() {
+      let data = this.cache.connectedList.pop();
+      if (data) this.cache.connectedList.push(data);
     },
     scanVuxTableForceResize() {
       let data = this.cache.scanDisplayResultList.pop();
@@ -339,7 +369,9 @@ function createVueMethods(vue) {
       operationModule.dispatch(operation, deviceMac, char);
     },
     getDeviceServices(deviceMac) {
-      serviceModule.getDeviceServiceList(deviceMac);
+      serviceModule.getDeviceServiceList(deviceMac).then(() => {
+        this.cache.currentConnectedTab = deviceMac; // 点击服务激活此设备tab页面
+      });
     },
     startScan() {
       scanModule.startScan(this.store.devConf);
@@ -391,7 +423,13 @@ function createVueMethods(vue) {
     },
     disconnectDevice(deviceMac) {
       apiModule.disconnectByDevConf(this.store.devConf, deviceMac).then(() => {
-        _.remove(this.cache.connectedList, {mac: deviceMac});
+        let index = _.findIndex(this.cache.connectedList, {mac: deviceMac});
+        if (index === -1) return; 
+        this.cache.connectedList.splice(index, 1); // 删除此设备
+        let activeItem = this.cache.connectedList[index] || this.cache.connectedList[index-1];
+        let activeItemName = activeItem ? activeItem.mac : '0';
+        this.cache.currentConnectedTab = activeItemName;
+        this.connectVuxTableForceResize();
         // CAUTION: 目前通过连接状态SSE发送通知，暂时不考虑SSE失败的情况
         // notify(`设备 ${deviceMac} 断开连接`, `操作成功`, libEnum.messageType.SUCCESS);
       }).catch(function(ex) {

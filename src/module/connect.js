@@ -4,6 +4,7 @@ import libLogger from '../lib/logger.js';
 import apiModule from './api.js';
 import dbModule from './db.js';
 import vueModule from './vue.js';
+import main from '../main.js';
 
 const logger = libLogger.genModuleLogger('connect');
 
@@ -31,6 +32,12 @@ function loadConnectedList() {
   });
 }
 
+function connectVuxTableForceResize() {
+  const cache = dbModule.getCache();
+  let data = cache.connectedList.pop();
+  if (data) cache.connectedList.push(data);
+}
+
 // 更新扫描结果
 // {handle: "CB:76:B8:B2:65:6E", chipId: 0, connectionState: "connected"}
 function connectStatusSseMessageHandler(message) {
@@ -42,8 +49,14 @@ function connectStatusSseMessageHandler(message) {
       chip: data.chipId
     });
     vueModule.notify(`chip${data.chipId} 连接${data.handle}成功`, `操作成功`, libEnum.messageType.SUCCESS);
-  } else if (data.connectionState === 'disconnected') { // 断连移除
-    _.remove(cache.connectedList, {mac: data.handle});
+  } else if (data.connectionState === 'disconnected') { 
+    let index = _.findIndex(cache.connectedList, {mac: data.handle});
+    if (index === -1) return; 
+    cache.connectedList.splice(index, 1); // 删除此设备
+    let activeItem = cache.connectedList[index] || cache.connectedList[index-1];
+    let activeItemName = activeItem ? activeItem.mac : '0';
+    cache.currentConnectedTab = activeItemName;
+    connectVuxTableForceResize();
     vueModule.notify(`设备 ${data.handle} 断开连接`, '通知提示', libEnum.messageType.WARNING);
   }
 }

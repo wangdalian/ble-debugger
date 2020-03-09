@@ -1,5 +1,10 @@
 import Vue from 'vue'
 import { 
+  Container,
+  Header,
+  Aside,
+  Main,
+  Footer,
   Row,
   Col,
   Button,
@@ -32,6 +37,11 @@ import {
   Tag
 } from 'element-ui'
 
+Vue.use(Container)
+Vue.use(Header)
+Vue.use(Aside)
+Vue.use(Main)
+Vue.use(Footer)  
 Vue.use(InfiniteScroll)
 Vue.use(Select)
 Vue.use(Button)

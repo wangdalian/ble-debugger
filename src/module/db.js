@@ -54,7 +54,9 @@ let storage = {
 };
 
 let cache = {
+  currentConnectedTab: '0',
   scanDisplayFilterContent: '',
+  connectDisplayFilterContent: '',
   notifyDisplayFilterContent: '',
   isApiDebuggerLoading: false,
   isNotifyLoading: false,
