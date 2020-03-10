@@ -58,6 +58,7 @@ let cache = {
   scanDisplayFilterContent: '',
   connectDisplayFilterContent: '',
   notifyDisplayFilterContent: '',
+  apiLogDisplayFilterContent: '',
   isApiDebuggerLoading: false,
   isNotifyLoading: false,
   devicesConnectLoading: {
@@ -108,6 +109,9 @@ let cache = {
   ],
   notifyDisplayResultList: [
 
+  ],
+  apiLogResultList: [
+    {timestamp: Date.now(), timeStr: '2020-03-10T02:48:41.235', apiName: '扫描设备', method: 'GET', url: 'http://192.168.5.105/gap/nodes/?mac=&access_token=&active=1&event=1&chip=0', body: '{"data": }'}
   ],
   scanDisplayResultList: [ // 用于显示的列表
     // {name: 'MI BAND 3', mac: 'CC:1B:E0:E0:DD:71', bdaddrType: 'random', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},

@@ -1,7 +1,13 @@
 <template>
   <div id="app" v-cloak>
     <el-container style="height: 100%">
-      <el-header class="top">
+      <el-header style="height: 70px;
+          background-color: #409eff;
+          color: #fff;
+          padding-left: 30px;
+          vertical-align: middle;
+          line-height: 70px;
+          border-bottom: 1px solid #ddd;">
         <span style="font-size: 20px;">Cassia蓝牙调试工具</span>
         <span style="float: right;">Language
           <el-select v-model="store.devConfDisplayVars.language" size="small" style="width: 120px; padding-right: 15px;">
@@ -11,7 +17,7 @@
         </span>
       </el-header>
       <el-container>
-        <el-aside width="315px" style="border-right: 1px solid #f2f2f2" v-show="this.store.devConfDisplayVars.isConfigMenuItemOpen">
+        <el-aside width="350px" style="border-right: 1px solid #f2f2f2" v-show="this.store.devConfDisplayVars.isConfigMenuItemOpen">
           <el-container style="height: 100%">
             <el-main>
               <el-form label-width="80px" size="small">
@@ -60,15 +66,22 @@
                     :max="0">
                   </el-slider>
               </el-form-item>
+              <el-form-item>
+                <el-button-group>
+                  <el-button type="primary" size="small" @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
+                  <el-button type="danger" size="small" @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
+                  <el-button size="small" type="primary">重启 AP</el-button>
+                </el-button-group>
+              </el-form-item>
               </el-form>
             </el-main>
-            <el-footer style="background-color: #fff; line-height: 50px; height: 50px; text-align: center">
+            <!--<el-footer style="background-color: #fff; line-height: 50px; height: 50px; text-align: center">
               <el-button-group>
                 <el-button type="primary" size="small" @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
                 <el-button type="danger" size="small" @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
                 <el-button size="small" type="primary">重启 AP</el-button>
               </el-button-group>
-            </el-footer>
+            </el-footer>-->
           </el-container>
         </el-aside>
         <el-main style="background-color: #fff; padding: 0">
@@ -101,6 +114,10 @@
                 <el-menu-item index="apiDebuggerMenuItem">
                   <i class="el-icon-service"></i>
                   <span slot="title">接口调试</span>
+                </el-menu-item>
+                <el-menu-item index="apiLogListMenuItem">
+                  <i class="el-icon-s-order"></i>
+                  <span slot="title">接口日志</span>
                 </el-menu-item>
               </el-menu>
             </el-aside>
@@ -201,6 +218,7 @@
                           <el-button type="primary" size="small" @click="disconnectDevice(row.mac)">断连</el-button>
                           <el-button type="primary" size="small">配对</el-button>
                           <el-button type="primary" size="small">取消配对</el-button>
+                          <el-button type="primary" size="small" @click="exportDeviceServices(device.mac)">导出</el-button>
                         </el-button-group>
                       </template>
                     </vxe-table-column>
@@ -221,7 +239,7 @@
                         <el-button size="small" @click="disconnectDevice(device.mac)" style="color: #2897ff">断连</el-button>
                         <el-button size="small" style="color: #2897ff">配对</el-button>
                         <el-button size="small" style="color: #2897ff">取消配对</el-button>
-                        <el-button size="small" style="color: #2897ff">导出</el-button>
+                        <el-button size="small" @click="exportDeviceServices(device.mac)" style="color: #2897ff">导出</el-button>
                       </el-button-group>
                     </el-col>
                   </el-row>
@@ -471,6 +489,37 @@
                   </highlight-code>
                 </el-tab-pane>
               </el-tabs>
+              <el-tabs v-show="store.devConfDisplayVars.activeMenuItem === 'apiLogListMenuItem'">
+                <el-tab-pane>
+                  <span slot="label"><i class="el-icon-connection"></i> 接口日志</span>
+                  <el-row>
+                    <vxe-toolbar>
+                      <template v-slot:buttons>
+                        <span>接口日志数量:<span style="font-weight: bold; color: #409eff">{{ getComputedApiLogDisplayResultList().length }} </span></span>
+                        <vxe-input v-model="cache.apiLogDisplayFilterContent" type="search" placeholder="搜索" size="small"></vxe-input>
+                        <vxe-button @click="apiLogDisplayResultClear" status="danger" size="small">清空</vxe-button>
+                        <vxe-button @click="apiLogDisplayResultExport" status="primary" size="small">导出</vxe-button>
+                      </template>
+                    </vxe-toolbar>
+                    <!-- 注意设置为固定高度，否则页面在过多的数据时候会造成卡顿，TODO: 是否考虑使用分页优化? -->
+                    <vxe-grid 
+                      border="none"
+                      stripe
+                      height="560px"
+                      highlight-hover-row
+                      ref="refApiLogDisplayResultGrid"
+                      :sort-config="{trigger: 'cell'}"
+                      :data="getComputedApiLogDisplayResultList()">
+                      <vxe-table-column field="timeStr" title="时间" type="html" width="25%" sortable></vxe-table-column>
+                      <vxe-table-column field="apiName" title="接口名称" type="html" width="15%" sortable></vxe-table-column>
+                      <vxe-table-column field="method" title="请求方法" type="html" width="15%" sortable></vxe-table-column>
+                      <vxe-table-column field="url" title="请求地址" type="html" width="45%" ></vxe-table-column>
+                      <!--<vxe-table-column field="body" title="请求内容" type="html" width="20%"></vxe-table-column> -->
+                      <!-- 增加重放功能 -->
+                    </vxe-grid>
+                  </el-row>
+                </el-tab-pane>
+              </el-tabs>
             </el-main>
           </el-container>
         </el-main>
@@ -563,16 +612,6 @@ code {
 /* 当页面加载完再显示 */
 [v-cloak]{
   display: none;
-}
-
-.top {
-  height: 70px;
-  background-color: #409eff;
-  color: #fff;
-  padding-left: 30px;
-  vertical-align: middle;
-  line-height: 70px;
-  border-bottom: 1px solid #000;
 }
 
 </style>

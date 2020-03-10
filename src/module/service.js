@@ -48,9 +48,13 @@ function procDeviceServiceList(data) {
 function getDeviceServiceList(deviceMac) {
   const devConf = dbModule.getDevConf();
   const cache = dbModule.getCache();
-  return apiModule.getDeviceServiceListByDevConf(devConf, deviceMac).then(data => {
-    // 对象实例的动态添加属性，直接赋值不会动态变化，必须使用$set方法动态设置
-    main.setObjProperty(cache.devicesServiceList, deviceMac, procDeviceServiceList(data));
+  return new Promise((resovle, reject) => {
+    apiModule.getDeviceServiceListByDevConf(devConf, deviceMac).then(data => {
+      const _data = _.cloneDeep(data);
+      // 对象实例的动态添加属性，直接赋值不会动态变化，必须使用$set方法动态设置
+      main.setObjProperty(cache.devicesServiceList, deviceMac, procDeviceServiceList(data));
+      resovle(_data);
+    }).catch(ex => reject(ex));
   });
 }
 

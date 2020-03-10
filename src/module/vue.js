@@ -103,6 +103,26 @@ function createRssiChart() {
 
 function createVueMethods(vue) {
   return {
+    getComputedApiLogDisplayResultList () { // 全局搜索扫描列表
+      const filterName = XEUtils.toString(this.cache.apiLogDisplayFilterContent).trim().toLowerCase();
+      if (filterName) {
+        const filterRE = new RegExp(filterName, 'gi');
+        const searchProps = ['apiName', 'method', 'url', 'data'];
+        const rest = this.cache.apiLogResultList.filter(item => {
+          return searchProps.some(key => {
+            return XEUtils.toString(item[key]).toLowerCase().indexOf(filterName) > -1;
+          });
+        });
+        return rest.map(row => {
+          const item = Object.assign({}, row);
+          searchProps.forEach(key => {
+            item[key] = XEUtils.toString(item[key]).replace(filterRE, match => `<span class="keyword-lighten">${match}</span>`)
+          });
+          return item;
+        });
+      }
+      return this.cache.apiLogResultList;
+    },
     getComputedConnectDisplayResultList () { // 全局搜索扫描列表
       const filterName = XEUtils.toString(this.cache.connectDisplayFilterContent).trim().toLowerCase();
       if (filterName) {
@@ -135,6 +155,9 @@ function createVueMethods(vue) {
     notifyDisplayResultClear() {
       this.cache.notifyDisplayResultList.splice(0);
     },
+    apiLogDisplayResultClear() {
+      this.cache.apiLogResultList.splice(0);
+    },
     scanDisplayResultExport () {
       this.$refs.refScanDisplayResultGrid.exportData({ type: 'csv' })
     },
@@ -143,6 +166,9 @@ function createVueMethods(vue) {
     },
     notifyDisplayResultExport () {
       this.$refs.refNotifyDisplayResultGrid.exportData({ type: 'csv' })
+    },
+    apiLogDisplayResultExport () {
+      this.$refs.refApiLogDisplayResultGrid.exportData({ type: 'csv' })
     },
     loadNotifyResult() {
       const loadPageSize = 5;
@@ -352,9 +378,17 @@ function createVueMethods(vue) {
         this.scanVuxTableForceResize();
         this.notifyVuxTableForceResize();
         this.connectVuxTableForceResize();
+        this.apiLogVuxTableForceResize();
       } else if (key === 'apiDebuggerMenuItem') {
         this.store.devConfDisplayVars.activeMenuItem = key;
+      } else if (key === 'apiLogListMenuItem') {
+        this.store.devConfDisplayVars.activeMenuItem = key;
+        this.apiLogVuxTableForceResize();
       }
+    },
+    apiLogVuxTableForceResize() {
+      let data = this.cache.apiLogResultList.pop();
+      if (data) this.cache.apiLogResultList.push(data);
     },
     connectVuxTableForceResize() {
       let data = this.cache.connectedList.pop();
@@ -374,6 +408,19 @@ function createVueMethods(vue) {
     getDeviceServices(deviceMac) {
       serviceModule.getDeviceServiceList(deviceMac).then(() => {
         this.cache.currentConnectedTab = deviceMac; // 点击服务激活此设备tab页面
+      });
+    },
+    exportDeviceServices(deviceMac) {
+      serviceModule.getDeviceServiceList(deviceMac).then((data) => {
+        data = JSON.stringify(data, null, 2);
+        const blob = new Blob([data], {type: 'text/json'});
+        const event = document.createEvent('MouseEvents');
+        const link = document.createElement('a');
+        link.download = `${deviceMac.replace(/:/g, '_')}_service.json`;
+        link.href = window.URL.createObjectURL(blob);
+        link.dataset.downloadurl = ['text/json', link.download, link.href].join(':');
+        event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        link.dispatchEvent(event);
       });
     },
     startScan() {
