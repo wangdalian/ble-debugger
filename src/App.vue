@@ -111,13 +111,17 @@
                   <i class="el-icon-message-solid"></i>
                   <span slot="title">通知列表</span>
                 </el-menu-item>
+                <el-menu-item index="apiLogListMenuItem">
+                  <i class="el-icon-s-order"></i>
+                  <span slot="title">接口日志</span>
+                </el-menu-item>
                 <el-menu-item index="apiDebuggerMenuItem">
                   <i class="el-icon-service"></i>
                   <span slot="title">接口调试</span>
                 </el-menu-item>
-                <el-menu-item index="apiLogListMenuItem">
-                  <i class="el-icon-s-order"></i>
-                  <span slot="title">接口日志</span>
+                <el-menu-item index="apiDemoMenuItem">
+                  <i class="el-icon-magic-stick"></i>
+                  <span slot="title">常用示例</span>
                 </el-menu-item>
               </el-menu>
             </el-aside>
@@ -151,7 +155,7 @@
                     <!-- <vxe-table-column field="adData" title="广播包" :width="store.devConfDisplayVars.adDataWidth" show-overflow></vxe-table-column> -->
                     <vxe-table-column title="操作" width="15%">
                       <template v-slot="{ row }">
-                        <vxe-button status="primary" size="small" @click="connectDevice(row, row.mac)" :loading="cache.devicesConnectLoading[row.mac]">连接</vxe-button>
+                        <vxe-button status="primary" size="small" @click="connectDeviceByRow(row, row.mac)" :loading="cache.devicesConnectLoading[row.mac]">连接</vxe-button>
                       </template>
                     </vxe-table-column>
                   </vxe-grid>
@@ -512,12 +516,83 @@
                       :data="getComputedApiLogDisplayResultList()">
                       <vxe-table-column field="timeStr" title="时间" type="html" width="25%" sortable></vxe-table-column>
                       <vxe-table-column field="apiName" title="接口名称" type="html" width="15%" sortable></vxe-table-column>
-                      <vxe-table-column field="method" title="请求方法" type="html" width="15%" sortable></vxe-table-column>
-                      <vxe-table-column field="url" title="请求地址" type="html" width="45%" ></vxe-table-column>
-                      <!--<vxe-table-column field="body" title="请求内容" type="html" width="20%"></vxe-table-column> -->
-                      <!-- 增加重放功能 -->
+                      <vxe-table-column field="apiContentJson" title="请求内容" type="html" width="60%" sortable></vxe-table-column>
+                      <!-- TODO: 增加重放功能 -->
                     </vxe-grid>
                   </el-row>
+                </el-tab-pane>
+              </el-tabs>
+              <el-tabs v-show="store.devConfDisplayVars.activeMenuItem === 'apiDemoMenuItem'">
+                <el-tab-pane>
+                  <span slot="label"><i class="el-icon-connection"></i> 建连->写入->通知</span>
+                  <el-card shadow="hover">
+                    <div slot="header" class="clearfix">
+                      <span>1.连接设备</span>
+                      <el-button @click="apiDemoConnectTest" style="float: right; padding: 3px 0" type="text">测试</el-button>
+                    </div>
+                    <el-form label-width="80px" size="small">
+                      <el-form-item label="历史接口">
+                        <el-select @change="apiDemoConnectChanged" v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect.tempFromApiLogUrl" style="width: 100%">
+                          <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: '连接设备'})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
+                        </el-select>
+                      </el-form-item>
+                      <el-form-item label="使用芯片">
+                        <el-radio-group v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect.chip" size="small">
+                          <el-radio-button label="0">芯片0</el-radio-button>
+                          <el-radio-button label="1">芯片1</el-radio-button>
+                        </el-radio-group>
+                      </el-form-item>
+                      <el-form-item label="地址类型">
+                        <el-radio-group v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect.addrType" size="small">
+                          <el-radio-button label="public">PUBLIC</el-radio-button>
+                          <el-radio-button label="random">RANDOM</el-radio-button>
+                        </el-radio-group>
+                      </el-form-item>
+                      <el-form-item label="设备地址">
+                        <el-input v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect.deviceMac"></el-input>
+                      </el-form-item>
+                    </el-form>
+                  </el-card>
+                  <el-card shadow="hover" style="margin-top: 15px;">
+                    <div slot="header" class="clearfix">
+                      <span>2.写入指令</span>
+                      <el-button @click="apiDemoWriteTest" style="float: right; padding: 3px 0" type="text">测试</el-button>
+                    </div>
+                    <el-form label-width="80px" size="small">
+                      <el-form-item label="历史接口">
+                        <el-select @change="apiDemoWriteChanged" v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write.tempFromApiLogUrl" style="width: 100%">
+                          <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: '写入数据'})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
+                        </el-select>
+                      </el-form-item>
+                      <el-form-item label="HANDLE">
+                        <el-input v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write.handle"></el-input>
+                      </el-form-item>
+                      <el-form-item label="VALUE">
+                        <el-input v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write.value"></el-input>
+                      </el-form-item>
+                      <el-form-item label="写入方式">
+                        <el-radio-group v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write.noresponse" size="small">
+                          <el-radio-button label="false">等待</el-radio-button>
+                          <el-radio-button label="true">不等待</el-radio-button>
+                        </el-radio-group>
+                      </el-form-item>
+                    </el-form>
+                  </el-card>
+                  <el-card shadow="hover" style="margin-top: 15px;">
+                    <div slot="header" class="clearfix">
+                      <span>3.接收通知</span>
+                    </div>
+                    <el-form label-width="80px" size="small">
+                      <span style="font-size: 12px">通过SSE接收数据</span>
+                    </el-form>
+                  </el-card>
+                  <el-button-group style="margin-top: 15px;">
+                    <el-button type="primary" size="small" @click="apiDemoConnectWriteNotifyGenCode">生成代码</el-button>
+                    <el-button type="primary" size="small">清空数据</el-button>
+                  </el-button-group>
+                  <highlight-code lang="javascript">
+                    {{ store.devConfDisplayVars.apiDemoParams.connectWriteNotify.code }}
+                  </highlight-code>
                 </el-tab-pane>
               </el-tabs>
             </el-main>

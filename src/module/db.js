@@ -1,22 +1,25 @@
 const _ = require('lodash');
 import libEnum from '../lib/enum.js';
+import libLogger from '../lib/logger.js';
 import apiModule from './api.js';
 
+const logger = libLogger.genModuleLogger('db');
 const storageKey = 'storageKey';
 
 let storage = {
+  devConfSaveTimer: null,
+  accessToken: '', // ac连接方式token
   devConf: {
     controlStyle: libEnum.controlStyle.AP, // 连接方式
     serverURI: 'http://192.168.5.100', // 服务器地址
     baseURI: 'http://192.168.5.100', //
     acDevKey: 'cassia', // 开发者账号
     acDevSecret: 'cassia', // 开发者密码
-    mac: '', // 路由器MAC
+    mac: 'CC:1B:E0:E0:DD:70', // 路由器MAC
     filter_name: [], // 扫描name过滤
     filter_mac: [], // 扫描mac过滤
     filter_rssi: -75,
     chip: 0, // 扫描使用的芯片
-    access_token: '' // ac连接方式token
   },
   devConfDisplayVars: {
     language: '中文',
@@ -37,6 +40,7 @@ let storage = {
     apiOutputDisplayCount: 20,
     activeMenuItem: 'scanListMenuItem',
     activeApiTabName: 'scan', // scan | connect | disconnect | read | write | writeNoRes ...
+    activeApiDemoTabName: 'connectWriteNotify', // scan | connectWriteNotify
     activeApiOutputTabName: 'output', // output | curl | nodejs
     rssiChartStopped: false, // 是否暂停了rssi chart
     rssiChartSwitch: false, // 是否开启rssi chart，默认关闭
@@ -45,10 +49,27 @@ let storage = {
     rssiChartDataCount:  (60 * 1000 / 2000), // rssiChartPeriod * 1000 / rssiChartDataSpan;
     apiDebuggerParams: { // 调试工具参数
       [libEnum.apiType.SCAN]: {chip: 0, filter_name: [], filter_mac: [], filter_rssi: -65},
-      [libEnum.apiType.CONNECT]: {chip: 0, deviceMac: '', addrType: libEnum.deviceAddrType.PUBLIC},
-      [libEnum.apiType.READ]: {deviceMac: '', handle: ''},
-      [libEnum.apiType.WRITE]: {deviceMac: '', handle: '', value: '', noresponse: false},
-      [libEnum.apiType.DISCONNECT]: {deviceMac: ''},
+      [libEnum.apiType.CONNECT]: {chip: 0, deviceMac: 'C0:00:5B:D1:AA:BC', addrType: libEnum.deviceAddrType.PUBLIC},
+      [libEnum.apiType.READ]: {deviceMac: 'C0:00:5B:D1:AA:BC', handle: '39'},
+      [libEnum.apiType.WRITE]: {deviceMac: 'C0:00:5B:D1:AA:BC', handle: '39', value: '21ff310302ff31', noresponse: false},
+      [libEnum.apiType.DISCONNECT]: {deviceMac: 'C0:00:5B:D1:AA:BC'},
+    },
+    apiDemoParams: { // demo工具参数
+      connectWriteNotify: {
+        connect: {
+          tempFromApiLogUrl: '',
+          chip: 0,
+          deviceMac: 'C0:00:5B:D1:AA:BC',
+          addrType: libEnum.deviceAddrType.PUBLIC
+        },
+        write: {
+          tempFromApiLogUrl: '',
+          handle: 39,
+          value: '21ff310302ff31',
+          noresponse: false
+        },
+        code: ''
+      }
     }
   }
 };
@@ -111,7 +132,22 @@ let cache = {
 
   ],
   apiLogResultList: [
-    {timestamp: Date.now(), timeStr: '2020-03-10T02:48:41.235', apiName: '扫描设备', method: 'GET', url: 'http://192.168.5.105/gap/nodes/?mac=&access_token=&active=1&event=1&chip=0', body: '{"data": }'}
+    {
+      timestamp: Date.now(), 
+      timeStr: '2020-03-10T02:48:41.235', 
+      apiName: '扫描设备', 
+      apiContentJson: '',
+      apiContent: {
+        url: 'http://192.168.5.105/gap/nodes/?mac=&access_token=&active=1&event=1&chip=0',
+        method: 'GET',
+        headers: {},
+        data: {
+          body: {},
+          params: {},
+          query: {}
+        }
+      }
+    }
   ],
   scanDisplayResultList: [ // 用于显示的列表
     // {name: 'MI BAND 3', mac: 'CC:1B:E0:E0:DD:71', bdaddrType: 'random', rssi: -75, adData: '0201061BFF5701006BFCA25D5ED51C0B3E60820178B901BE01D40B59A1259C'},
@@ -154,17 +190,16 @@ function saveApDevConf(_devConf) {
   _devConf.baseURI = getBaseURI(_devConf);
   storage.devConf = _devConf;
   save(storageKey, JSON.stringify(storage));
-  return Promise.resolve();
 }
 
 // 更新接口地址
 function saveAcDevConf(_devConf) {
   _devConf.baseURI = getBaseURI(_devConf);
   // TODO: 优化定时获取token
+  storage.devConf = _devConf;  
   return new Promise(function(resolve, reject) {
     apiModule.getAccessToken(_devConf.baseURI, _devConf.acDevKey, _devConf.acDevSecret).then(function(data) {
-      _devConf.access_token = data.access_token;
-      storage.devConf = _devConf;
+      storage.accessToken = data.access_token;
       save(storageKey, JSON.stringify(storage));
       resolve();
     }).catch(function(error) {
@@ -174,10 +209,14 @@ function saveAcDevConf(_devConf) {
 }
 
 function saveDevConf(_devConf) {
-  if (_devConf.controlStyle === libEnum.controlStyle.AC) {
-    return saveAcDevConf(_devConf);
-  }
-  return saveApDevConf(_devConf);
+  clearTimeout(storage.devConfSaveTimer);
+  storage.devConfSaveTimer = setTimeout(function() {
+    logger.info('save dev conf:', _devConf);
+    if (_devConf.controlStyle === libEnum.controlStyle.AC) {
+      return saveAcDevConf(_devConf);
+    }
+    return saveApDevConf(_devConf);
+  }, 1000); // 1秒防止抖动
 }
 
 function getDevConf() {

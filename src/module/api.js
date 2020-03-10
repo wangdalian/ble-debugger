@@ -25,14 +25,14 @@ function isValidValue(value) {
   return true;
 }
 
-function getFields(devConf, fields) {
+function getFields(devConf, fields, withToken=true) {
   let param = {};
   _.forEach(devConf, (value, key) => {
     if (_.includes(fields, key) && isValidValue(value)) param[key] = value;
   });
   if (devConf.controlStyle === libEnum.controlStyle.AC) {
     param.mac = devConf.mac;
-    param.access_token = devConf.access_token;
+    if (withToken) param.access_token = dbModule.getStorage().accessToken;
   }
   return param;
 }
@@ -40,16 +40,17 @@ function getFields(devConf, fields) {
 // 请求accessToken
 function getAccessToken(baseURI, devKey, devSecret) {
   const url = `${baseURI}/oauth2/token`;
+  const body = {grant_type: 'client_credentials'};
+  const headers = {
+    Authorization: 'Basic ' + base64.encode(`${devKey}:${devSecret}`)
+  };
   const instance = axios.create({
     timeout: config.http.requestTimeout,
-    headers: {
-      Authorization: 'Basic ' + base64.encode(`${devKey}:${devSecret}`)
-    }
+    headers: headers,
   });
-  const data = {grant_type: 'client_credentials'};
-  addApiLogItem('请求令牌', 'POST', url, data);
+  addApiLogItem('请求令牌', 'POST', url, {}, body, {}, headers);
   return new Promise((resolve, reject) => {
-    instance.post(url, data).then(function(response) {
+    instance.post(url, body).then(function(response) {
       logger.info('get access token success:', response);
       resolve(response.data);
     }).catch(function(error) {
@@ -69,6 +70,10 @@ function scanSseErrorHandler(error) {
 
 function getScanUrl(baseURI, params) {
   return `${baseURI}/gap/nodes?${obj2QueryStr(params)}`;
+}
+
+function getNotifyUrl(baseURI, params) {
+  return `${baseURI}/gatt/nodes?${obj2QueryStr(params)}`;
 }
 
 function getConnectUrl(baseURI, deviceMac, params) {
@@ -124,10 +129,10 @@ function notifySseErrorHandler(error) {
   logger.error('notify sse error:', error);
 }
 
-// params -> {chip: 0, filter_mac: '1,2', filter_name: '2,3', filter_rssi: -75, mac: 'aa', access_token: 'bac'}
-function openNotifySse(baseURI, params, messageHandler, errorHandler) {
-  const url = `${baseURI}/gatt/nodes?${obj2QueryStr(params)}`;
-  addApiLogItem('打开通知', 'GET/SSE', url, '');
+// query -> {chip: 0, filter_mac: '1,2', filter_name: '2,3', filter_rssi: -75, mac: 'aa', access_token: 'bac'}
+function openNotifySse(baseURI, query, messageHandler, errorHandler) {
+  const url = `${baseURI}/gatt/nodes?${obj2QueryStr(query)}`;
+  addApiLogItem('打开通知', 'GET/SSE', url, query);
   let sse = new EventSource(url);
   sse.onmessage = messageHandler || notifySseMessageHandler;
   sse.onerror = errorHandler || notifySseErrorHandler;
@@ -135,12 +140,12 @@ function openNotifySse(baseURI, params, messageHandler, errorHandler) {
   return sse;
 }
 
-function connect(baseURI, params, deviceMac, addrType) {
-  const url = `${baseURI}/gap/nodes/${deviceMac}/connection/?${obj2QueryStr(params)}`;
-  const data = {timeout: config.http.requestTimeout, type: addrType};
-  addApiLogItem('连接设备', 'POST', url, data);
+function connect(baseURI, query, deviceMac, addrType) {
+  const url = `${baseURI}/gap/nodes/${deviceMac}/connection/?${obj2QueryStr(query)}`;
+  const body = {timeout: config.http.requestTimeout, type: addrType};
+  addApiLogItem('连接设备', 'POST', url, query, body, {deviceMac});
   return new Promise((resolve, reject) => {
-    axios.post(url, data).then(function(response) {
+    axios.post(url, body).then(function(response) {
       logger.info('connect device success:', response);
       resolve(response.data);
     }).catch(function(error) {
@@ -151,9 +156,9 @@ function connect(baseURI, params, deviceMac, addrType) {
   });
 }
 
-function disconnect(baseURI, params, deviceMac) {
-  const url = `${baseURI}/gap/nodes/${deviceMac}/connection/?${obj2QueryStr(params)}`;
-  addApiLogItem('断开设备', 'DELETE', url, '');
+function disconnect(baseURI, query, deviceMac) {
+  const url = `${baseURI}/gap/nodes/${deviceMac}/connection/?${obj2QueryStr(query)}`;
+  addApiLogItem('断开设备', 'DELETE', url, query, {}, {deviceMac});
   return new Promise((resolve, reject) => {
     axios.delete(url).then(function(response) {
       logger.info('disconnect device success:', response);
@@ -166,9 +171,9 @@ function disconnect(baseURI, params, deviceMac) {
   });
 }
 
-function getConnectedList(baseURI, params) {
-  const url = `${baseURI}/gap/nodes?${obj2QueryStr(params)}&connection_state=connected`;
-  addApiLogItem('连接列表', 'GET', url, '');
+function getConnectedList(baseURI, query) {
+  const url = `${baseURI}/gap/nodes?${obj2QueryStr(query)}&connection_state=connected`;
+  addApiLogItem('连接列表', 'GET', url, query);
   return new Promise((resolve, reject) => {
     axios.get(url).then(function(response) {
       logger.info('get connected list success:', response);
@@ -181,9 +186,9 @@ function getConnectedList(baseURI, params) {
   });
 }
 
-function getDeviceServiceList(baseURI, params, deviceMac) {
-  const url = `${baseURI}/gatt/nodes/${deviceMac}/services/characteristics/descriptors?${obj2QueryStr(params)}`;
-  addApiLogItem('服务列表', 'GET', url, '');
+function getDeviceServiceList(baseURI, query, deviceMac) {
+  const url = `${baseURI}/gatt/nodes/${deviceMac}/services/characteristics/descriptors?${obj2QueryStr(query)}`;
+  addApiLogItem('服务列表', 'GET', url, query, {}, {deviceMac});
   return new Promise((resolve, reject) => {
     axios.get(url).then(function(response) {
       logger.info('get device service list success:', response);
@@ -196,9 +201,9 @@ function getDeviceServiceList(baseURI, params, deviceMac) {
   });
 }
 
-function readByHandle(baseURI, params, deviceMac, handle) {
-  const url = `${baseURI}/gatt/nodes/${deviceMac}/handle/${handle}/value?${obj2QueryStr(params)}`;
-  addApiLogItem('读取数据', 'GET', url, '');
+function readByHandle(baseURI, query, deviceMac, handle) {
+  const url = `${baseURI}/gatt/nodes/${deviceMac}/handle/${handle}/value?${obj2QueryStr(query)}`;
+  addApiLogItem('读取数据', 'GET', url, query, {}, {deviceMac});
   return new Promise((resolve, reject) => {
     axios.get(url).then(function(response) {
       logger.info('read handle success:', response);
@@ -211,10 +216,10 @@ function readByHandle(baseURI, params, deviceMac, handle) {
   });
 }
 
-function writeByHandle(baseURI, params, deviceMac, handle, value, noresponse=false) {
-  let url = `${baseURI}/gatt/nodes/${deviceMac}/handle/${handle}/value/${value}?${obj2QueryStr(params)}`;
-  if (noresponse) url = url + '&noresponse=1';
-  addApiLogItem('写入数据', 'GET', url, '');
+function writeByHandle(baseURI, query, deviceMac, handle, value, noresponse=false) {
+  if (noresponse) query.noresponse = 1;
+  let url = `${baseURI}/gatt/nodes/${deviceMac}/handle/${handle}/value/${value}?${obj2QueryStr(query)}`;
+  addApiLogItem('写入数据', 'GET', url, query, {}, {deviceMac, handle, value});
   return new Promise((resolve, reject) => {
     axios.get(url).then(function(response) {
       logger.info('write handle success:', response);
@@ -239,16 +244,16 @@ function getDisconnectUrlByDevConf(devConf, deviceMac) {
   return getDisconnectUrl(devConf.baseURI, deviceMac, params);
 }
 
-function getWriteUrlByDevConf(devConf, deviceMac, handle, value, noresponse) {
+function getWriteUrlByDevConf(devConf, deviceMac, handle, value, noresponse, withToken=true) {
   const fields = [];
-  const params = getFields(devConf, fields);
+  const params = getFields(devConf, fields, withToken);
   if (noresponse) params.noresponse = 1;
   return getWriteUrl(devConf.baseURI, deviceMac, handle, value, params);
 }
 
-function getConnectUrlByDevConf(devConf, deviceMac, chip) {
+function getConnectUrlByDevConf(devConf, deviceMac, chip, withToken=true) {
   const fields = [];
-  const params = getFields(devConf, fields);
+  const params = getFields(devConf, fields, withToken);
   if (chip === 0 || chip === 1) params.chip = chip;
   return getConnectUrl(devConf.baseURI, deviceMac, params);
 } 
@@ -261,27 +266,47 @@ function getScanUrlByDevConf(devConf) {
   return getScanUrl(devConf.baseURI, params);
 }
 
+function getOauth2UrlByDevConf(devConf) {
+  const url = `${devConf.baseURI}/oauth2/token`;
+  return url;
+}
+
+function getNotifyUrlByDevConf(devConf, withToken=true) {
+  const fields = [];
+  const params = getFields(devConf, fields, withToken);
+  params.event = 1;
+  return getNotifyUrl(devConf.baseURI, params);
+}
+
 function getConnectStatusUrlByDevConf(devConf) {
   const fields = [];
   const params = getFields(devConf, fields);
   return getConnectStatusUrl(devConf.baseURI, params);
 }
 
-function addApiLogItem(apiName, method, url, data) {
+function addApiLogItem(apiName, method, url, query = {}, body = {}, params = {}, headers = {}) {
   const now = Date.now();
+  const apiContent = {url, method, data: {}};
+  if (!_.isEmpty(headers)) apiContent.headers = headers;
+  if (!_.isEmpty(query)) apiContent.data.query = query;
+  if (!_.isEmpty(body)) apiContent.data.body = body;
+  if (!_.isEmpty(params)) apiContent.data.params = params;
   dbModule.cache.apiLogResultList.push({
     timestamp: now,
     timeStr: new Date(now).toISOString(),
     apiName,
-    method,
-    url,
-    data: _.isString(data) ? data : JSON.stringify(data)
+    apiContent: apiContent,
+    apiContentJson: JSON.stringify(apiContent)
   });
 }
 
 function startScanByDevConf(devConf, messageHandler, errorHandler) {
-  const url = getScanUrlByDevConf(devConf);
-  addApiLogItem('扫描设备', 'GET/SSE', url, '');
+  const fields = ['chip', 'filter_mac', 'filter_name', 'filter_rssi'];
+  const query = getFields(devConf, fields);
+  query.active = 1;
+  query.event = 1;
+  let url = `${devConf.baseURI}/gap/nodes?${obj2QueryStr(query)}`;
+  addApiLogItem('扫描设备', 'GET/SSE', url, query);
   return startScan(url, messageHandler, errorHandler);
 }
 
@@ -310,12 +335,12 @@ function startNotifyByDevConf(devConf, messageHandler, errorHandler) {
 function connectByDevConf(devConf, deviceMac, addrType, chip=0) {
   const params = getFields(devConf, []);
   const scanDisplayResultList = dbModule.getCache().scanDisplayResultList;
-  if (!addrType) {
+  if (!addrType) { // 没有传入则从扫描结果里面找设备地址类型
     const item = _.find(scanDisplayResultList, {mac: deviceMac});
     if (!item) return Promise.reject('can not get addr type');
     addrType = item.bdaddrType;
   }
-  if (chip === 0 || chip === 1) params.chip = chip;
+  if (+chip === 0 || +chip === 1) params.chip = chip;
   return connect(devConf.baseURI, params, deviceMac, addrType);
 }
 
@@ -360,5 +385,7 @@ export default {
   getReadUrlByDevConf,
   getWriteUrlByDevConf,
   getDisconnectUrlByDevConf,
-  startScanByUserParams
+  startScanByUserParams,
+  getNotifyUrlByDevConf,
+  getOauth2UrlByDevConf,
 }

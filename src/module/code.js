@@ -180,6 +180,200 @@ function genCode(apiType, codeType, apiParams) {
   return generater[apiType][codeType](apiParams);
 }
 
+function apiDemoConnectWriteNotifyGenCodeAp(connectParams, writeParams) {
+  const devConf = dbModule.getDevConf();
+  const connectUrl = apiModule.getConnectUrlByDevConf(devConf, connectParams.deviceMac, connectParams.chip);
+  const writeUrl = apiModule.getWriteUrlByDevConf(devConf, connectParams.deviceMac, writeParams.handle, writeParams.value, writeParams.noresponse);
+  const notifyUrl = apiModule.getNotifyUrlByDevConf(devConf);
+
+  return `
+  const request = require('request');
+  const EventSource = require('eventsource');
+
+  // connect to device
+  function connect() {
+    let options = {
+      'method': 'POST',
+      'url': '${connectUrl}',
+      'headers': {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({"timeout":5000, "type": "${connectParams.addrType}"})
+    };
+    return new Promise((resolve, reject) => {
+      request(options, function (error, response) { 
+        console.log('connect:', error, response.body);
+        if (error) reject(error);
+        else if (response.body !== 'OK') reject(response.body);
+        else resolve(response.body);
+      });
+    });
+  }
+
+  // write data to device
+  function write() {
+    let options = {
+      'method': 'GET',
+      'url': '${writeUrl}',
+      'headers': {
+      }
+    };
+    return new Promise((resolve, reject) => {
+      request(options, function (error, response) { 
+        console.log('write:', error, response.body);
+        if (error) reject(error);
+        else if (response.body !== 'OK') reject(response.body);
+        else resolve(response.body);
+      });
+    });
+  }
+
+  function openNotifySse() {
+    const url = '${notifyUrl}';
+    const sse = new EventSource(url);
+
+    sse.onerror = function(error) {
+      console.log('open notify sse failed:', error);
+    };
+    
+    sse.onmessage = function(message) {
+      console.log('recevied notify sse message:', message);
+    };
+    
+    return Promise.resolve(sse);
+  }
+
+  // TODO: listen connect status sse, add retry when device disconnected
+
+  function main() {
+    connect().then(write).then(openNotifySse).then(() => {
+      console.log('success');
+    }).catch(ex => {
+      console.error('fail:', ex);
+    });
+  }
+
+  main();
+  `;
+}
+
+function apiDemoConnectWriteNotifyGenCodeAc(connectParams, writeParams) {
+  const devConf = dbModule.getDevConf();
+  const oauth2Url = apiModule.getOauth2UrlByDevConf(devConf);
+  const connectUrl = apiModule.getConnectUrlByDevConf(devConf, connectParams.deviceMac, connectParams.chip, false);
+  const writeUrl = apiModule.getWriteUrlByDevConf(devConf, connectParams.deviceMac, writeParams.handle, writeParams.value, writeParams.noresponse, false);
+  const notifyUrl = apiModule.getNotifyUrlByDevConf(devConf, false);
+
+  return `
+  const request = require('request');
+  const EventSource = require('eventsource');
+
+  const key = '${devConf.acDevKey}';
+  const secret = '${devConf.acDevSecret}';
+
+  // oauth2
+  function oauth2(key, secret) {
+    const auth = Buffer.from(\`\${key}:\${secret}\`).toString('base64');
+    let options = {
+      'method': 'POST',
+      'url': '${oauth2Url}',
+      'headers': {
+        'Authorization': \`Basic \${auth}\`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({'grant_type': 'client_credentials'})
+    };
+    return new Promise((resolve, reject) => {
+      request(options, function (error, response) { 
+        console.log('oauth2:', error, response.body);
+        if (error) reject(error);
+        else if (response.statusCode !== 200) reject(response.body);
+        else resolve(JSON.parse(response.body).access_token);
+      });
+    });
+  }
+
+  // connect to device
+  function connect(token) {
+    let options = {
+      'method': 'POST',
+      'url': \`${connectUrl}&access_token=\${token}\`,
+      'headers': {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({"timeout":5000, "type": "${connectParams.addrType}"})
+    };
+    return new Promise((resolve, reject) => {
+      request(options, function (error, response) { 
+        console.log('connect:', error, response.body);
+        if (error) reject(error);
+        else if (response.body !== 'OK') reject(response.body);
+        else resolve(response.body);
+      });
+    });
+  }
+
+  // write data to device
+  function write(token) {
+    let options = {
+      'method': 'GET',
+      'url': \`${writeUrl}&access_token=\${token}\`,
+      'headers': {
+      }
+    };
+    return new Promise((resolve, reject) => {
+      request(options, function (error, response) { 
+        console.log('write:', error, response.body);
+        if (error) reject(error);
+        else if (response.body !== 'OK') reject(response.body);
+        else resolve(response.body);
+      });
+    });
+  }
+
+  function openNotifySse(token) {
+    const url = \`${notifyUrl}&access_token=\${token}\`;
+    const sse = new EventSource(url);
+
+    sse.onerror = function(error) {
+      console.log('open notify sse failed:', error);
+    };
+    
+    sse.onmessage = function(message) {
+      console.log('recevied notify sse message:', message);
+    };
+    
+    return Promise.resolve(sse);
+  }
+
+  // TODO: listen connect status sse, add retry when device disconnected
+
+  (async () => {
+    try {
+      let token = await oauth2(key, secret);
+      console.log('token:', token);
+      await connect(token);
+      await write(token);
+      await openNotifySse(token);
+      console.log('success');
+    } catch(ex) {
+      console.error('fail:', ex);
+    }
+  })();
+  `;
+}
+
+function apiDemoConnectWriteNotifyGenCode(connectParams, writeParams) {
+  const devConf = dbModule.getDevConf();
+
+  if (devConf.controlStyle === libEnum.controlStyle.AP) {
+    return apiDemoConnectWriteNotifyGenCodeAp(connectParams, writeParams);
+  } else {
+    return apiDemoConnectWriteNotifyGenCodeAc(connectParams, writeParams);
+  }
+}
+
 export default {
   genCode,
+  apiDemoConnectWriteNotifyGenCode,
 }

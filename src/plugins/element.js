@@ -34,9 +34,11 @@ import {
   Table,
   TableColumn,
   MessageBox,
-  Tag
+  Tag,
+  Card
 } from 'element-ui'
 
+Vue.use(Card);
 Vue.use(Container)
 Vue.use(Header)
 Vue.use(Aside)

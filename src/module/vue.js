@@ -103,6 +103,46 @@ function createRssiChart() {
 
 function createVueMethods(vue) {
   return {
+    apiDemoConnectWriteNotifyGenCode() {
+      const writeParams = this.store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write;
+      const connectParams = this.store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect;
+      const code = codeModule.apiDemoConnectWriteNotifyGenCode(connectParams, writeParams);
+      this.store.devConfDisplayVars.apiDemoParams.connectWriteNotify.code = code;
+    },
+    apiDemoWriteChanged(apiContentJson) {
+      const apiContent = JSON.parse(apiContentJson);
+      const apiDemoWrite = this.store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write;
+      apiDemoWrite.handle = apiContent.data.params.handle;
+      apiDemoWrite.value = apiContent.data.params.value;
+      apiDemoWrite.noresponse = (_.get(apiContent, 'data.query.noresponse') === 1 || false);
+    },
+    apiDemoWriteTest() {
+      const writeParams = this.store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write;
+      const connectParams = this.store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect;
+      apiModule.writeByHandleByDevConf(this.store.devConf, connectParams.deviceMac, writeParams.handle, writeParams.value, writeParams.noresponse).then(() => {
+        notify(`写入数据 ${deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
+      }).catch(ex => {
+        notify(`写入数据 ${connectParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+      });
+    },
+    apiDemoConnectTest() {
+      const connectParams = this.store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect;
+      apiModule.connectByDevConf(this.store.devConf, connectParams.deviceMac, connectParams.addrType, connectParams.chip).then(() => {
+        // notify(`连接设备 ${deviceMac} 成功`, '设备连接成功', libEnum.messageType.SUCCESS);
+      }).catch(ex => {
+        notify(`连接设备 ${connectParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+      });
+    },
+    apiDemoConnectChanged(apiContentJson) { // URL改变 -> 找到对应的日志 -> 设置对应的参数
+      const apiContent = JSON.parse(apiContentJson);
+      const apiDemoConnect = this.store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect;
+      apiDemoConnect.chip = apiContent.data.query.chip;
+      apiDemoConnect.deviceMac = apiContent.data.params.deviceMac;
+      apiDemoConnect.addrType = apiContent.data.body.type;
+    },
+    getApiLogListByFilter(filter) {
+      return _.filter(this.cache.apiLogResultList, filter);
+    },
     getComputedApiLogDisplayResultList () { // 全局搜索扫描列表
       const filterName = XEUtils.toString(this.cache.apiLogDisplayFilterContent).trim().toLowerCase();
       if (filterName) {
@@ -226,7 +266,7 @@ function createVueMethods(vue) {
         this.store.devConfDisplayVars.activeApiOutputTabName = 'output'; // 切换到调试结果页面
         notify('调试API扫描自动执行10秒，正常的SSE会一直收到数据', '操作成功', libEnum.messageType.SUCCESS);
       } else if (apiType === libEnum.apiType.CONNECT) {
-        apiModule.connectByDevConf(this.store.devConf, apiParams.deviceMac, apiParams.addrType).then(() => {
+        apiModule.connectByDevConf(this.store.devConf, apiParams.deviceMac, apiParams.addrType, apiParams.chip).then(() => {
           // notify(`连接设备 ${deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
           apiResult.resultList.push(`${new Date().toISOString()}: 连接设备成功, ${JSON.stringify(apiParams)}`);
         }).catch(ex => {
@@ -235,7 +275,7 @@ function createVueMethods(vue) {
         });
       } else if (apiType === libEnum.apiType.READ) {
         apiModule.readByHandleByDevConf(this.store.devConf, apiParams.deviceMac, apiParams.handle).then(() => {
-          notify(`读取数据 ${deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
+          notify(`读取数据 ${apiParams.deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
           apiResult.resultList.push(`${new Date().toISOString()}: 读取数据成功, ${JSON.stringify(apiParams)}`);
         }).catch(ex => {
           notify(`读取数据 ${apiParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
@@ -243,7 +283,7 @@ function createVueMethods(vue) {
         });
       } else if (apiType === libEnum.apiType.WRITE) {
         apiModule.writeByHandleByDevConf(this.store.devConf, apiParams.deviceMac, apiParams.handle, apiParams.value, apiParams.noresponse).then(() => {
-          notify(`写入数据 ${deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
+          notify(`写入数据 ${apiParams.deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
           apiResult.resultList.push(`${new Date().toISOString()}: 写入数据成功, ${JSON.stringify(apiParams)}`);
         }).catch(ex => {
           notify(`写入数据 ${apiParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
@@ -251,7 +291,7 @@ function createVueMethods(vue) {
         });
       } else if (apiType === libEnum.apiType.DISCONNECT) {
         apiModule.disconnectByDevConf(this.store.devConf, apiParams.deviceMac).then(() => {
-          notify(`断连设备 ${deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
+          notify(`断连设备 ${apiParams.deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
           apiResult.resultList.push(`${new Date().toISOString()}: 断连设备成功, ${JSON.stringify(apiParams)}`);
         }).catch(ex => {
           notify(`断连设备 ${apiParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
@@ -384,6 +424,8 @@ function createVueMethods(vue) {
       } else if (key === 'apiLogListMenuItem') {
         this.store.devConfDisplayVars.activeMenuItem = key;
         this.apiLogVuxTableForceResize();
+      } else if (key === 'apiDemoMenuItem') {
+        this.store.devConfDisplayVars.activeMenuItem = key;
       }
     },
     apiLogVuxTableForceResize() {
@@ -448,7 +490,7 @@ function createVueMethods(vue) {
       }
       this.store.devConfDisplayVars.isScanning = false;
     },
-    connectDevice(row, deviceMac) { // notify通过连接状态SSE通知
+    connectDeviceByRow(row, deviceMac) { // notify通过连接状态SSE通知
       main.setObjProperty(this.cache.devicesConnectLoading, deviceMac, true);
       apiModule.connectByDevConf(this.store.devConf, deviceMac).then(() => {
         // notify(`连接设备 ${deviceMac} 成功`, '设备连接成功', libEnum.messageType.SUCCESS);
@@ -626,7 +668,7 @@ function createWatch() {
 }
 
 function createComputed() {
-  return {
+  return {    
     getComputedNotifyDisplayResultList () { // 全局搜索扫描列表
       const filterName = XEUtils.toString(this.cache.notifyDisplayFilterContent).trim().toLowerCase();
       if (filterName) {
