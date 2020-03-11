@@ -80,6 +80,10 @@ function getConnectUrl(baseURI, deviceMac, params) {
   return `${baseURI}/gap/nodes/${deviceMac}/connection?${obj2QueryStr(params)}`;
 }
 
+function getAsyncConnectUrl(baseURI, params) {
+  return `${baseURI}/gap/multi-connect?${obj2QueryStr(params)}`;
+}
+
 function getReadUrl(baseURI, deviceMac, handle, params) {
   return `${baseURI}/gatt/nodes/${deviceMac}/handle/${handle}/value?${obj2QueryStr(params)}`;
 }
@@ -238,9 +242,9 @@ function getReadUrlByDevConf(devConf, deviceMac, handle) {
   return getReadUrl(devConf.baseURI, deviceMac, handle, params);
 }
 
-function getDisconnectUrlByDevConf(devConf, deviceMac) {
+function getDisconnectUrlByDevConf(devConf, deviceMac, withToken=true) {
   const fields = [];
-  const params = getFields(devConf, fields);
+  const params = getFields(devConf, fields, withToken);
   return getDisconnectUrl(devConf.baseURI, deviceMac, params);
 }
 
@@ -254,13 +258,32 @@ function getWriteUrlByDevConf(devConf, deviceMac, handle, value, noresponse, wit
 function getConnectUrlByDevConf(devConf, deviceMac, chip, withToken=true) {
   const fields = [];
   const params = getFields(devConf, fields, withToken);
-  if (chip === 0 || chip === 1) params.chip = chip;
+  if (+chip === 0 || +chip === 1) params.chip = chip;
   return getConnectUrl(devConf.baseURI, deviceMac, params);
 } 
+
+function getAsyncConnectUrlByDevConf(devConf, withToken=true) {
+  const fields = [];
+  const params = getFields(devConf, fields, withToken);
+  return getAsyncConnectUrl(devConf.baseURI, params);
+}
 
 function getScanUrlByDevConf(devConf) {
   const fields = ['chip', 'filter_mac', 'filter_name', 'filter_rssi'];
   const params = getFields(devConf, fields);
+  params.active = 1;
+  params.event = 1;
+  return getScanUrl(devConf.baseURI, params);
+}
+
+function getScanUrlByUserParams(devConf, chip, filter_mac, filter_name, filter_rssi, withToken=true) {
+  const _devConf = _.cloneDeep(devConf);
+  _devConf.chip = chip;
+  _devConf.filter_mac = filter_mac;
+  _devConf.filter_name = filter_name;
+  _devConf.filter_rssi = filter_rssi;
+  const fields = ['chip', 'filter_mac', 'filter_name', 'filter_rssi'];
+  const params = getFields(_devConf, fields, withToken);
   params.active = 1;
   params.event = 1;
   return getScanUrl(devConf.baseURI, params);
@@ -278,9 +301,9 @@ function getNotifyUrlByDevConf(devConf, withToken=true) {
   return getNotifyUrl(devConf.baseURI, params);
 }
 
-function getConnectStatusUrlByDevConf(devConf) {
+function getConnectStatusUrlByDevConf(devConf, withToken=true) {
   const fields = [];
-  const params = getFields(devConf, fields);
+  const params = getFields(devConf, fields, withToken);
   return getConnectStatusUrl(devConf.baseURI, params);
 }
 
@@ -388,4 +411,7 @@ export default {
   startScanByUserParams,
   getNotifyUrlByDevConf,
   getOauth2UrlByDevConf,
+  getScanUrlByUserParams,
+  getAsyncConnectUrlByDevConf,
+  getConnectStatusUrlByDevConf
 }

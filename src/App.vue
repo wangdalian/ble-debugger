@@ -524,7 +524,7 @@
               </el-tabs>
               <el-tabs v-show="store.devConfDisplayVars.activeMenuItem === 'apiDemoMenuItem'">
                 <el-tab-pane>
-                  <span slot="label"><i class="el-icon-connection"></i> 建连->写入->通知</span>
+                  <span slot="label"><i class="el-icon-connection"></i> [单设备]建连->写入->通知</span>
                   <el-card shadow="hover">
                     <div slot="header" class="clearfix">
                       <span>1.连接设备</span>
@@ -592,6 +592,91 @@
                   </el-button-group>
                   <highlight-code lang="javascript">
                     {{ store.devConfDisplayVars.apiDemoParams.connectWriteNotify.code }}
+                  </highlight-code>
+                </el-tab-pane>
+                <el-tab-pane>
+                  <span slot="label"><i class="el-icon-connection"></i> [多设备]扫描->建连->写入</span>
+                  <el-card shadow="hover">
+                    <div slot="header" class="clearfix">
+                      <span>1.扫描设备</span>
+                      <el-button @click="apiDemoScanTest" style="float: right; padding: 3px 0" type="text">测试</el-button>
+                    </div>
+                    <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                      <el-form-item label="历史接口">
+                        <el-select @change="apiDemoScanChanged" v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.tempFromApiLogUrl" style="width: 100%">
+                          <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: '扫描设备'})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
+                        </el-select>
+                      </el-form-item>
+                      <el-form-item label="使用芯片">
+                        <el-radio-group v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.chip" size="small">
+                          <el-radio-button :label="0">芯片0</el-radio-button>
+                          <el-radio-button :label="1">芯片1</el-radio-button>
+                        </el-radio-group>
+                      </el-form-item>
+                      <el-form-item label="过滤名称">
+                        <el-select v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.filter_name" placeholder="请输入" multiple filterable allow-create default-first-option style="width: 100%">
+                        </el-select>
+                      </el-form-item>
+                      <el-form-item label="过滤MAC">
+                        <el-select v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.filter_mac" placeholder="请输入" multiple filterable allow-create default-first-option style="width: 100%">
+                        </el-select>
+                      </el-form-item>
+                      <el-form-item label="过滤RSSI">
+                        <el-slider
+                        v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.filter_rssi"
+                        show-input
+                        :min="-85"
+                        :max="0">
+                      </el-slider>
+                      </el-form-item>
+                    </el-form>
+                  </el-card>
+                  <el-card shadow="hover" style="margin-top: 15px;">
+                    <div slot="header" class="clearfix">
+                      <span>2.连接设备</span>
+                    </div>
+                    <el-form label-width="80px" size="small">
+                      <span style="font-size: 12px">连接扫描到的设备</span>
+                    </el-form>
+                  </el-card>
+                  <el-card shadow="hover" style="margin-top: 15px;">
+                    <div slot="header" class="clearfix">
+                      <span>3.写入指令</span>
+                    </div>
+                    <el-form label-width="80px" size="small">
+                      <el-form-item label="历史接口">
+                        <el-select @change="apiDemoWriteChanged" v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.write.tempFromApiLogUrl" style="width: 100%">
+                          <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: '写入数据'})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
+                        </el-select>
+                      </el-form-item>
+                      <el-form-item label="HANDLE">
+                        <el-input v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.write.handle"></el-input>
+                      </el-form-item>
+                      <el-form-item label="VALUE">
+                        <el-input v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.write.value"></el-input>
+                      </el-form-item>
+                      <el-form-item label="写入方式">
+                        <el-radio-group v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.write.noresponse" size="small">
+                          <el-radio-button label="false">等待</el-radio-button>
+                          <el-radio-button label="true">不等待</el-radio-button>
+                        </el-radio-group>
+                      </el-form-item>
+                    </el-form>
+                  </el-card>
+                  <el-card shadow="hover" style="margin-top: 15px;">
+                    <div slot="header" class="clearfix">
+                      <span>4.接收通知</span>
+                    </div>
+                    <el-form label-width="80px" size="small">
+                      <span style="font-size: 12px">通过SSE接收数据</span>
+                    </el-form>
+                  </el-card>
+                  <el-button-group style="margin-top: 15px;">
+                    <el-button type="primary" size="small" @click="apiDemoScanConnectWriteNotifyGenCode">生成代码</el-button>
+                    <el-button type="primary" size="small">清空数据</el-button>
+                  </el-button-group>
+                  <highlight-code lang="javascript">
+                    {{ store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.code }}
                   </highlight-code>
                 </el-tab-pane>
               </el-tabs>

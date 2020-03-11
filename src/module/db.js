@@ -55,12 +55,28 @@ let storage = {
       [libEnum.apiType.DISCONNECT]: {deviceMac: 'C0:00:5B:D1:AA:BC'},
     },
     apiDemoParams: { // demo工具参数
-      connectWriteNotify: {
+      connectWriteNotify: { // [单设备] 建连->写入->通知
         connect: {
           tempFromApiLogUrl: '',
           chip: 0,
           deviceMac: 'C0:00:5B:D1:AA:BC',
           addrType: libEnum.deviceAddrType.PUBLIC
+        },
+        write: { // [多设备] 扫描->建连->写入->通知
+          tempFromApiLogUrl: '',
+          handle: 39,
+          value: '21ff310302ff31',
+          noresponse: false
+        },
+        code: ''
+      },
+      scanConnectWriteNotify: {
+        scan: {
+          tempFromApiLogUrl: '',
+          chip: 0,
+          filter_name: [],
+          filter_mac: [],
+          filter_rssi: -75
         },
         write: {
           tempFromApiLogUrl: '',

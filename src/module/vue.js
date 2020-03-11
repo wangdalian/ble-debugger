@@ -103,6 +103,29 @@ function createRssiChart() {
 
 function createVueMethods(vue) {
   return {
+    apiDemoScanChanged(apiContentJson) {
+      const apiContent = JSON.parse(apiContentJson);
+      const apiDemoScan = this.store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan;
+      apiDemoScan.chip = apiContent.data.query.chip;
+      if (apiContent.data.query.filter_name) apiDemoScan.filter_name = apiContent.data.query.filter_name;
+      if (apiContent.data.query.filter_mac) apiDemoScan.filter_mac = apiContent.data.query.filter_mac;
+      apiDemoScan.filter_rssi = apiContent.data.query.filter_rssi;
+    },
+    apiDemoScanTest() {
+      const scanParams = this.store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan;
+      let sse = apiModule.startScanByUserParams(this.store.devConf, scanParams.chip, scanParams.filter_mac, scanParams.filter_name, scanParams.filter_rssi, () => {
+        notify(`测试扫描成功`, '操作成功', libEnum.messageType.SUCCESS);
+        sse.close();
+      }, (error) => {
+        notify(`测试扫描失败: ${error}`, '操作失败', libEnum.messageType.ERROR);
+      });
+    },
+    apiDemoScanConnectWriteNotifyGenCode() {
+      const scanParams = this.store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan;
+      const writeParams = this.store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.write;
+      const code = codeModule.apiDemoScanConnectWriteNotifyGenCode(scanParams, writeParams);
+      this.store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.code = code;
+    },
     apiDemoConnectWriteNotifyGenCode() {
       const writeParams = this.store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write;
       const connectParams = this.store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect;
@@ -120,9 +143,9 @@ function createVueMethods(vue) {
       const writeParams = this.store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write;
       const connectParams = this.store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect;
       apiModule.writeByHandleByDevConf(this.store.devConf, connectParams.deviceMac, writeParams.handle, writeParams.value, writeParams.noresponse).then(() => {
-        notify(`写入数据 ${deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
+        notify(`测试写入数据 ${deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
       }).catch(ex => {
-        notify(`写入数据 ${connectParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+        notify(`测试写入数据 ${connectParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
       });
     },
     apiDemoConnectTest() {
@@ -130,7 +153,7 @@ function createVueMethods(vue) {
       apiModule.connectByDevConf(this.store.devConf, connectParams.deviceMac, connectParams.addrType, connectParams.chip).then(() => {
         // notify(`连接设备 ${deviceMac} 成功`, '设备连接成功', libEnum.messageType.SUCCESS);
       }).catch(ex => {
-        notify(`连接设备 ${connectParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+        notify(`测试连接设备 ${connectParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
       });
     },
     apiDemoConnectChanged(apiContentJson) { // URL改变 -> 找到对应的日志 -> 设置对应的参数
