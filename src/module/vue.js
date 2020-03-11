@@ -449,6 +449,8 @@ function createVueMethods(vue) {
         this.apiLogVuxTableForceResize();
       } else if (key === 'apiDemoMenuItem') {
         this.store.devConfDisplayVars.activeMenuItem = key;
+      } else if (key === 'toolsMenuItem') {
+        this.store.devConfDisplayVars.activeMenuItem = key;
       }
     },
     apiLogVuxTableForceResize() {
@@ -686,6 +688,28 @@ function createWatch() {
         dbModule.saveDevConf(val);
       },
       deep: true
+    },
+    'store.devConfDisplayVars.toolsBinaryConversion.type': {
+      handler: function(val, oldVal) {
+        let value = parseInt(this.store.devConfDisplayVars.toolsBinaryConversion.value, oldVal);
+        this.store.devConfDisplayVars.toolsBinaryConversion.value = value.toString(val);
+      }
+    },
+    'store.devConfDisplayVars.toolsHexTextConversion.type': {
+      handler: function(val, oldVal) {
+        let value = this.store.devConfDisplayVars.toolsHexTextConversion.value;
+        if (oldVal === 'hex') this.store.devConfDisplayVars.toolsHexTextConversion.value = Buffer.from(value, 'hex').toString();
+        else this.store.devConfDisplayVars.toolsHexTextConversion.value = Buffer.from(value).toString('hex');
+      }
+    },
+    'store.devConfDisplayVars.toolsJsonConversion.inline': {
+      handler: function(val, oldVal) {
+        try {
+          this.store.devConfDisplayVars.toolsJsonConversion.format = JSON.stringify(JSON.parse(val), null, 2);
+        } catch (ex) {
+          this.store.devConfDisplayVars.toolsJsonConversion.format = `${ex}\n${val}`;
+        }
+      }
     }
   };
 }

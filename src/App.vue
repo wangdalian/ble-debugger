@@ -67,11 +67,9 @@
                   </el-slider>
               </el-form-item>
               <el-form-item>
-                <el-button-group>
+                  <el-button size="small" type="danger">重启 AP</el-button>
                   <el-button type="primary" size="small" @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
                   <el-button type="danger" size="small" @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
-                  <el-button size="small" type="primary">重启 AP</el-button>
-                </el-button-group>
               </el-form-item>
               </el-form>
             </el-main>
@@ -121,7 +119,11 @@
                 </el-menu-item>
                 <el-menu-item index="apiDemoMenuItem">
                   <i class="el-icon-magic-stick"></i>
-                  <span slot="title">常用示例</span>
+                  <span slot="title">场景示例</span>
+                </el-menu-item>
+                <el-menu-item index="toolsMenuItem">
+                  <i class="el-icon-s-tools"></i>
+                  <span slot="title">常用工具</span>
                 </el-menu-item>
               </el-menu>
             </el-aside>
@@ -133,8 +135,8 @@
                     <template v-slot:buttons>
                       <span>扫描设备数量:<span style="font-weight: bold; color: #409eff">{{ getComputedScanDisplayResultList.length }} </span></span>
                       <vxe-input v-model="cache.scanDisplayFilterContent" type="search" placeholder="搜索mac或name" size="small"></vxe-input>
-                      <vxe-button @click="scanDisplayResultClear" status="danger" size="small">清空</vxe-button>
                       <vxe-button @click="scanDisplayResultExport" status="primary" size="small">导出</vxe-button>
+                      <vxe-button @click="scanDisplayResultClear" status="danger" size="small">清空</vxe-button>
                     </template>
                   </vxe-toolbar>
                   <!-- 注意设置为固定高度，否则页面在过多的数据时候会造成卡顿，TODO: 是否考虑使用分页优化? -->
@@ -199,6 +201,7 @@
                       <span>连接设备数量:<span style="font-weight: bold; color: #409eff">{{ getComputedConnectDisplayResultList().length }} </span></span>
                       <vxe-input v-model="cache.connectDisplayFilterContent" type="search" placeholder="搜索mac或name" size="small"></vxe-input>
                       <vxe-button @click="connectDisplayResultExport" status="primary" size="small">导出</vxe-button>
+                      <vxe-button status="danger" size="small">清空</vxe-button>
                     </template>
                   </vxe-toolbar>
                   <!-- 注意设置为固定高度，否则页面在过多的数据时候会造成卡顿，TODO: 是否考虑使用分页优化? -->
@@ -323,8 +326,8 @@
                         <vxe-input v-model="cache.notifyDisplayFilterContent" type="search" placeholder="搜索mac" size="small"></vxe-input>
                         <vxe-button @click="openNotify" status="primary" size="small" v-show="!store.devConfDisplayVars.isNotifyOn">开启</vxe-button>
                         <vxe-button @click="closeNotify" status="danger" size="small" v-show="store.devConfDisplayVars.isNotifyOn">关闭</vxe-button>
-                        <vxe-button @click="notifyDisplayResultClear" status="danger" size="small">清空</vxe-button>
                         <vxe-button @click="notifyDisplayResultExport" status="primary" size="small">导出</vxe-button>
+                        <vxe-button @click="notifyDisplayResultClear" status="danger" size="small">清空</vxe-button>
                       </template>
                     </vxe-toolbar>
                     <!-- 注意设置为固定高度，否则页面在过多的数据时候会造成卡顿，TODO: 是否考虑使用分页优化? -->
@@ -501,8 +504,8 @@
                       <template v-slot:buttons>
                         <span>接口日志数量:<span style="font-weight: bold; color: #409eff">{{ getComputedApiLogDisplayResultList().length }} </span></span>
                         <vxe-input v-model="cache.apiLogDisplayFilterContent" type="search" placeholder="搜索" size="small"></vxe-input>
-                        <vxe-button @click="apiLogDisplayResultClear" status="danger" size="small">清空</vxe-button>
                         <vxe-button @click="apiLogDisplayResultExport" status="primary" size="small">导出</vxe-button>
+                        <vxe-button @click="apiLogDisplayResultClear" status="danger" size="small">清空</vxe-button>
                       </template>
                     </vxe-toolbar>
                     <!-- 注意设置为固定高度，否则页面在过多的数据时候会造成卡顿，TODO: 是否考虑使用分页优化? -->
@@ -680,6 +683,62 @@
                   </highlight-code>
                 </el-tab-pane>
               </el-tabs>
+              <el-tabs v-show="store.devConfDisplayVars.activeMenuItem === 'toolsMenuItem'">
+                <el-tab-pane>
+                  <span slot="label"><i class="el-icon-s-tools"></i> 常用工具</span>
+                  <el-card shadow="hover">
+                    <div slot="header" class="clearfix">
+                      <span>进制转换</span>
+                    </div>
+                    <el-form :inline="true" size="small" style="width: 100%">
+                      <el-form-item>
+                        <el-radio-group v-model="store.devConfDisplayVars.toolsBinaryConversion.type">
+                          <el-radio-button label="2"></el-radio-button>
+                          <el-radio-button label="10"></el-radio-button>
+                          <el-radio-button label="16"></el-radio-button>
+                        </el-radio-group>
+                      </el-form-item>
+                      <el-form-item>
+                        <el-input v-model="store.devConfDisplayVars.toolsBinaryConversion.value">
+                        </el-input>
+                      </el-form-item>
+                    </el-form>
+                  </el-card>
+                  <el-card shadow="hover" style="margin-top: 15px">
+                    <div slot="header" class="clearfix">
+                      <span>HEX/TEXT转换</span>
+                    </div>
+                    <el-form :inline="true" size="small" style="width: 100%">
+                      <el-form-item>
+                        <el-radio-group v-model="store.devConfDisplayVars.toolsHexTextConversion.type">
+                          <el-radio-button label="hex"></el-radio-button>
+                          <el-radio-button label="text"></el-radio-button>
+                        </el-radio-group>
+                      </el-form-item>
+                      <el-form-item>
+                        <el-input v-model="store.devConfDisplayVars.toolsHexTextConversion.value">
+                        </el-input>
+                      </el-form-item>
+                    </el-form>
+                  </el-card>
+                  <el-card shadow="hover" style="margin-top: 15px">
+                    <div slot="header" class="clearfix">
+                      <span>JSON格式化</span>
+                    </div>
+                    <el-form size="small" style="width: 100%">
+                      <el-form-item>
+                        <el-input v-model="store.devConfDisplayVars.toolsJsonConversion.inline">
+                        </el-input>
+                      </el-form-item>
+                      <el-form-item>
+                        <highlight-code lang="javascript">
+                          {{ store.devConfDisplayVars.toolsJsonConversion.format }}
+                        </highlight-code>
+                      </el-form-item>
+                    </el-form>
+                  </el-card>
+                </el-tab-pane>
+              </el-tabs>
             </el-main>
           </el-container>
         </el-main>
@@ -749,7 +808,7 @@ HTML, BODY {
 }
 
 input::-webkit-input-placeholder {
-  font-style: italic;
+  /* font-style: italic; */
 }
 
 div::-webkit-scrollbar {
