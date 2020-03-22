@@ -23,13 +23,13 @@
         </span>
       </el-header>
       <el-container>
-        <el-aside style="width: 350px; border-right: 1px solid #f2f2f2; background-color: #fff; height: 100%; position: fixed; z-index: 999; top: 75px; 
+        <el-aside style="width: 350px; border-right: 1px solid #f2f2f2; background-color: #f4f5f6; height: 100%; position: fixed; z-index: 999; top: 67px; 
           z-index: 3;" v-show="this.store.devConfDisplayVars.isConfigMenuItemOpen">
           <el-container style="height: 100%; width: 100%;">
             <el-main>
               <el-form label-width="80px" size="small">
-              <el-row style="font-size: 16px; border-bottom: 1px solid #ddd; margin-top: 30px;">
-                <span>配置连接配置</span>
+              <el-row style="font-size: 16px; border-bottom: 1px solid #ddd; margin-top: 10px;">
+                <span>配置连接参数</span>
               </el-row>
               <el-form-item label="连接方式" style="margin-top: 15px;">
                 <el-select v-model="store.devConf.controlStyle" style="width: 100%">
@@ -75,7 +75,7 @@
               </el-form-item>
               </el-form>
             </el-main>
-            <el-footer style="background-color: #f4f5f6; width: 350px; height: 50px; line-height: 50px; vertial-align: middle; text-align: center; position: fixed; bottom: 0; left: 0;">
+            <el-footer style="background-color: #ddd; width: 350px; height: 50px; line-height: 50px; vertial-align: middle; text-align: center; position: fixed; bottom: 0; left: 0;">
               <el-button type="danger" size="small" style="margin-right: 20px;">重启 AP</el-button>
               <el-button type="primary" size="small" @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
               <el-button type="danger" size="small" @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
