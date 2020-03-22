@@ -1,12 +1,14 @@
 <template>
   <div id="app" v-cloak>
     <el-container style="height: 100%">
-      <el-header style="height: 67px;
+      <el-header style="height: 67px; width: 100%;
           background-color: #212637;
           color: #fff;
           vertical-align: middle;
           line-height: 67px;
           border-bottom: 1px solid #1e2946;
+          position: fixed;
+          z-index: 999;
           ">
         <span style="width: 80px; text-align: center; ">
             <img :src="require('./assets/img/cassia.png')" style="vertical-align: middle; width: 38px; height: 38px; margin-top: -10px;"></img>
@@ -21,8 +23,9 @@
         </span>
       </el-header>
       <el-container>
-        <el-aside width="350px" style="border-right: 1px solid #f2f2f2;" v-show="this.store.devConfDisplayVars.isConfigMenuItemOpen">
-          <el-container style="height: 100%; ">
+        <el-aside style="width: 350px; border-right: 1px solid #f2f2f2; background-color: #fff; height: 100%; position: fixed; z-index: 999; top: 75px; 
+          z-index: 3;" v-show="this.store.devConfDisplayVars.isConfigMenuItemOpen">
+          <el-container style="height: 100%; width: 100%;">
             <el-main>
               <el-form label-width="80px" size="small">
               <el-row style="font-size: 16px; border-bottom: 1px solid #ddd; margin-top: 30px;">
@@ -72,18 +75,16 @@
               </el-form-item>
               </el-form>
             </el-main>
-            <el-footer style="background-color: #f4f5f6; height: 50px; display: flex; align-items: center; ">
-              <el-row style="width: 100%">
-                <el-button type="danger" size="small" style="display: inline; float: left;" >重启 AP</el-button>
-                <el-button type="primary" size="small" style="display: inline; float: right; " @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
-                <el-button type="danger" size="small" style="display: inline; float: right; "  @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
-              </el-row>
+            <el-footer style="background-color: #f4f5f6; width: 350px; height: 50px; line-height: 50px; vertial-align: middle; text-align: center; position: fixed; bottom: 0; left: 0;">
+              <el-button type="danger" size="small" style="margin-right: 20px;">重启 AP</el-button>
+              <el-button type="primary" size="small" @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
+              <el-button type="danger" size="small" @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
             </el-footer>
           </el-container>
         </el-aside>
-        <el-main style="background-color: #fff; padding: 0">
+        <el-main :style="{'background-color': '#fff', 'padding': 0, 'margin-left': this.store.devConfDisplayVars.isConfigMenuItemOpen ? '350px' : '0px', 'margin-top': '67px'}">
           <el-container style="height: 100%; background-color: #fff">
-            <el-aside width="80px" style="background-color: #fff">
+            <el-aside width="80px" style="height: 100%; background-color: #fff; position: fixed; z-index: 999;">
               <el-menu
                 collapse
                 @select="menuSelect"
@@ -126,7 +127,7 @@
                 </el-menu-item>
               </el-menu>
             </el-aside>
-            <el-main style="height: 100%;">
+            <el-main style="height: 100%; margin-left: 80px;">
               <el-tabs style="background-color: #fff"	@tab-click="scanTabsClick" v-show="store.devConfDisplayVars.activeMenuItem === 'scanListMenuItem'">
                 <el-tab-pane style="height: 100%; background-color: #fff; " >
                   <span slot="label"><i class="el-icon-s-data"></i> 扫描结果</span>
@@ -253,7 +254,7 @@
                     </el-col>
                   </el-row>
                   <el-row style="padding-left: 0px; margin-top: 15px; ">
-                    <el-collapse style="overflow-y: scroll; height: 550px;">
+                    <el-collapse>
                       <el-collapse-item v-for="(service, index) in cache.devicesServiceList[device.mac]" :key="service.uuid">
                         <template slot="title">
                           <el-col style="padding-left: 5px; font-size: 14px; font-style: normal;">{{ service.uuid }}</el-col>
