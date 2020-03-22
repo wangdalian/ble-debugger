@@ -1,14 +1,18 @@
 <template>
   <div id="app" v-cloak>
     <el-container style="height: 100%">
-      <el-header style="height: 70px;
-          background-color: #409eff;
+      <el-header style="height: 67px;
+          background-color: #212637;
           color: #fff;
-          padding-left: 30px;
           vertical-align: middle;
-          line-height: 70px;
-          border-bottom: 1px solid #ddd;">
-        <span style="font-size: 20px;">Cassia蓝牙调试工具</span>
+          line-height: 67px;
+          border-bottom: 1px solid #1e2946;
+          ">
+        <span style="width: 80px; text-align: center; ">
+            <img :src="require('./assets/img/cassia.png')" style="vertical-align: middle; width: 38px; height: 38px; margin-top: -10px;"></img>
+        </span>
+        <span style="font-size: 22px;">
+        Cassia 蓝牙调试工具</span>
         <span style="float: right;">Language
           <el-select v-model="store.devConfDisplayVars.language" size="small" style="width: 120px; padding-right: 15px;">
             <el-option label="中文" value="中文"></el-option>
@@ -17,8 +21,8 @@
         </span>
       </el-header>
       <el-container>
-        <el-aside width="350px" style="border-right: 1px solid #f2f2f2" v-show="this.store.devConfDisplayVars.isConfigMenuItemOpen">
-          <el-container style="height: 100%">
+        <el-aside width="350px" style="border-right: 1px solid #f2f2f2;" v-show="this.store.devConfDisplayVars.isConfigMenuItemOpen">
+          <el-container style="height: 100%; ">
             <el-main>
               <el-form label-width="80px" size="small">
               <el-row style="font-size: 16px; border-bottom: 1px solid #ddd; margin-top: 30px;">
@@ -66,74 +70,69 @@
                     :max="0">
                   </el-slider>
               </el-form-item>
-              <el-form-item>
-                  <el-button size="small" type="danger">重启 AP</el-button>
-                  <el-button type="primary" size="small" @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
-                  <el-button type="danger" size="small" @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
-              </el-form-item>
               </el-form>
             </el-main>
-            <!--<el-footer style="background-color: #fff; line-height: 50px; height: 50px; text-align: center">
-              <el-button-group>
-                <el-button type="primary" size="small" @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
-                <el-button type="danger" size="small" @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
-                <el-button size="small" type="primary">重启 AP</el-button>
-              </el-button-group>
-            </el-footer>-->
+            <el-footer style="background-color: #f4f5f6; height: 50px; display: flex; align-items: center; ">
+              <el-row style="width: 100%">
+                <el-button type="danger" size="small" style="display: inline; float: left;" >重启 AP</el-button>
+                <el-button type="primary" size="small" style="display: inline; float: right; " @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
+                <el-button type="danger" size="small" style="display: inline; float: right; "  @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
+              </el-row>
+            </el-footer>
           </el-container>
         </el-aside>
         <el-main style="background-color: #fff; padding: 0">
           <el-container style="height: 100%; background-color: #fff">
-            <el-aside width="110px" style="background-color: #fff">
+            <el-aside width="80px" style="background-color: #fff">
               <el-menu
                 collapse
                 @select="menuSelect"
-                :background-color="store.devConfDisplayVars.isConfigMenuItemOpen ? '#fff' : '#f5f5f5'"
-                text-color="#fff"
+                background-color="#212637"
+                text-color="#ffffff"
                 active-text-color="#2897ff"
                 default-active="scanListMenuItem"
                 class="el-menu-vertical-demo">
                 <el-menu-item index="configMenuItem">
-                  <i class="el-icon-s-fold"></i>
+                  <i class="el-icon-s-fold" style="font-size: 24px; color: #fff;"></i>
                   <span slot="title">配置参数</span>
                 </el-menu-item>
                 <el-menu-item index="scanListMenuItem">
-                  <i class="el-icon-search"></i>
+                  <i class="el-icon-search" style="font-size: 24px; color: #fff;"></i>
                   <span slot="title">扫描列表</span>
                 </el-menu-item>
                 <el-menu-item index="connectListMenuItem">
-                  <i class="el-icon-connection"></i>
+                  <i class="el-icon-connection" style="font-size: 24px; color: #fff;"></i>
                   <span slot="title">连接列表</span>
                 </el-menu-item>
                 <el-menu-item index="notifyListMenuItem">
-                  <i class="el-icon-message-solid"></i>
+                  <i class="el-icon-message-solid" style="font-size: 24px; color: #fff;"></i>
                   <span slot="title">通知列表</span>
                 </el-menu-item>
                 <el-menu-item index="apiLogListMenuItem">
-                  <i class="el-icon-s-order"></i>
+                  <i class="el-icon-s-order" style="font-size: 24px; color: #fff;"></i>
                   <span slot="title">接口日志</span>
                 </el-menu-item>
                 <el-menu-item index="apiDebuggerMenuItem">
-                  <i class="el-icon-service"></i>
+                  <i class="el-icon-service" style="font-size: 24px; color: #fff;"></i>
                   <span slot="title">接口调试</span>
                 </el-menu-item>
                 <el-menu-item index="apiDemoMenuItem">
-                  <i class="el-icon-magic-stick"></i>
+                  <i class="el-icon-magic-stick" style="font-size: 24px; color: #fff;"></i>
                   <span slot="title">场景示例</span>
                 </el-menu-item>
                 <el-menu-item index="toolsMenuItem">
-                  <i class="el-icon-s-tools"></i>
+                  <i class="el-icon-s-tools" style="font-size: 24px; color: #fff;"></i>
                   <span slot="title">常用工具</span>
                 </el-menu-item>
               </el-menu>
             </el-aside>
-            <el-main style="height: 100%">
+            <el-main style="height: 100%;">
               <el-tabs style="background-color: #fff"	@tab-click="scanTabsClick" v-show="store.devConfDisplayVars.activeMenuItem === 'scanListMenuItem'">
                 <el-tab-pane style="height: 100%; background-color: #fff; " >
                   <span slot="label"><i class="el-icon-s-data"></i> 扫描结果</span>
                   <vxe-toolbar>
                     <template v-slot:buttons>
-                      <span>扫描设备数量:<span style="font-weight: bold; color: #409eff">{{ getComputedScanDisplayResultList.length }} </span></span>
+                      <span>设备数量: <span style="font-weight: bold; color: #409eff">{{ getComputedScanDisplayResultList.length }} </span></span>
                       <vxe-input v-model="cache.scanDisplayFilterContent" type="search" placeholder="搜索mac或name" size="small"></vxe-input>
                       <vxe-button @click="scanDisplayResultExport" status="primary" size="small">导出</vxe-button>
                       <vxe-button @click="scanDisplayResultClear" status="danger" size="small">清空</vxe-button>
@@ -145,6 +144,7 @@
                     show-overflow
                     stripe
                     highlight-hover-row
+                    :header-row-style="{'background-color': '#f4f5f6'}"
                     height="560px"
                     ref="refScanDisplayResultGrid"
                     :sort-config="{trigger: 'cell'}"
@@ -193,15 +193,16 @@
                   <v-chart :options="chartOptions" ref="rssiChart" :autoresize="true" style="width: 100%; height: 500px; "></v-chart>
                 </el-tab-pane>
               </el-tabs>
-              <el-tabs closable v-model="cache.currentConnectedTab" @tab-remove="connectedListTabRemove" v-show="store.devConfDisplayVars.activeMenuItem === 'connectListMenuItem'">
-                <el-tab-pane>
+              <el-tabs v-model="cache.currentConnectedTab" @tab-remove="connectedListTabRemove" v-show="store.devConfDisplayVars.activeMenuItem === 'connectListMenuItem'">
+                <el-tab-pane :closable="false">
                   <span slot="label"><i class="el-icon-s-data"></i> 连接列表</span>
                   <vxe-toolbar>
                     <template v-slot:buttons>
-                      <span>连接设备数量:<span style="font-weight: bold; color: #409eff">{{ getComputedConnectDisplayResultList().length }} </span></span>
+                      <span>已连接设备: <span style="font-weight: bold; color: #409eff">{{ getComputedConnectDisplayResultList().length }} </span></span>
                       <vxe-input v-model="cache.connectDisplayFilterContent" type="search" placeholder="搜索mac或name" size="small"></vxe-input>
                       <vxe-button @click="connectDisplayResultExport" status="primary" size="small">导出</vxe-button>
                       <vxe-button status="danger" size="small">清空</vxe-button>
+                      <vxe-button status="danger" size="small">全部关闭</vxe-button>
                     </template>
                   </vxe-toolbar>
                   <!-- 注意设置为固定高度，否则页面在过多的数据时候会造成卡顿，TODO: 是否考虑使用分页优化? -->
@@ -211,6 +212,7 @@
                     stripe
                     highlight-hover-row
                     height="560px"
+                    :header-row-style="{'background-color': '#f4f5f6'}"
                     ref="refConnectDisplayResultGrid"
                     :sort-config="{trigger: 'cell'}"
                     :data="getComputedConnectDisplayResultList()">
@@ -231,7 +233,7 @@
                     </vxe-table-column>
                   </vxe-grid>
                 </el-tab-pane>
-                <el-tab-pane v-for="(device, index) in cache.connectedList" :key="device.mac" :name="device.mac">
+                <el-tab-pane :closable="true" v-for="(device, index) in cache.connectedList" :key="device.mac" :name="device.mac">
                   <span slot="label"><i class="el-icon-connection"></i> {{ device.mac }}</span>
                   <el-row style="background-color: #409eff; font-size: 14px; font-style: normal; border-radius: 3px; color: #fff; height: 60px; display: flex; align-items: center; padding-left: 15px; padding-right: 15px;">
                     <el-col :span="6">
@@ -250,8 +252,8 @@
                       </el-button-group>
                     </el-col>
                   </el-row>
-                  <el-row style="padding-left: 0px; margin-top: 15px;">
-                    <el-collapse>
+                  <el-row style="padding-left: 0px; margin-top: 15px; ">
+                    <el-collapse style="overflow-y: scroll; height: 550px;">
                       <el-collapse-item v-for="(service, index) in cache.devicesServiceList[device.mac]" :key="service.uuid">
                         <template slot="title">
                           <el-col style="padding-left: 5px; font-size: 14px; font-style: normal;">{{ service.uuid }}</el-col>
@@ -322,7 +324,7 @@
                   <el-row>
                     <vxe-toolbar>
                       <template v-slot:buttons>
-                        <span>设备通知数量:<span style="font-weight: bold; color: #409eff">{{ getComputedNotifyDisplayResultList.length }} </span></span>
+                        <span>收到通知: <span style="font-weight: bold; color: #409eff">{{ getComputedNotifyDisplayResultList.length }} </span></span>
                         <vxe-input v-model="cache.notifyDisplayFilterContent" type="search" placeholder="搜索mac" size="small"></vxe-input>
                         <vxe-button @click="openNotify" status="primary" size="small" v-show="!store.devConfDisplayVars.isNotifyOn">开启</vxe-button>
                         <vxe-button @click="closeNotify" status="danger" size="small" v-show="store.devConfDisplayVars.isNotifyOn">关闭</vxe-button>
@@ -337,6 +339,7 @@
                       stripe
                       height="560px"
                       highlight-hover-row
+                      :header-row-style="{'background-color': '#f4f5f6'}"
                       ref="refNotifyDisplayResultGrid"
                       :sort-config="{trigger: 'cell'}"
                       :data="getComputedNotifyDisplayResultList">
@@ -502,7 +505,7 @@
                   <el-row>
                     <vxe-toolbar>
                       <template v-slot:buttons>
-                        <span>接口日志数量:<span style="font-weight: bold; color: #409eff">{{ getComputedApiLogDisplayResultList().length }} </span></span>
+                        <span>日志条数: <span style="font-weight: bold; color: #409eff">{{ getComputedApiLogDisplayResultList().length }} </span></span>
                         <vxe-input v-model="cache.apiLogDisplayFilterContent" type="search" placeholder="搜索" size="small"></vxe-input>
                         <vxe-button @click="apiLogDisplayResultExport" status="primary" size="small">导出</vxe-button>
                         <vxe-button @click="apiLogDisplayResultClear" status="danger" size="small">清空</vxe-button>
@@ -514,6 +517,7 @@
                       stripe
                       height="560px"
                       highlight-hover-row
+                      :header-row-style="{'background-color': '#f4f5f6'}"
                       ref="refApiLogDisplayResultGrid"
                       :sort-config="{trigger: 'cell'}"
                       :data="getComputedApiLogDisplayResultList()">
@@ -666,14 +670,6 @@
                       </el-form-item>
                     </el-form>
                   </el-card>
-                  <el-card shadow="hover" style="margin-top: 15px;">
-                    <div slot="header" class="clearfix">
-                      <span>4.接收通知</span>
-                    </div>
-                    <el-form label-width="80px" size="small">
-                      <span style="font-size: 12px">通过SSE接收数据</span>
-                    </el-form>
-                  </el-card>
                   <el-button-group style="margin-top: 15px;">
                     <el-button type="primary" size="small" @click="apiDemoScanConnectWriteNotifyGenCode">生成代码</el-button>
                     <el-button type="primary" size="small">清空数据</el-button>
@@ -759,7 +755,6 @@ HTML {
 }
 
 HTML, BODY {
-  font-family: "Courier New", "Monaco", "monospace", "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
   margin: 0px;
   padding: 0;
   width: 100%;
@@ -768,7 +763,7 @@ HTML, BODY {
 }
 
 * {
-  font-family: "Courier New", "Monaco", "monospace", "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+  font-family: "Monaco", "monospace", "Courier New", "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
 }
 
 #app {
@@ -833,4 +828,11 @@ code {
   display: none;
 }
 
+.el-menu-item.is-active {
+  background-color: #22315f !important;
+}
+
+.el-radio-button__inner {
+  width: 80px;
+}
 </style>
