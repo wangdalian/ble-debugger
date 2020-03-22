@@ -276,18 +276,18 @@ function createVueMethods(vue) {
         apiResult.sse = apiModule.startScanByUserParams(this.store.devConf, apiParams.chip, apiParams.filter_mac, apiParams.filter_name, apiParams.filter_rssi, (message) => {
           if (this.store.devConfDisplayVars.isApiScanResultDisplayOn) { // 追加到api扫描调试结果里面
             this.cache.apiDebuggerResult[libEnum.apiType.SCAN].resultList.push({time: Date.now(), data: message.data.trim()});
+            setTimeout(() => {
+              if (!apiResult.sse) return;
+              apiResult.sse.close();
+              apiResult.sse = null;
+              this.store.devConfDisplayVars.isApiScanning = false;
+              notify('已自动停止API扫描', '操作成功', libEnum.messageType.SUCCESS);
+            }, 0);
           }
         });
-        setTimeout(() => {
-          if (!apiResult.sse) return;
-          apiResult.sse.close();
-          apiResult.sse = null;
-          this.store.devConfDisplayVars.isApiScanning = false;
-          notify('已自动停止API扫描', '操作成功', libEnum.messageType.SUCCESS);
-        }, 10000);
         this.store.devConfDisplayVars.isApiScanning = true;
         this.store.devConfDisplayVars.activeApiOutputTabName = 'output'; // 切换到调试结果页面
-        notify('调试API扫描自动执行10秒，正常的SSE会一直收到数据', '操作成功', libEnum.messageType.SUCCESS);
+        notify('调试API扫描到结果就主动停止，正常的SSE会一直收到数据', '操作成功', libEnum.messageType.SUCCESS);
       } else if (apiType === libEnum.apiType.CONNECT) {
         apiModule.connectByDevConf(this.store.devConf, apiParams.deviceMac, apiParams.addrType, apiParams.chip).then(() => {
           // notify(`连接设备 ${deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);

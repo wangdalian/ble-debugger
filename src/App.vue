@@ -41,13 +41,13 @@
                 <el-input v-model="store.devConf.serverURI" class="server-ip" clearable placeholder="http://192.168.0.100"></el-input>
               </el-form-item>
               <el-form-item label="开发账号" v-show="store.devConf.controlStyle === 'ac'"  style="margin-top: 15px;">
-                <el-input v-model="store.devConf.acDevKey" class="ac-dev-key"></el-input>
+                <el-input v-model="store.devConf.acDevKey" class="ac-dev-key" clearable></el-input>
               </el-form-item>
               <el-form-item label="开发密码" v-show="store.devConf.controlStyle === 'ac'"  style="margin-top: 15px;">
-                <el-input v-model="store.devConf.acDevSecret" class="ac-dev-secret"></el-input>
+                <el-input v-model="store.devConf.acDevSecret" class="ac-dev-secret" clearable></el-input>
               </el-form-item>
               <el-form-item label="AP MAC" v-show="store.devConf.controlStyle === 'ac'"  style="margin-top: 15px;">
-                <el-input v-model="store.devConf.mac" class="ap-mac" placeholder="CC:1B:E0:E0:DD:70"></el-input>
+                <el-input v-model="store.devConf.mac" class="ap-mac" placeholder="CC:1B:E0:E0:DD:70" clearable></el-input>
               </el-form-item>
               <el-row style="font-size: 16px; border-bottom: 1px solid #ddd; margin-top: 50px;">
                 <span>配置扫描参数</span>
@@ -150,8 +150,8 @@
                     ref="refScanDisplayResultGrid"
                     :sort-config="{trigger: 'cell'}"
                     :data="getComputedScanDisplayResultList">
-                    <vxe-table-column field="name" title="NAME" type="html" width="25%" sortable></vxe-table-column>
-                    <vxe-table-column field="mac" title="MAC" type="html" width="30%" show-overflow></vxe-table-column>
+                    <vxe-table-column field="name" title="名称" type="html" width="25%" sortable></vxe-table-column>
+                    <vxe-table-column field="mac" title="地址" type="html" width="30%" show-overflow></vxe-table-column>
                     <vxe-table-column field="bdaddrType" title="类型" width="15%" sortable></vxe-table-column>
                     <vxe-table-column field="rssi" title="信号" width="15%" sortable></vxe-table-column>
                     <!-- 暂时不显示广播包了，没有找到合适位置，上面的字段自定义slot，数据量大的话会卡顿 -->
@@ -285,7 +285,7 @@
                               <el-radio-button label="hex">HEX</el-radio-button>
                               <el-radio-button label="text">TEXT</el-radio-button>
                             </el-radio-group>
-                            <el-input v-show="char.propertiesStr.includes('WRITE') || char.propertiesStr.includes('WRITE NO RES')" style="width: 220px; float: right; font-size: 12px; font-style: normal;" size="small" v-model="char.writeValue" :placeholder="char.writeValueType === 'hex' ? '格式：aa00bb11cc22（支持空格）' : '格式：任意字符'">
+                            <el-input v-show="char.propertiesStr.includes('WRITE') || char.propertiesStr.includes('WRITE NO RES')" clearable style="width: 220px; float: right; font-size: 12px; font-style: normal;" size="small" v-model="char.writeValue" :placeholder="char.writeValueType === 'hex' ? '格式：aa00bb11cc22（支持空格）' : '格式：任意字符'">
                             </el-input>
                           </el-row>
                           <el-row style="font-size: 12px; font-style: normal; color: #409eff" v-show="char.readValue.toString().length !== 0">
@@ -403,7 +403,7 @@
                       </el-radio-group>
                     </el-form-item>
                     <el-form-item label="设备地址">
-                      <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].deviceMac"></el-input>
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].deviceMac"></el-input>
                     </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
@@ -417,10 +417,10 @@
                   <span slot="label"><i class="el-icon-reading"></i> 读取数据</span>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="HANDLE">
-                      <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].handle"></el-input>
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].handle"></el-input>
                     </el-form-item>
                     <el-form-item label="设备地址">
-                      <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].deviceMac"></el-input>
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].deviceMac"></el-input>
                     </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
@@ -434,10 +434,10 @@
                   <span slot="label"><i class="el-icon-edit-outline"></i> 写入数据</span>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="HANDLE">
-                      <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].handle"></el-input>
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].handle"></el-input>
                     </el-form-item>
                     <el-form-item label="VALUE">
-                      <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].value"></el-input>
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].value"></el-input>
                     </el-form-item>
                     <el-form-item label="写入方式">
                       <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].noresponse" size="small">
@@ -446,7 +446,7 @@
                       </el-radio-group>
                     </el-form-item>
                     <el-form-item label="设备地址">
-                      <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].deviceMac"></el-input>
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].deviceMac"></el-input>
                     </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
@@ -460,7 +460,7 @@
                   <span slot="label"><i class="el-icon-scissors"></i> 断开连接</span>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="设备地址">
-                      <el-input v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].deviceMac"></el-input>
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].deviceMac"></el-input>
                     </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
@@ -480,7 +480,7 @@
                     <el-button size="small" type="danger" @click="clearApiOutputDisplay">清空</el-button>
                   </el-button-group>
                   -->
-                  <highlight-code lang="javascript" v-if="store.devConfDisplayVars.activeApiTabName === 'scan'" v-infinite-scroll="loadApiDebuggerResult" infinite-scroll-distance="20px" :infinite-scroll-disabled="cache.isApiDebuggerLoading">
+                  <highlight-code lang="javascript" v-if="store.devConfDisplayVars.activeApiTabName === 'scan'" v-infinite-scroll="loadApiDebuggerResult" infinite-scroll-distance="200px" :infinite-scroll-disabled="cache.isApiDebuggerLoading">
                     {{ cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].displayResultList.join('\n') }}
                   </highlight-code>
                   <highlight-code lang="javascript" v-if="store.devConfDisplayVars.activeApiTabName !== 'scan'">
@@ -522,9 +522,9 @@
                       ref="refApiLogDisplayResultGrid"
                       :sort-config="{trigger: 'cell'}"
                       :data="getComputedApiLogDisplayResultList()">
-                      <vxe-table-column field="timeStr" title="时间" type="html" width="25%" sortable></vxe-table-column>
-                      <vxe-table-column field="apiName" title="接口名称" type="html" width="15%" sortable></vxe-table-column>
-                      <vxe-table-column field="apiContentJson" title="请求内容" type="html" width="60%" sortable></vxe-table-column>
+                      <vxe-table-column field="timeStr" title="时间" type="html" width="20%" sortable></vxe-table-column>
+                      <vxe-table-column field="apiName" title="接口名称" type="html" width="10%" sortable></vxe-table-column>
+                      <vxe-table-column field="apiContentJson" title="请求内容" type="html" width="70%" sortable></vxe-table-column>
                       <!-- TODO: 增加重放功能 -->
                     </vxe-grid>
                   </el-row>
@@ -557,7 +557,7 @@
                         </el-radio-group>
                       </el-form-item>
                       <el-form-item label="设备地址">
-                        <el-input v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect.deviceMac"></el-input>
+                        <el-input clearable v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect.deviceMac"></el-input>
                       </el-form-item>
                     </el-form>
                   </el-card>
@@ -573,10 +573,10 @@
                         </el-select>
                       </el-form-item>
                       <el-form-item label="HANDLE">
-                        <el-input v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write.handle"></el-input>
+                        <el-input clearable v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write.handle"></el-input>
                       </el-form-item>
                       <el-form-item label="VALUE">
-                        <el-input v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write.value"></el-input>
+                        <el-input clearable v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write.value"></el-input>
                       </el-form-item>
                       <el-form-item label="写入方式">
                         <el-radio-group v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write.noresponse" size="small">
@@ -658,10 +658,10 @@
                         </el-select>
                       </el-form-item>
                       <el-form-item label="HANDLE">
-                        <el-input v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.write.handle"></el-input>
+                        <el-input clearable v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.write.handle"></el-input>
                       </el-form-item>
                       <el-form-item label="VALUE">
-                        <el-input v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.write.value"></el-input>
+                        <el-input clearable v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.write.value"></el-input>
                       </el-form-item>
                       <el-form-item label="写入方式">
                         <el-radio-group v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.write.noresponse" size="small">
@@ -696,7 +696,7 @@
                         </el-radio-group>
                       </el-form-item>
                       <el-form-item>
-                        <el-input v-model="store.devConfDisplayVars.toolsBinaryConversion.value">
+                        <el-input clearable v-model="store.devConfDisplayVars.toolsBinaryConversion.value">
                         </el-input>
                       </el-form-item>
                     </el-form>
@@ -713,7 +713,7 @@
                         </el-radio-group>
                       </el-form-item>
                       <el-form-item>
-                        <el-input v-model="store.devConfDisplayVars.toolsHexTextConversion.value">
+                        <el-input clearable v-model="store.devConfDisplayVars.toolsHexTextConversion.value">
                         </el-input>
                       </el-form-item>
                     </el-form>
@@ -724,7 +724,7 @@
                     </div>
                     <el-form size="small" style="width: 100%">
                       <el-form-item>
-                        <el-input v-model="store.devConfDisplayVars.toolsJsonConversion.inline">
+                        <el-input clearable v-model="store.devConfDisplayVars.toolsJsonConversion.inline">
                         </el-input>
                       </el-form-item>
                       <el-form-item>
