@@ -194,7 +194,7 @@
                   <v-chart :options="chartOptions" ref="rssiChart" :autoresize="true" style="width: 100%; height: 500px; "></v-chart>
                 </el-tab-pane>
               </el-tabs>
-              <el-tabs v-model="cache.currentConnectedTab" @tab-remove="connectedListTabRemove" v-show="store.devConfDisplayVars.activeMenuItem === 'connectListMenuItem'">
+              <el-tabs @tab-click="connectTabsClick" v-model="cache.currentConnectedTab" @tab-remove="connectedListTabRemove" v-show="store.devConfDisplayVars.activeMenuItem === 'connectListMenuItem'">
                 <el-tab-pane :closable="false">
                   <span slot="label"><i class="el-icon-s-data"></i> 连接列表</span>
                   <vxe-toolbar>
