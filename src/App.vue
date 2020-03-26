@@ -203,7 +203,7 @@
                       <vxe-input v-model="cache.connectDisplayFilterContent" type="search" placeholder="搜索mac或name" size="small"></vxe-input>
                       <vxe-button @click="connectDisplayResultExport" status="primary" size="small">导出</vxe-button>
                       <vxe-button status="danger" size="small">清空</vxe-button>
-                      <vxe-button status="danger" size="small">全部关闭</vxe-button>
+                      <vxe-button @click="disconnectAll" status="danger" size="small">全部断连</vxe-button>
                     </template>
                   </vxe-toolbar>
                   <!-- 注意设置为固定高度，否则页面在过多的数据时候会造成卡顿，TODO: 是否考虑使用分页优化? -->
@@ -226,8 +226,8 @@
                         <el-button-group>
                           <el-button type="primary" size="small" @click="getDeviceServices(row.mac)">服务</el-button>
                           <el-button type="primary" size="small" @click="disconnectDevice(row.mac)">断连</el-button>
-                          <el-button type="primary" size="small">配对</el-button>
-                          <el-button type="primary" size="small">取消配对</el-button>
+                          <el-button type="primary" size="small" @click="pair(row.mac)">配对</el-button>
+                          <el-button type="primary" size="small" @click="unpair(row.mac)">取消配对</el-button>
                           <el-button type="primary" size="small" @click="exportDeviceServices(device.mac)">导出</el-button>
                         </el-button-group>
                       </template>
@@ -247,8 +247,8 @@
                       <el-button-group style="float: right; ">
                         <el-button size="small" @click="getDeviceServices(device.mac)" style="color: #2897ff">服务</el-button>
                         <el-button size="small" @click="disconnectDevice(device.mac)" style="color: #2897ff">断连</el-button>
-                        <el-button size="small" style="color: #2897ff">配对</el-button>
-                        <el-button size="small" style="color: #2897ff">取消配对</el-button>
+                        <el-button size="small" @click="pair(device.mac)" style="color: #2897ff">配对</el-button>
+                        <el-button size="small" @click="unpair(device.mac)" style="color: #2897ff">取消配对</el-button>
                         <el-button size="small" @click="exportDeviceServices(device.mac)" style="color: #2897ff">导出</el-button>
                       </el-button-group>
                     </el-col>
@@ -741,6 +741,60 @@
         </el-main>
       </el-container>
     </el-container>
+    <el-dialog
+      title="Security OOB"
+      center
+      :visible.sync="store.devConfDisplayVars.pairBySecurityOOB.visible">
+      <el-form label-width="80px" size="small">
+        <el-form-item label="设备地址">
+          <el-input v-model="store.devConfDisplayVars.pairBySecurityOOB.deviceMac" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="rand">
+          <el-input v-model="store.devConfDisplayVars.pairBySecurityOOB.rand" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="confirm">
+          <el-input v-model="store.devConfDisplayVars.pairBySecurityOOB.confirm" clearable></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="store.devConfDisplayVars.pairBySecurityOOB.visible = false">取 消</el-button>
+        <el-button type="primary" @click="pairBySecurityOOB">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      title="LE Legacy OOB"
+      center
+      :visible.sync="store.devConfDisplayVars.pairByLegacyOOB.visible">
+      <el-form label-width="80px" size="small">
+        <el-form-item label="设备地址">
+          <el-input v-model="store.devConfDisplayVars.pairByLegacyOOB.deviceMac" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="tk">
+          <el-input v-model="store.devConfDisplayVars.pairByLegacyOOB.tk" clearable></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="store.devConfDisplayVars.pairByLegacyOOB.visible = false">取 消</el-button>
+        <el-button type="primary" @click="pairByLegacyOOB">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      title="Passkey"
+      center
+      :visible.sync="store.devConfDisplayVars.pairByPasskey.visible">
+      <el-form label-width="80px" size="small">
+        <el-form-item label="设备地址">
+          <el-input v-model="store.devConfDisplayVars.pairByPasskey.deviceMac" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="passkey">
+          <el-input v-model="store.devConfDisplayVars.pairByPasskey.passkey" clearable></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="store.devConfDisplayVars.pairByPasskey.visible = false">取 消</el-button>
+        <el-button type="primary" @click="pairByPasskey">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 

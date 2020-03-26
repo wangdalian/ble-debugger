@@ -103,6 +103,86 @@ function createRssiChart() {
 
 function createVueMethods(vue) {
   return {
+    unpair(deviceMac) {
+      apiModule.unpairByDevConf(this.store.devConf, deviceMac).then(() => {
+        notify(`取消配对成功 ${deviceMac}`, '操作成功');
+      }).catch(ex => {
+        notify(`取消配对失败 ${deviceMac} ${ex}`, '操作失败', libEnum.messageType.ERROR);
+      });
+    },
+    pairByLegacyOOB() {
+      const deviceMac = this.store.devConfDisplayVars.pairByLegacyOOB.deviceMac;
+      const tk = this.store.devConfDisplayVars.pairByLegacyOOB.tk;
+      apiModule.pairByLegacyOOBByDevConf(this.store.devConf, deviceMac, tk).then(() => {
+        notify(`配对成功 ${deviceMac}`, '操作成功');
+      }).catch(ex => {
+        notify(`配对失败 ${deviceMac} ${ex}`, '操作失败', libEnum.messageType.ERROR);
+      });
+    },
+    pairBySecurityOOB() {
+      const deviceMac = this.store.devConfDisplayVars.pairBySecurityOOB.deviceMac;
+      const rand = this.store.devConfDisplayVars.pairBySecurityOOB.rand;
+      const confirm = this.store.devConfDisplayVars.pairBySecurityOOB.confirm;
+      apiModule.pairBySecurityOOBByDevConf(this.store.devConf, deviceMac, rand, confirm).then(() => {
+        notify(`配对成功 ${deviceMac}`, '操作成功');
+      }).catch(ex => {
+        notify(`配对失败 ${deviceMac} ${ex}`, '操作失败', libEnum.messageType.ERROR);
+      });
+    },
+    pairByPasskey() {
+      const deviceMac = this.store.devConfDisplayVars.pairByPasskey.deviceMac;
+      const passkey = this.store.devConfDisplayVars.pairByPasskey.passkey;
+      apiModule.pairByPasskeyByDevConf(this.store.devConf, deviceMac, passkey).then(() => {
+        notify(`配对成功 ${deviceMac}`, '操作成功');
+      }).catch(ex => {
+        notify(`配对失败 ${deviceMac} ${ex}`, '操作失败', libEnum.messageType.ERROR);
+      });
+    },
+    pair(deviceMac) {
+      apiModule.pairByDevConf(this.store.devConf, deviceMac).then((x) => {
+        if (x.pairingStatusCode === libEnum.pairingStatusCode.SUCCESS) {
+          return notify(`配对成功 ${deviceMac}`, '操作成功');
+        } 
+        if (x.pairingStatusCode === libEnum.pairingStatusCode.FAILED) {
+          return notify(`配对失败 ${deviceMac}`, '操作失败', libEnum.messageType.ERROR);
+        } 
+        if (x.pairingStatusCode === libEnum.pairingStatusCode.ABORTED) {
+          return notify(`配对终止 ${deviceMac}`, '操作失败', libEnum.messageType.WARNING);
+        }
+        if (x.pairingStatusCode === libEnum.pairingStatusCode.LE_LEGACY_OOB_EXPECTED) {
+          this.store.devConfDisplayVars.pairByLegacyOOB.deviceMac = deviceMac;
+          this.store.devConfDisplayVars.pairByLegacyOOB.visible = true;
+          return;
+        }
+        if (x.pairingStatusCode === libEnum.pairingStatusCode.LE_SECURE_OOB_EXPECTED) {
+          this.store.devConfDisplayVars.pairBySecurityOOB.deviceMac = deviceMac;
+          this.store.devConfDisplayVars.pairBySecurityOOB.visible = true;
+          return;
+        }
+        if (x.pairingStatusCode === libEnum.pairingStatusCode.PASSKEY_INPUT_EXPECTED) {
+          this.store.devConfDisplayVars.pairByPasskey.deviceMac = deviceMac;
+          this.store.devConfDisplayVars.pairByPasskey.visible = true;
+          return;
+        }
+        if (x.pairingStatusCode === libEnum.pairingStatusCode.NUM_CMP_EXPECTED) {
+          apiModule.pairByNumbericComparisonByDevConf(this.store.devConf, deviceMac).then(() => {
+            notify(`配对成功 ${deviceMac}`, '操作成功');
+          }).catch(ex => {
+            notify(`配对失败 ${deviceMac} ${ex}`, '操作失败', libEnum.messageType.ERROR);
+          });
+        }
+      });
+    },
+    disconnectAll() { // 断连所有
+      let all = _.map(this.cache.connectedList, item => {
+        apiModule.disconnectByDevConf(this.store.devConf, item.mac).catch(ex => {
+          notify(`断连失败 ${item.mac} ${ex}`, '操作失败', libEnum.messageType.ERROR);
+        });
+      });
+      Promise.all(all).catch(ex => {
+        logger.warn('disconnect all error:', ex);
+      });
+    },
     apiDemoScanChanged(apiContentJson) {
       const apiContent = JSON.parse(apiContentJson);
       const apiDemoScan = this.store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan;
@@ -517,7 +597,7 @@ function createVueMethods(vue) {
     },
     connectDeviceByRow(row, deviceMac) { // notify通过连接状态SSE通知
       main.setObjProperty(this.cache.devicesConnectLoading, deviceMac, true);
-      apiModule.connectByDevConf(this.store.devConf, deviceMac).then(() => {
+      apiModule.connectByDevConf(this.store.devConf, deviceMac, null, this.store.devConf.chip).then(() => {
         // notify(`连接设备 ${deviceMac} 成功`, '设备连接成功', libEnum.messageType.SUCCESS);
         _.remove(this.cache.scanResultList, {mac: deviceMac});
         let removedList = _.remove(this.cache.scanDisplayResultList, {mac: deviceMac}); // 连接成功从扫描列表中移除
@@ -637,7 +717,6 @@ function scanDataList2RssiChartData(periodStartTime, periodEndTime, vue) {
   if (devicesCount > 5) {
     vue.destoryRssiChart();
     notify(`当前扫描设备数量超过5个，已自动关闭rssi图表，请配置合适的扫描过滤参数，防止卡顿`, '操作失败', libEnum.messageType.ERROR);
-    logger.info('11111111111111', devicesCount);
     return [];
   }
   _.forEach(dbModule.getCache().scanDevicesRssiHistory, (rssiHistory, deviceMac) => {

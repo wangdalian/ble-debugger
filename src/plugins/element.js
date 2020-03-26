@@ -35,9 +35,11 @@ import {
   TableColumn,
   MessageBox,
   Tag,
-  Card
+  Card,
+  Dialog
 } from 'element-ui'
 
+Vue.use(Dialog);
 Vue.use(Card);
 Vue.use(Container)
 Vue.use(Header)

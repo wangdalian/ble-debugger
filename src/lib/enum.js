@@ -52,6 +52,17 @@ const deviceAddrType = {
   RANDOM: 'random'
 };
 
+const pairingStatusCode = {
+  FAILED: 0,
+  SUCCESS: 1,
+  ABORTED: 2,
+  LE_LEGACY_OOB_EXPECTED: 3,
+  LE_SECURE_OOB_EXPECTED: 4,
+  PASSKEY_INPUT_EXPECTED: 5,
+  PASSKEY_DISPLAY_EXPECTED: 6,
+  NUM_CMP_EXPECTED: 7,
+};
+
 export default {
   operation,
   controlStyle,
@@ -60,5 +71,6 @@ export default {
   writeDataType,
   apiType,
   codeType,
-  deviceAddrType
+  deviceAddrType,
+  pairingStatusCode
 }

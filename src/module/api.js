@@ -144,6 +144,93 @@ function openNotifySse(baseURI, query, messageHandler, errorHandler) {
   return sse;
 }
 
+// 取消配对
+function unpair(baseURI, query, deviceMac) {
+  const url = `${baseURI}/management/nodes/${deviceMac}/bond/?${obj2QueryStr(query)}`;
+  addApiLogItem('取消配对', 'POST', url, query, {deviceMac});
+  return new Promise((resolve, reject) => {
+    axios.delete(url).then(function(response) {
+      logger.info('unpair device success:', deviceMac, response);
+      resolve(response.data);
+    }).catch(function(error) {
+      let info = error.response ? error.response.data : error;
+      logger.error('unpair device error:', info);
+      reject(info);
+    });
+  });
+}
+
+// 配对
+function pair(baseURI, query, deviceMac, body={}) {
+  const url = `${baseURI}/management/nodes/${deviceMac}/pair/?${obj2QueryStr(query)}`;
+  if (!body.iocapability) body.iocapability = 'KeyboardDisplay';
+  addApiLogItem('设备配对', 'POST', url, query, {deviceMac});
+  return new Promise((resolve, reject) => {
+    axios.post(url, body).then(function(response) {
+      logger.info('pair device success:', response);
+      resolve(response.data);
+    }).catch(function(error) {
+      let info = error.response ? error.response.data : error;
+      logger.error('pair device error:', info);
+      reject(info);
+    });
+  });
+}
+
+// 配对输入
+function pairInput(baseURI, query, deviceMac, body) {
+  const url = `${baseURI}/management/nodes/${deviceMac}/pair-input/?${obj2QueryStr(query)}`;
+  addApiLogItem('配对输入', 'POST', url, query, body, {deviceMac});
+  return new Promise((resolve, reject) => {
+    axios.post(url, body).then(function(response) {
+      logger.info('pair input device success:', response);
+      resolve(response.data);
+    }).catch(function(error) {
+      let info = error.response ? error.response.data : error;
+      logger.error('pair input device error:', info);
+      reject(info);
+    });
+  });
+}
+
+// 通过输入配对
+function pairByPasskey(baseURI, query, deviceMac, passkey) {
+  return pairInput(baseURI, query, deviceMac, {passkey}).then(() => {
+    logger.info('pair by passkey device success:', deviceMac, passkey);
+  }).catch(ex => {
+    logger.error('pair by passkey device error:', deviceMac, passkey, ex);
+    throw(ex);
+  });
+}
+
+// Legacy Pairing OOB
+function pairByLegacyOOB(baseURI, query, deviceMac, tk) {
+  return pairInput(baseURI, query, deviceMac, {tk}).then(() => {
+    logger.info('pair by legacy pairing OOB device success:', deviceMac, tk);
+  }).catch(ex => {
+    logger.error('pair by legacy pairing OOB device error:', deviceMac, tk, ex);
+    throw(ex);
+  });
+}
+
+// Numeric Comparison
+function pairByNumbericComparison(baseURI, query, deviceMac, passkey=1) {
+  return pairInput(baseURI, query, deviceMac, {passkey}).then(() => {
+    logger.info('pair by numberic comparison device success:', deviceMac);
+  }).catch(ex => {
+    logger.error('pair by numberic comparison device error:', deviceMac, ex);
+  });
+}
+
+// Security OOB
+function pairBySecurityOOB(baseURI, query, deviceMac, rand, confirm) {
+  return pair(baseURI, query, deviceMac, {rand, confirm}).then(() => {
+    logger.info('pair by security OOB device success:', deviceMac, rand, confirm);
+  }).catch(ex => {
+    logger.error('pair by security OOB device error:', deviceMac, rand, confirm, ex);
+  });
+}
+
 function connect(baseURI, query, deviceMac, addrType) {
   const url = `${baseURI}/gap/nodes/${deviceMac}/connection/?${obj2QueryStr(query)}`;
   const body = {timeout: config.http.requestTimeout, type: addrType};
@@ -367,6 +454,36 @@ function connectByDevConf(devConf, deviceMac, addrType, chip=0) {
   return connect(devConf.baseURI, params, deviceMac, addrType);
 }
 
+function pairByDevConf(devConf, deviceMac) {
+  const params = getFields(devConf, []);
+  return pair(devConf.baseURI, params, deviceMac);
+}
+
+function unpairByDevConf(devConf, deviceMac) {
+  const params = getFields(devConf, []);
+  return unpair(devConf.baseURI, params, deviceMac);
+}
+
+function pairByPasskeyByDevConf(devConf, deviceMac, passkey) {
+  const params = getFields(devConf, []);
+  return pairByPasskey(devConf.baseURI, params, deviceMac, passkey);
+}
+
+function pairByNumbericComparisonByDevConf(devConf, deviceMac, passkey=1) {
+  const params = getFields(devConf, []);
+  return pairByNumbericComparison(devConf.baseURI, params, deviceMac, passkey);
+}
+
+function pairByLegacyOOBByDevConf(devConf, deviceMac, tk) {
+  const params = getFields(devConf, []);
+  return pairByLegacyOOB(devConf.baseURI, params, deviceMac, tk);
+}
+
+function pairBySecurityOOBByDevConf(devConf, deviceMac, rand, confirm) {
+  const params = getFields(devConf, []);
+  return pairBySecurityOOB(devConf.baseURI, params, deviceMac, rand, confirm);
+}
+
 function getConnectedListByDevConf(devConf) {
   const params = getFields(devConf, []);
   return getConnectedList(devConf.baseURI, params);
@@ -413,5 +530,11 @@ export default {
   getOauth2UrlByDevConf,
   getScanUrlByUserParams,
   getAsyncConnectUrlByDevConf,
-  getConnectStatusUrlByDevConf
+  getConnectStatusUrlByDevConf,
+  pairByDevConf,
+  pairByPasskeyByDevConf,
+  pairByNumbericComparisonByDevConf,
+  pairByLegacyOOBByDevConf,
+  pairBySecurityOOBByDevConf,
+  unpairByDevConf,
 }

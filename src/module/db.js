@@ -22,6 +22,22 @@ let storage = {
     chip: 0, // 扫描使用的芯片
   },
   devConfDisplayVars: {
+    pairBySecurityOOB: { // security pair
+      visible: false, 
+      deviceMac: '',
+      rand: '',
+      confirm: ''
+    },
+    pairByLegacyOOB: {
+      visible: false,
+      deviceMac: '',
+      tk: '',
+    },
+    pairByPasskey: {
+      visible: false,
+      deviceMac: '',
+      passkey: '',
+    },
     toolsBinaryConversion: {
       type: '10',
       value: ''
