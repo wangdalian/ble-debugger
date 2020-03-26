@@ -81,7 +81,7 @@ function getConnectUrl(baseURI, deviceMac, params) {
 }
 
 function getAsyncConnectUrl(baseURI, params) {
-  return `${baseURI}/gap/multi-connect?${obj2QueryStr(params)}`;
+  return `${baseURI}/gap/batch-connect?${obj2QueryStr(params)}`;
 }
 
 function getReadUrl(baseURI, deviceMac, handle, params) {
