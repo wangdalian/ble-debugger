@@ -76,7 +76,8 @@
               </el-form>
             </el-main>
             <el-footer style="background-color: #ddd; width: 350px; height: 50px; line-height: 50px; vertial-align: middle; text-align: center; position: fixed; bottom: 0; left: 0;">
-              <el-button type="danger" size="small" style="margin-right: 20px;">重启 AP</el-button>
+              <el-button type="danger" size="small" @click="reboot" style="margin-right: 20px;">重启 AP</el-button>
+              <el-button type="primary" size="small" @click="apInfo" style="margin-right: 20px;">AP 信息</el-button>
               <el-button type="primary" size="small" @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
               <el-button type="danger" size="small" @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
             </el-footer>

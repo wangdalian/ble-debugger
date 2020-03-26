@@ -103,6 +103,26 @@ function createRssiChart() {
 
 function createVueMethods(vue) {
   return {
+    apInfo() {
+      if (this.store.devConf.controlStyle === libEnum.controlStyle.AP) {
+        return notify(`暂时不支持，请使用AC方式获取AP信息`, '操作失败', libEnum.messageType.ERROR);
+      }
+      apiModule.infoByDevConf(this.store.devConf).then(() => {
+        notify(`获取AP信息成功`, '操作成功');
+      }).catch(ex => {
+        notify(`获取AP信息失败 ${ex}`, '操作失败', libEnum.messageType.ERROR);
+      });
+    },
+    reboot() {
+      if (this.store.devConf.controlStyle === libEnum.controlStyle.AP) {
+        return notify(`暂时不支持，请使用AC方式重启AP`, '操作失败', libEnum.messageType.ERROR);
+      }
+      apiModule.rebootByDevConf(this.store.devConf).then(() => {
+        notify(`重启AP成功`, '操作成功');
+      }).catch(ex => {
+        notify(`重启AP失败 ${ex}`, '操作失败', libEnum.messageType.ERROR);
+      });
+    },
     unpair(deviceMac) {
       apiModule.unpairByDevConf(this.store.devConf, deviceMac).then(() => {
         notify(`取消配对成功 ${deviceMac}`, '操作成功');

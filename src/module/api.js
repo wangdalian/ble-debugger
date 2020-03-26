@@ -160,6 +160,38 @@ function unpair(baseURI, query, deviceMac) {
   });
 }
 
+// 重启ap
+function info(baseURI, query) {
+  const url = `${baseURI}/cassia/info/?${obj2QueryStr(query)}`;
+  addApiLogItem('获取AP信息', 'GET', url, query);
+  return new Promise((resolve, reject) => {
+    axios.get(url).then(function(response) {
+      logger.info('get ap info success:', response);
+      resolve(response.data);
+    }).catch(function(error) {
+      let info = error.response ? error.response.data : error;
+      logger.error('get ap info error:', info);
+      reject(info);
+    });
+  });
+}
+
+// 重启ap
+function reboot(baseURI, query) {
+  const url = `${baseURI}/cassia/reboot/?${obj2QueryStr(query)}`;
+  addApiLogItem('重启AP', 'GET', url, query);
+  return new Promise((resolve, reject) => {
+    axios.get(url).then(function(response) {
+      logger.info('reboot ap success:', response);
+      resolve(response.data);
+    }).catch(function(error) {
+      let info = error.response ? error.response.data : error;
+      logger.error('reboot error:', info);
+      reject(info);
+    });
+  });
+}
+
 // 配对
 function pair(baseURI, query, deviceMac, body={}) {
   const url = `${baseURI}/management/nodes/${deviceMac}/pair/?${obj2QueryStr(query)}`;
@@ -459,6 +491,16 @@ function pairByDevConf(devConf, deviceMac) {
   return pair(devConf.baseURI, params, deviceMac);
 }
 
+function rebootByDevConf(devConf) {
+  const params = getFields(devConf, []);
+  return reboot(devConf.baseURI, params);
+}
+
+function infoByDevConf(devConf) {
+  const params = getFields(devConf, []);
+  return info(devConf.baseURI, params);
+}
+
 function unpairByDevConf(devConf, deviceMac) {
   const params = getFields(devConf, []);
   return unpair(devConf.baseURI, params, deviceMac);
@@ -537,4 +579,6 @@ export default {
   pairByLegacyOOBByDevConf,
   pairBySecurityOOBByDevConf,
   unpairByDevConf,
+  rebootByDevConf,
+  infoByDevConf,
 }
