@@ -472,7 +472,7 @@ function createVueMethods(vue) {
     },
     destoryAndCreateRssiChart() { // 销毁重建图表
       if (!this.store.devConfDisplayVars.isScanning) {
-        this.$confirm('此操作需要开启扫描, 是否继续?（请配置合适的扫描过滤参数，不超过5个设备，否则会自动暂停）', '提示', {
+        this.$confirm('此操作需要开启扫描, 是否继续?（请配置合适的扫描过滤参数，暂时最多只支持5个设备，否则会自动暂停扫描）', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
