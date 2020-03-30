@@ -80,6 +80,10 @@ function getConnectUrl(baseURI, deviceMac, params) {
   return `${baseURI}/gap/nodes/${deviceMac}/connection?${obj2QueryStr(params)}`;
 }
 
+function getConnectListUrl(baseURI, params) {
+  return `${baseURI}/gap/nodes?${obj2QueryStr(params)}&connection_state=connected`;
+}
+
 function getAsyncConnectUrl(baseURI, params) {
   return `${baseURI}/gap/batch-connect?${obj2QueryStr(params)}`;
 }
@@ -94,6 +98,22 @@ function getWriteUrl(baseURI, deviceMac, handle, value, params) {
 
 function getDisconnectUrl(baseURI, deviceMac, params) {
   return `${baseURI}/gap/nodes/${deviceMac}/connection?${obj2QueryStr(params)}`;
+}
+
+function getPairUrl(baseURI, deviceMac, params) {
+  return `${baseURI}/management/nodes/${deviceMac}/pair/?${obj2QueryStr(params)}`;
+}
+
+function getUnpairUrl(baseURI, deviceMac, params) {
+  return `${baseURI}/management/nodes/${deviceMac}/bond/?${obj2QueryStr(params)}`;
+}
+
+function getPairInputUrl(baseURI, deviceMac, params) {
+  return `${baseURI}/management/nodes/${deviceMac}/pair-input/?${obj2QueryStr(params)}`;
+}
+
+function getDiscoverUrl(baseURI, deviceMac, params) {
+  return `${baseURI}/gatt/nodes/${deviceMac}/services/characteristics/descriptors?${obj2QueryStr(params)}`;
 }
 
 function getConnectStatusUrl(baseURI, params) {
@@ -367,6 +387,30 @@ function getDisconnectUrlByDevConf(devConf, deviceMac, withToken=true) {
   return getDisconnectUrl(devConf.baseURI, deviceMac, params);
 }
 
+function getPairUrlByDevConf(devConf, deviceMac, withToken=true) {
+  const fields = [];
+  const params = getFields(devConf, fields, withToken);
+  return getPairUrl(devConf.baseURI, deviceMac, params);
+}
+
+function getUnpairUrlByDevConf(devConf, deviceMac, withToken=true) {
+  const fields = [];
+  const params = getFields(devConf, fields, withToken);
+  return getUnpairUrl(devConf.baseURI, deviceMac, params);
+}
+
+function getPairInputUrlByDevConf(devConf, deviceMac, withToken=true) {
+  const fields = [];
+  const params = getFields(devConf, fields, withToken);
+  return getPairInputUrl(devConf.baseURI, deviceMac, params);
+}
+
+function getDiscoverUrlByDevConf(devConf, deviceMac, withToken=true) {
+  const fields = [];
+  const params = getFields(devConf, fields, withToken);
+  return getDiscoverUrl(devConf.baseURI, deviceMac, params);
+}
+
 function getWriteUrlByDevConf(devConf, deviceMac, handle, value, noresponse, withToken=true) {
   const fields = [];
   const params = getFields(devConf, fields, withToken);
@@ -380,6 +424,12 @@ function getConnectUrlByDevConf(devConf, deviceMac, chip, withToken=true) {
   if (+chip === 0 || +chip === 1) params.chip = chip;
   return getConnectUrl(devConf.baseURI, deviceMac, params);
 } 
+
+function getConnectListUrlByDevConf(devConf, withToken=true) {
+  const fields = [];
+  const params = getFields(devConf, fields, withToken);
+  return getConnectListUrl(devConf.baseURI, params);
+}
 
 function getAsyncConnectUrlByDevConf(devConf, withToken=true) {
   const fields = [];
@@ -581,4 +631,9 @@ export default {
   unpairByDevConf,
   rebootByDevConf,
   infoByDevConf,
+  getConnectListUrlByDevConf,
+  getDiscoverUrlByDevConf,
+  getPairUrlByDevConf,
+  getPairInputUrlByDevConf,
+  getUnpairUrlByDevConf
 }

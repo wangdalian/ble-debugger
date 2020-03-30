@@ -24,6 +24,38 @@ const generater = {
     [libEnum.codeType.CURL]: _genDisconnectCodeCurl,
     [libEnum.codeType.NODEJS]: _genDisconnectCodeNodeJS,
   },
+  [libEnum.apiType.CONNECT_LIST]: {
+    [libEnum.codeType.CURL]: _genConnectListCodeCurl,
+    [libEnum.codeType.NODEJS]: _genConnectListCodeNodeJS,
+  },
+  [libEnum.apiType.DISCOVER]: {
+    [libEnum.codeType.CURL]: _genDiscoverCodeCurl,
+    [libEnum.codeType.NODEJS]: _genDiscoverCodeNodeJS,
+  },
+  [libEnum.apiType.NOTIFY]: {
+    [libEnum.codeType.CURL]: _genNotifyCodeCurl,
+    [libEnum.codeType.NODEJS]: _genNotifyCodeNodeJS,
+  },
+  [libEnum.apiType.PAIR]: {
+    [libEnum.codeType.CURL]: _genPairCodeCurl,
+    [libEnum.codeType.NODEJS]: _genPairCodeNodeJS,
+  },
+  [libEnum.apiType.PAIR_INPUT]: {
+    [libEnum.codeType.CURL]: _genPairInputCodeCurl,
+    [libEnum.codeType.NODEJS]: _genPairInputCodeNodeJS,
+  },
+  [libEnum.apiType.UNPAIR]: {
+    [libEnum.codeType.CURL]: _genUnpairCodeCurl,
+    [libEnum.codeType.NODEJS]: _genUnpairCodeNodeJS,
+  },
+}
+
+function _genDiscoverCodeCurl(apiParams) {
+  const devConf = dbModule.getDevConf();
+  let url = apiModule.getDiscoverUrlByDevConf(devConf, apiParams.deviceMac);
+  return `
+  curl --location --request GET '${url}'
+  `;
 }
 
 function _genDisconnectCodeCurl(apiParams) {
@@ -32,6 +64,57 @@ function _genDisconnectCodeCurl(apiParams) {
   return `
   curl --location --request DELETE '${url}'
   `;
+}
+
+function _genPairCodeCurl(apiParams) {
+  const devConf = dbModule.getDevConf();
+  let url = apiModule.getPairUrlByDevConf(devConf, apiParams.deviceMac);
+  return `
+  curl --location --request POST '${url}' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+    "iocapability": "${apiParams.iocapability}"
+  }'
+  `;
+}
+
+function _genUnpairCodeCurl(apiParams) {
+  const devConf = dbModule.getDevConf();
+  let url = apiModule.getUnpairUrlByDevConf(devConf, apiParams.deviceMac);
+  return `
+  curl --location --request DELETE '${url}'
+  `;
+}
+
+function _genPairInputCodeCurl(apiParams) {
+  const devConf = dbModule.getDevConf();
+  let url = apiModule.getPairInputUrlByDevConf(devConf, apiParams.deviceMac);
+  if (apiParams.inputType === 'Passkey') {
+    return `
+    curl --location --request POST '${url}' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+      "passkey": "${apiParams.passkey}"
+    }'
+    `;
+  } else if (apiParams.inputType === 'LegacyOOB') {
+    return `
+    curl --location --request POST '${url}' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+      "tk": "${apiParams.tk}"
+    }'
+    `;
+  } else if (apiParams.inputType === 'SecurityOOB') {
+    return `
+    curl --location --request POST '${url}' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+      "rand": "${apiParams.rand}",
+      "confirm": "${apiParams.confirm}"
+    }'
+    `;
+  }
 }
 
 function _genWriteCodeCurl(apiParams) {
@@ -63,6 +146,41 @@ function _genConnectCodeCurl(apiParams) {
   `;
 }
 
+function _genConnectListCodeCurl(apiParams) {
+  const devConf = dbModule.getDevConf();
+  let url = apiModule.getConnectListUrlByDevConf(devConf);
+  return `
+  curl --location --request GET '${url}'
+  `;
+}
+
+function _genConnectListCodeNodeJS(apiParams) {
+  const devConf = dbModule.getDevConf();
+  let url = apiModule.getConnectListUrlByDevConf(devConf);
+  return `
+  var request = require('request');
+  var options = {
+    'method': 'GET',
+    'url': '${url}',
+    'headers': {
+    }
+  };
+  request(options, function (error, response) { 
+    if (error) throw new Error(error);
+    console.log(response.body);
+  });
+  `;
+}
+
+function _genNotifyCodeCurl(apiParams) {
+  const devConf = dbModule.getDevConf();
+  let url = apiModule.getNotifyUrlByDevConf(devConf);
+
+  return `
+  curl -H "Accept: text/event-stream" '${url}'
+  `;
+}
+
 function _genScanCodeCurl(apiParams) {
   const devConf = dbModule.getDevConf();
   let _devConf = _.cloneDeep(devConf);
@@ -73,6 +191,24 @@ function _genScanCodeCurl(apiParams) {
 
   return `
   curl -H "Accept: text/event-stream" '${url}'
+  `;
+}
+
+function _genDiscoverCodeNodeJS(apiParams) {
+  const devConf = dbModule.getDevConf();
+  let url = apiModule.getConnectUrlByDevConf(devConf, apiParams.deviceMac);
+  return `
+  var request = require('request');
+  var options = {
+    'method': 'GET',
+    'url': '${url}',
+    'headers': {
+    }
+  };
+  request(options, function (error, response) { 
+    if (error) throw new Error(error);
+    console.log(response.body);
+  });
   `;
 }
 
@@ -92,6 +228,98 @@ function _genDisconnectCodeNodeJS(apiParams) {
     console.log(response.body);
   });
   `;
+}
+
+function _genUnpairCodeNodeJS(apiParams) {
+  const devConf = dbModule.getDevConf();
+  let url = apiModule.getUnpairUrlByDevConf(devConf, apiParams.deviceMac);
+  return `
+  var request = require('request');
+  var options = {
+    'method': 'DELETE',
+    'url': '${url}',
+    'headers': {
+    }
+  };
+  request(options, function (error, response) { 
+    if (error) throw new Error(error);
+    console.log(response.body);
+  });
+  `;
+}
+
+function _genPairCodeNodeJS(apiParams) {
+  const devConf = dbModule.getDevConf();
+  let url = apiModule.getPairUrlByDevConf(devConf, apiParams.deviceMac, apiParams.chip);
+  return `
+  var request = require('request');
+  var options = {
+    'method': 'POST',
+    'url': '${url}',
+    'headers': {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({"iocapability":"${apiParams.iocapability}"})
+  };
+  request(options, function (error, response) { 
+    if (error) throw new Error(error);
+    console.log(response.body);
+  });
+  `;
+}
+
+function _genPairInputCodeNodeJS(apiParams) {
+  const devConf = dbModule.getDevConf();
+  let url = apiModule.getPairInputUrlByDevConf(devConf, apiParams.deviceMac);
+  if (apiParams.inputType === 'Passkey') {
+    return `
+      var request = require('request');
+      var options = {
+        'method': 'POST',
+        'url': '${url}',
+        'headers': {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({"passkey":"${apiParams.passkey}"})
+      };
+      request(options, function (error, response) { 
+        if (error) throw new Error(error);
+        console.log(response.body);
+      });
+      `;
+  } else if (apiParams.inputType === 'LegacyOOB') {
+    return `
+      var request = require('request');
+      var options = {
+        'method': 'POST',
+        'url': '${url}',
+        'headers': {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({"tk":"${apiParams.tk}"})
+      };
+      request(options, function (error, response) { 
+        if (error) throw new Error(error);
+        console.log(response.body);
+      });
+      `;
+  } else if (apiParams.inputType === 'SecurityOOB') {
+    return `
+      var request = require('request');
+      var options = {
+        'method': 'POST',
+        'url': '${url}',
+        'headers': {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({"rand":"${apiParams.rand}", "confirm":"${apiParams.confirm}"})
+      };
+      request(options, function (error, response) { 
+        if (error) throw new Error(error);
+        console.log(response.body);
+      });
+      `;
+  } 
 }
 
 function _genConnectCodeNodeJS(apiParams) {
@@ -148,6 +376,27 @@ function _genReadCodeNodeJS(apiParams) {
     if (error) throw new Error(error);
     console.log(response.body);
   });
+  `;
+}
+
+function _genNotifyCodeNodeJS(apiParams) {
+  const devConf = dbModule.getDevConf();
+  let url = apiModule.getNotifyUrlByDevConf(devConf);
+
+  return `
+  const EventSource = require('eventsource');
+
+  const url = '${url}';
+
+  const sse = new EventSource(url);
+
+  sse.onerror = function(error) {
+    console.log('open notify sse failed:', error);
+  };
+
+  sse.onmessage = function(message) {
+    console.log('recevied notify sse message:', message);
+  };
   `;
 }
 

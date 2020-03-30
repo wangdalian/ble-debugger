@@ -358,22 +358,22 @@
                   <span slot="label"><i class="el-icon-search"></i> 扫描设备</span>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="使用芯片">
-                      <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].chip" size="small">
+                      <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams['scan'].chip" size="small">
                         <el-radio-button :label="0">芯片0</el-radio-button>
                         <el-radio-button :label="1">芯片1</el-radio-button>
                       </el-radio-group>
                     </el-form-item>
                     <el-form-item label="过滤名称">
-                      <el-select v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].filter_name" placeholder="请输入" multiple filterable allow-create default-first-option style="width: 100%">
+                      <el-select v-model="store.devConfDisplayVars.apiDebuggerParams['scan'].filter_name" placeholder="请输入" multiple filterable allow-create default-first-option style="width: 100%">
                       </el-select>
                     </el-form-item>
                     <el-form-item label="过滤MAC">
-                      <el-select v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].filter_mac" placeholder="请输入" multiple filterable allow-create default-first-option style="width: 100%">
+                      <el-select v-model="store.devConfDisplayVars.apiDebuggerParams['scan'].filter_mac" placeholder="请输入" multiple filterable allow-create default-first-option style="width: 100%">
                       </el-select>
                     </el-form-item>
                     <el-form-item label="过滤RSSI">
                       <el-slider
-                      v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].filter_rssi"
+                      v-model="store.devConfDisplayVars.apiDebuggerParams['scan'].filter_rssi"
                       show-input
                       :min="-85"
                       :max="0">
@@ -392,19 +392,19 @@
                   <span slot="label"><i class="el-icon-connection"></i> 连接设备</span>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="使用芯片">
-                      <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].chip" size="small">
+                      <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams['connect'].chip" size="small">
                         <el-radio-button label="0">芯片0</el-radio-button>
                         <el-radio-button label="1">芯片1</el-radio-button>
                       </el-radio-group>
                     </el-form-item>
                     <el-form-item label="地址类型">
-                      <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].addrType" size="small">
+                      <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams['connect'].addrType" size="small">
                         <el-radio-button label="public">PUBLIC</el-radio-button>
                         <el-radio-button label="random">RANDOM</el-radio-button>
                       </el-radio-group>
                     </el-form-item>
                     <el-form-item label="设备地址">
-                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].deviceMac"></el-input>
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['connect'].deviceMac"></el-input>
                     </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
@@ -418,10 +418,10 @@
                   <span slot="label"><i class="el-icon-reading"></i> 读取数据</span>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="HANDLE">
-                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].handle"></el-input>
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['read'].handle"></el-input>
                     </el-form-item>
                     <el-form-item label="设备地址">
-                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].deviceMac"></el-input>
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['read'].deviceMac"></el-input>
                     </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
@@ -435,19 +435,19 @@
                   <span slot="label"><i class="el-icon-edit-outline"></i> 写入数据</span>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="HANDLE">
-                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].handle"></el-input>
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['write'].handle"></el-input>
                     </el-form-item>
                     <el-form-item label="VALUE">
-                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].value"></el-input>
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['write'].value"></el-input>
                     </el-form-item>
                     <el-form-item label="写入方式">
-                      <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].noresponse" size="small">
+                      <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams['write'].noresponse" size="small">
                         <el-radio-button label="false">等待</el-radio-button>
                         <el-radio-button label="true">不等待</el-radio-button>
                       </el-radio-group>
                     </el-form-item>
                     <el-form-item label="设备地址">
-                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].deviceMac"></el-input>
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['write'].deviceMac"></el-input>
                     </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
@@ -461,7 +461,7 @@
                   <span slot="label"><i class="el-icon-scissors"></i> 断开连接</span>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="设备地址">
-                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams[store.devConfDisplayVars.activeApiTabName].deviceMac"></el-input>
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['disconnect'].deviceMac"></el-input>
                     </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
@@ -471,6 +471,124 @@
                     </el-form-item>
                   </el-form>
                 </el-tab-pane>
+                <el-tab-pane name="connectList">
+                  <span slot="label"><i class="el-icon-scissors"></i> 连接列表</span>
+                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                    <el-form-item align="left">
+                      <el-button-group>
+                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
+                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                      </el-button-group>
+                    </el-form-item>
+                  </el-form>
+                </el-tab-pane>
+                <el-tab-pane name="discover">
+                  <span slot="label"><i class="el-icon-scissors"></i> 设备服务</span>
+                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                    <el-form-item label="设备地址">
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['discover'].deviceMac"></el-input>
+                    </el-form-item>
+                    <el-form-item align="left">
+                      <el-button-group>
+                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
+                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                      </el-button-group>
+                    </el-form-item>
+                  </el-form>
+                </el-tab-pane>
+                <el-tab-pane name="notify">
+                  <span slot="label"><i class="el-icon-scissors"></i> 打开通知</span>
+                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                    <el-form-item align="left">
+                      <el-button-group>
+                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
+                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                      </el-button-group>
+                    </el-form-item>
+                  </el-form>
+                </el-tab-pane>
+                <el-tab-pane name="connectStatus">
+                  <span slot="label"><i class="el-icon-scissors"></i> 连接状态</span>
+                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                    <el-form-item align="left">
+                      <el-button-group>
+                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
+                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                      </el-button-group>
+                    </el-form-item>
+                  </el-form>
+                </el-tab-pane>
+                <el-tab-pane name="pair">
+                  <span slot="label"><i class="el-icon-scissors"></i> 配对</span>
+                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                    <el-form-item label="设备地址">
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['pair'].deviceMac"></el-input>
+                    </el-form-item>
+                    <el-form-item label="输入能力">
+                      <el-select v-model="store.devConfDisplayVars.apiDebuggerParams['pair'].iocapability" style="width: 100%">
+                        <el-option label="DisplayOnly" value="DisplayOnly" key="DisplayOnly"></el-option>
+                        <el-option label="DisplayYesNo" value="DisplayYesNo" key="DisplayYesNo"></el-option>
+                        <el-option label="KeyboardOnly" value="KeyboardOnly" key="KeyboardOnly"></el-option>
+                        <el-option label="NoInputNoOutput" value="NoInputNoOutput" key="NoInputNoOutput"></el-option>
+                        <el-option label="KeyboardDisplay" value="KeyboardDisplay" key="KeyboardDisplay"></el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item align="left">
+                      <el-button-group>
+                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
+                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                      </el-button-group>
+                    </el-form-item>
+                  </el-form>
+                </el-tab-pane>
+                <el-tab-pane name="pairInput">
+                  <span slot="label"><i class="el-icon-scissors"></i> 配对输入</span>
+                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                    <el-form-item label="设备地址">
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['pairInput'].deviceMac"></el-input>
+                    </el-form-item>
+                    <el-form-item label="输入能力">
+                      <el-select v-model="store.devConfDisplayVars.apiDebuggerParams['pairInput'].inputType" style="width: 100%">
+                        <el-option label="Passkey" value="Passkey" key="Passkey"></el-option>
+                        <el-option label="LegacyOOB" value="LegacyOOB" key="LegacyOOB"></el-option>
+                        <el-option label="SecurityOOB" value="SecurityOOB" key="SecurityOOB"></el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="passkey" v-show="store.devConfDisplayVars.apiDebuggerParams['pairInput'].inputType === 'Passkey'">
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['pairInput'].passkey"></el-input>
+                    </el-form-item>
+                    <el-form-item label="tk" v-show="store.devConfDisplayVars.apiDebuggerParams['pairInput'].inputType === 'LegacyOOB'">
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['pairInput'].tk"></el-input>
+                    </el-form-item>
+                    <el-form-item label="rand" v-show="store.devConfDisplayVars.apiDebuggerParams['pairInput'].inputType === 'SecurityOOB'">
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['pairInput'].rand"></el-input>
+                    </el-form-item>
+                    <el-form-item label="confirm" v-show="store.devConfDisplayVars.apiDebuggerParams['pairInput'].inputType === 'SecurityOOB'">
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['pairInput'].confirm"></el-input>
+                    </el-form-item>
+                    <el-form-item align="left">
+                      <el-button-group>
+                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
+                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                      </el-button-group>
+                    </el-form-item>
+                  </el-form>
+                </el-tab-pane>
+                <el-tab-pane name="unpair">
+                  <span slot="label"><i class="el-icon-scissors"></i> 取消配对</span>
+                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                    <el-form-item label="设备地址">
+                      <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['unpair'].deviceMac"></el-input>
+                    </el-form-item>
+                    <el-form-item align="left">
+                      <el-button-group>
+                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
+                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                      </el-button-group>
+                    </el-form-item>
+                  </el-form>
+                </el-tab-pane>
+              </el-tabs>
               </el-tabs>
               <el-tabs v-model="store.devConfDisplayVars.activeApiOutputTabName" v-show="store.devConfDisplayVars.activeMenuItem === 'apiDebuggerMenuItem'">
                 <el-tab-pane name="output">

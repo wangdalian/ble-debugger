@@ -81,6 +81,12 @@ let storage = {
       [libEnum.apiType.READ]: {deviceMac: 'C0:00:5B:D1:AA:BC', handle: '39'},
       [libEnum.apiType.WRITE]: {deviceMac: 'C0:00:5B:D1:AA:BC', handle: '39', value: '21ff310302ff31', noresponse: false},
       [libEnum.apiType.DISCONNECT]: {deviceMac: 'C0:00:5B:D1:AA:BC'},
+      [libEnum.apiType.DISCOVER]: {deviceMac: 'C0:00:5B:D1:AA:BC'},
+      [libEnum.apiType.NOTIFY]: {},
+      [libEnum.apiType.CONNECT_STATUS]: {},
+      [libEnum.apiType.PAIR]: {iocapability: 'KeyboardDisplay', deviceMac: 'C0:00:5B:D1:AA:BC'},
+      [libEnum.apiType.PAIR_INPUT]: {inputType: 'Passkey', deviceMac: 'C0:00:5B:D1:AA:BC', passkey: '', tk: '', rand: '', confirm: ''},
+      [libEnum.apiType.UNPAIR]: {deviceMac: 'C0:00:5B:D1:AA:BC'},
     },
     apiDemoParams: { // demo工具参数
       connectWriteNotify: { // [单设备] 建连->写入->通知
@@ -166,6 +172,55 @@ let cache = {
         [libEnum.codeType.CURL]: '',
         [libEnum.codeType.NODEJS]: ''
       }
+    },
+    [libEnum.apiType.CONNECT_LIST]: {
+      resultList: [],
+      code: {
+        [libEnum.codeType.CURL]: '',
+        [libEnum.codeType.NODEJS]: ''
+      }
+    },
+    [libEnum.apiType.DISCOVER]: {
+      resultList: [],
+      code: {
+        [libEnum.codeType.CURL]: '',
+        [libEnum.codeType.NODEJS]: ''
+      }
+    },
+    [libEnum.apiType.NOTIFY]: {
+      resultList: [],
+      code: {
+        [libEnum.codeType.CURL]: '',
+        [libEnum.codeType.NODEJS]: ''
+      }
+    },
+    [libEnum.apiType.CONNECT_STATUS]: {
+      resultList: [],
+      code: {
+        [libEnum.codeType.CURL]: '',
+        [libEnum.codeType.NODEJS]: ''
+      }
+    },
+    [libEnum.apiType.PAIR]: {
+      resultList: [],
+      code: {
+        [libEnum.codeType.CURL]: '',
+        [libEnum.codeType.NODEJS]: ''
+      }
+    },
+    [libEnum.apiType.PAIR_INPUT]: {
+      resultList: [],
+      code: {
+        [libEnum.codeType.CURL]: '',
+        [libEnum.codeType.NODEJS]: ''
+      }
+    },
+    [libEnum.apiType.UNPAIR]: {
+      resultList: [],
+      code: {
+        [libEnum.codeType.CURL]: '',
+        [libEnum.codeType.NODEJS]: ''
+      }
     }
   },
   scanResultList: [ // 扫描结果缓存池，mac为唯一key，重复的只更新rssi值，显示列表从这取数据，TODO: 待优化查找
@@ -228,7 +283,6 @@ function getBaseURI(devConf) {
   }
   return url;
 }
-
 
 function saveApDevConf(_devConf) {
   _devConf.baseURI = getBaseURI(_devConf);

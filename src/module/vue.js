@@ -375,7 +375,7 @@ function createVueMethods(vue) {
       if (apiType === libEnum.apiType.SCAN) {
         apiResult.sse = apiModule.startScanByUserParams(this.store.devConf, apiParams.chip, apiParams.filter_mac, apiParams.filter_name, apiParams.filter_rssi, (message) => {
           if (this.store.devConfDisplayVars.isApiScanResultDisplayOn) { // 追加到api扫描调试结果里面
-            this.cache.apiDebuggerResult[libEnum.apiType.SCAN].resultList.push({time: Date.now(), data: message.data.trim()});
+            apiResult.resultList.push({time: Date.now(), data: message.data.trim()});
             setTimeout(() => {
               if (!apiResult.sse) return;
               apiResult.sse.close();
@@ -419,6 +419,90 @@ function createVueMethods(vue) {
         }).catch(ex => {
           notify(`断连设备 ${apiParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
           apiResult.resultList.push(`${new Date().toISOString()}: 断连设备失败, ${JSON.stringify({apiParams, ex})}`);
+        });
+      } else if (apiType === libEnum.apiType.CONNECT_LIST) {
+        apiModule.getConnectedListByDevConf(this.store.devConf).then((data) => {
+          notify(`获取连接列表成功`, '操作成功', libEnum.messageType.SUCCESS);
+          apiResult.resultList.push(`${new Date().toISOString()}: 获取连接列表成功, ${JSON.stringify(data)}`);
+        }).catch(ex => {
+          notify(`获取连接列表失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+          apiResult.resultList.push(`${new Date().toISOString()}: 获取连接列表失败, ${JSON.stringify({ex})}`);
+        });
+      } else if (apiType === libEnum.apiType.DISCOVER) {
+        apiModule.getDeviceServiceListByDevConf(this.store.devConf, apiParams.deviceMac).then((data) => {
+          notify(`获取设备服务列表成功`, '操作成功', libEnum.messageType.SUCCESS);
+          apiResult.resultList.push(`${new Date().toISOString()}: 获取设备服务列表成功, ${JSON.stringify(data)}`);
+        }).catch(ex => {
+          notify(`获取设备服务列表失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+          apiResult.resultList.push(`${new Date().toISOString()}: 获取设备服务列表失败, ${JSON.stringify({ex})}`);
+        });
+      } else if (apiType === libEnum.apiType.NOTIFY) {
+        apiResult.sse = apiModule.startNotifyByDevConf(this.store.devConf, (message) => {
+          if (this.store.devConfDisplayVars.isApiScanResultDisplayOn) { // 追加到api扫描调试结果里面
+            this.cache.apiDebuggerResult[libEnum.apiType.NOTIFY].resultList.push({time: Date.now(), data: message.data.trim()});
+            setTimeout(() => {
+              if (!apiResult.sse) return;
+              apiResult.sse.close();
+              apiResult.sse = null;
+              notify('已自动停止API通知', '操作成功', libEnum.messageType.SUCCESS);
+            }, 0);
+          }
+        }, err => {
+          notify(`开启通知失败`, '操作失败', libEnum.messageType.SUCCESS);
+          this.cache.apiDebuggerResult[libEnum.apiType.NOTIFY].resultList.push({time: Date.now(), err: JSON.stringify(err)});
+        });
+        notify('调试API开启通知后收到结果就主动停止，正常的SSE会一直收到数据', '操作成功', libEnum.messageType.SUCCESS);
+      } else if (apiType === libEnum.apiType.CONNECT_STATUS) {
+        apiResult.sse = apiModule.openConnectStatusSseByDevConf(this.store.devConf, (message) => {
+          if (this.store.devConfDisplayVars.isApiScanResultDisplayOn) { // 追加到api扫描调试结果里面
+            this.cache.apiDebuggerResult[libEnum.apiType.CONNECT_STATUS].resultList.push({time: Date.now(), data: message.data.trim()});
+          }
+        }, err => {
+          notify(`开启连接状态失败`, '操作失败', libEnum.messageType.SUCCESS);
+          this.cache.apiDebuggerResult[libEnum.apiType.CONNECT_STATUS].resultList.push({time: Date.now(), err: JSON.stringify(err)});
+        });
+        notify(`开启连接状态成功`, '操作成功', libEnum.messageType.SUCCESS);
+      } else if (apiType === libEnum.apiType.PAIR) {
+        apiModule.pairByDevConf(this.store.devConf, apiParams.deviceMac).then((data) => {
+          notify(`配对成功`, '操作成功', libEnum.messageType.SUCCESS);
+          apiResult.resultList.push(`${new Date().toISOString()}: 配对成功, ${JSON.stringify(data)}`);
+        }).catch(ex => {
+          notify(`配对失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+          apiResult.resultList.push(`${new Date().toISOString()}: 配对失败, ${JSON.stringify({ex})}`);
+        });
+      } else if (apiType === libEnum.apiType.PAIR_INPUT) {
+        if (apiParams.inputType === 'Passkey') { 
+          apiModule.pairByPasskeyByDevConf(this.store.devConf, apiParams.deviceMac, apiParams.passkey).then((data) => {
+            notify(`配对成功`, '操作成功', libEnum.messageType.SUCCESS);
+            apiResult.resultList.push(`${new Date().toISOString()}: 配对成功, ${JSON.stringify(data)}`);
+          }).catch(ex => {
+            notify(`配对失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+            apiResult.resultList.push(`${new Date().toISOString()}: 配对失败, ${JSON.stringify({ex})}`);
+          });
+        } else if (apiParams.inputType === 'LegacyOOB') {
+          apiModule.pairByLegacyOOBByDevConf(this.store.devConf, apiParams.deviceMac, tk).then((data) => {
+            notify(`配对成功`, '操作成功', libEnum.messageType.SUCCESS);
+            apiResult.resultList.push(`${new Date().toISOString()}: 配对成功, ${JSON.stringify(data)}`);
+          }).catch(ex => {
+            notify(`配对失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+            apiResult.resultList.push(`${new Date().toISOString()}: 配对失败, ${JSON.stringify({ex})}`);
+          });
+        } else if (apiParams.inputType === 'LegacyOOB') {
+          apiModule.pairByLegacyOOBByDevConf(this.store.devConf, apiParams.deviceMac, tk).then((data) => {
+            notify(`配对成功`, '操作成功', libEnum.messageType.SUCCESS);
+            apiResult.resultList.push(`${new Date().toISOString()}: 配对成功, ${JSON.stringify(data)}`);
+          }).catch(ex => {
+            notify(`配对失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+            apiResult.resultList.push(`${new Date().toISOString()}: 配对失败, ${JSON.stringify({ex})}`);
+          });
+        }
+      } else if (apiType === libEnum.apiType.UNPAIR) {
+        apiModule.unpairByDevConf(this.store.devConf, apiParams.deviceMac).then((data) => {
+          notify(`取消配对成功`, '操作成功', libEnum.messageType.SUCCESS);
+          apiResult.resultList.push(`${new Date().toISOString()}: 取消配对成功, ${JSON.stringify(data)}`);
+        }).catch(ex => {
+          notify(`取消配对失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+          apiResult.resultList.push(`${new Date().toISOString()}: 取消配对失败, ${JSON.stringify({ex})}`);
         });
       }
     },

@@ -39,7 +39,14 @@ const apiType = {
   CONNECT: 'connect',
   READ: 'read',
   WRITE: 'write',
-  DISCONNECT: 'disconnect'
+  DISCONNECT: 'disconnect',
+  CONNECT_LIST: 'connectList',
+  DISCOVER: 'discover',
+  NOTIFY: 'notify',
+  CONNECT_STATUS: 'connectStatus',
+  PAIR: 'pair',
+  PAIR_INPUT: 'pairInput',
+  UNPAIR: 'unpair'
 }
 
 const codeType = {
