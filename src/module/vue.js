@@ -103,40 +103,43 @@ function createRssiChart() {
 
 function createVueMethods(vue) {
   return {
+    changeLanguage() {
+      this.$i18n.locale = this.store.devConfDisplayVars.language;
+    },
     apInfo() {
       if (this.store.devConf.controlStyle === libEnum.controlStyle.AP) {
-        return notify(`暂时不支持，请使用AC方式获取AP信息`, '操作失败', libEnum.messageType.ERROR);
+        return notify(this.$i18n.t('message.noSupportByAp'), this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       }
       apiModule.infoByDevConf(this.store.devConf).then(() => {
-        notify(`获取AP信息成功`, '操作成功');
+        notify(this.$i18n.t('message.getApInfoOk'), this.$i18n.t('message.operationOk'));
       }).catch(ex => {
-        notify(`获取AP信息失败 ${ex}`, '操作失败', libEnum.messageType.ERROR);
+        notify(`${this.$i18n.t('message.getApInfoFail')} ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       });
     },
     reboot() {
       if (this.store.devConf.controlStyle === libEnum.controlStyle.AP) {
-        return notify(`暂时不支持，请使用AC方式重启AP`, '操作失败', libEnum.messageType.ERROR);
+        return notify(this.$i18n.t('message.noSupportByAp'), this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       }
       apiModule.rebootByDevConf(this.store.devConf).then(() => {
-        notify(`重启AP成功`, '操作成功');
+        notify(this.$i18n.t('message.rebootApOk'), this.$i18n.t('message.operationOk'));
       }).catch(ex => {
-        notify(`重启AP失败 ${ex}`, '操作失败', libEnum.messageType.ERROR);
+        notify(`${this.$i18n.t('message.rebootApFail')} ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       });
     },
     unpair(deviceMac) {
       apiModule.unpairByDevConf(this.store.devConf, deviceMac).then(() => {
-        notify(`取消配对成功 ${deviceMac}`, '操作成功');
+        notify(`${this.$i18n.t('message.unpairOk')} ${deviceMac}`, this.$i18n.t('message.operationOk'));
       }).catch(ex => {
-        notify(`取消配对失败 ${deviceMac} ${ex}`, '操作失败', libEnum.messageType.ERROR);
+        notify(`${this.$i18n.t('message.unpairFail')} ${deviceMac} ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       });
     },
     pairByLegacyOOB() {
       const deviceMac = this.store.devConfDisplayVars.pairByLegacyOOB.deviceMac;
       const tk = this.store.devConfDisplayVars.pairByLegacyOOB.tk;
       apiModule.pairByLegacyOOBByDevConf(this.store.devConf, deviceMac, tk).then(() => {
-        notify(`配对成功 ${deviceMac}`, '操作成功');
+        notify(`${this.$i18n.t('message.pairOk')} ${deviceMac}`, this.$i18n.t('message.operationOk'));
       }).catch(ex => {
-        notify(`配对失败 ${deviceMac} ${ex}`, '操作失败', libEnum.messageType.ERROR);
+        notify(`${this.$i18n.t('message.pairFail')} ${deviceMac} ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       });
     },
     pairBySecurityOOB() {
@@ -144,30 +147,30 @@ function createVueMethods(vue) {
       const rand = this.store.devConfDisplayVars.pairBySecurityOOB.rand;
       const confirm = this.store.devConfDisplayVars.pairBySecurityOOB.confirm;
       apiModule.pairBySecurityOOBByDevConf(this.store.devConf, deviceMac, rand, confirm).then(() => {
-        notify(`配对成功 ${deviceMac}`, '操作成功');
+        notify(`${this.$i18n.t('message.pairOk')} ${deviceMac}`, this.$i18n.t('message.operationOk'));
       }).catch(ex => {
-        notify(`配对失败 ${deviceMac} ${ex}`, '操作失败', libEnum.messageType.ERROR);
+        notify(`${this.$i18n.t('message.pairFail')} ${deviceMac} ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       });
     },
     pairByPasskey() {
       const deviceMac = this.store.devConfDisplayVars.pairByPasskey.deviceMac;
       const passkey = this.store.devConfDisplayVars.pairByPasskey.passkey;
       apiModule.pairByPasskeyByDevConf(this.store.devConf, deviceMac, passkey).then(() => {
-        notify(`配对成功 ${deviceMac}`, '操作成功');
+        notify(`${this.$i18n.t('message.pairOk')} ${deviceMac}`, this.$i18n.t('message.operationOk'));
       }).catch(ex => {
-        notify(`配对失败 ${deviceMac} ${ex}`, '操作失败', libEnum.messageType.ERROR);
+        notify(`${this.$i18n.t('message.pairFail')} ${deviceMac} ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       });
     },
     pair(deviceMac) {
       apiModule.pairByDevConf(this.store.devConf, deviceMac).then((x) => {
         if (x.pairingStatusCode === libEnum.pairingStatusCode.SUCCESS) {
-          return notify(`配对成功 ${deviceMac}`, '操作成功');
+          return notify(`${this.$i18n.t('message.pairOk')} ${deviceMac}`, this.$i18n.t('message.operationOk'));
         } 
         if (x.pairingStatusCode === libEnum.pairingStatusCode.FAILED) {
-          return notify(`配对失败 ${deviceMac}`, '操作失败', libEnum.messageType.ERROR);
+          return notify(`${this.$i18n.t('message.pairFail')} ${deviceMac}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
         } 
         if (x.pairingStatusCode === libEnum.pairingStatusCode.ABORTED) {
-          return notify(`配对终止 ${deviceMac}`, '操作失败', libEnum.messageType.WARNING);
+          return notify(`${this.$i18n.t('message.pairAbort')} ${deviceMac}`, this.$i18n.t('message.operationFail'), libEnum.messageType.WARNING);
         }
         if (x.pairingStatusCode === libEnum.pairingStatusCode.LE_LEGACY_OOB_EXPECTED) {
           this.store.devConfDisplayVars.pairByLegacyOOB.deviceMac = deviceMac;
@@ -186,9 +189,9 @@ function createVueMethods(vue) {
         }
         if (x.pairingStatusCode === libEnum.pairingStatusCode.NUM_CMP_EXPECTED) {
           apiModule.pairByNumbericComparisonByDevConf(this.store.devConf, deviceMac).then(() => {
-            notify(`配对成功 ${deviceMac}`, '操作成功');
+            notify(`${this.$i18n.t('message.pairOk')} ${deviceMac}`, this.$i18n.t('message.operationOk'));
           }).catch(ex => {
-            notify(`配对失败 ${deviceMac} ${ex}`, '操作失败', libEnum.messageType.ERROR);
+            notify(`${this.$i18n.t('message.pairFail')} ${deviceMac} ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
           });
         }
       });
@@ -196,7 +199,7 @@ function createVueMethods(vue) {
     disconnectAll() { // 断连所有
       let all = _.map(this.cache.connectedList, item => {
         apiModule.disconnectByDevConf(this.store.devConf, item.mac).catch(ex => {
-          notify(`断连失败 ${item.mac} ${ex}`, '操作失败', libEnum.messageType.ERROR);
+          notify(`${this.$i18n.t('message.disconnectFail')} ${item.mac} ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
         });
       });
       Promise.all(all).catch(ex => {
@@ -214,10 +217,10 @@ function createVueMethods(vue) {
     apiDemoScanTest() {
       const scanParams = this.store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan;
       let sse = apiModule.startScanByUserParams(this.store.devConf, scanParams.chip, scanParams.filter_mac, scanParams.filter_name, scanParams.filter_rssi, () => {
-        notify(`测试扫描成功`, '操作成功', libEnum.messageType.SUCCESS);
+        notify(`${this.$i18n.t('message.testScanOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
         sse.close();
       }, (error) => {
-        notify(`测试扫描失败: ${error}`, '操作失败', libEnum.messageType.ERROR);
+        notify(`${this.$i18n.t('message.testScanFail')}: ${error}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       });
     },
     apiDemoScanConnectWriteNotifyGenCode() {
@@ -243,9 +246,9 @@ function createVueMethods(vue) {
       const writeParams = this.store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write;
       const connectParams = this.store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect;
       apiModule.writeByHandleByDevConf(this.store.devConf, connectParams.deviceMac, writeParams.handle, writeParams.value, writeParams.noresponse).then(() => {
-        notify(`测试写入数据 ${deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
+        notify(`${this.$i18n.t('message.testWriteOk')}: ${connectParams.deviceMac}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
       }).catch(ex => {
-        notify(`测试写入数据 ${connectParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+        notify(`${this.$i18n.t('message.testWriteFail')}: ${connectParams.deviceMac}, ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       });
     },
     apiDemoConnectTest() {
@@ -253,7 +256,7 @@ function createVueMethods(vue) {
       apiModule.connectByDevConf(this.store.devConf, connectParams.deviceMac, connectParams.addrType, connectParams.chip).then(() => {
         // notify(`连接设备 ${deviceMac} 成功`, '设备连接成功', libEnum.messageType.SUCCESS);
       }).catch(ex => {
-        notify(`测试连接设备 ${connectParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+        notify(`${this.$i18n.t('message.testConnectFail')}: ${connectParams.deviceMac}, ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       });
     },
     apiDemoConnectChanged(apiContentJson) { // URL改变 -> 找到对应的日志 -> 设置对应的参数
@@ -381,60 +384,60 @@ function createVueMethods(vue) {
               apiResult.sse.close();
               apiResult.sse = null;
               this.store.devConfDisplayVars.isApiScanning = false;
-              notify('已自动停止API扫描', '操作成功', libEnum.messageType.SUCCESS);
+              notify(`${this.$i18n.t('message.alreadyStopScan')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
             }, 0);
           }
         });
         this.store.devConfDisplayVars.isApiScanning = true;
         this.store.devConfDisplayVars.activeApiOutputTabName = 'output'; // 切换到调试结果页面
-        notify('调试API扫描到结果就主动停止，正常的SSE会一直收到数据', '操作成功', libEnum.messageType.SUCCESS);
+        notify(`${this.$i18n.t('message.debuggerScanAlert')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
       } else if (apiType === libEnum.apiType.CONNECT) {
         apiModule.connectByDevConf(this.store.devConf, apiParams.deviceMac, apiParams.addrType, apiParams.chip).then(() => {
-          // notify(`连接设备 ${deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
-          apiResult.resultList.push(`${new Date().toISOString()}: 连接设备成功, ${JSON.stringify(apiParams)}`);
+          // notify(`连接设备 ${deviceMac} 成功`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
+          apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.connectDeviceOk')}, ${JSON.stringify(apiParams)}`);
         }).catch(ex => {
-          notify(`连接设备 ${apiParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
-          apiResult.resultList.push(`${new Date().toISOString()}: 连接设备失败, ${JSON.stringify({apiParams, ex})}`);
+          notify(`${this.$i18n.t('message.connectDeviceFail')}: ${apiParams.deviceMac}, ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
+          apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.connectDeviceFail')}, ${JSON.stringify({apiParams, ex})}`);
         });
       } else if (apiType === libEnum.apiType.READ) {
         apiModule.readByHandleByDevConf(this.store.devConf, apiParams.deviceMac, apiParams.handle).then(() => {
-          notify(`读取数据 ${apiParams.deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
-          apiResult.resultList.push(`${new Date().toISOString()}: 读取数据成功, ${JSON.stringify(apiParams)}`);
+          notify(`${this.$i18n.t('message.readDataOk')}: ${apiParams.deviceMac}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
+          apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.readDataOk')}, ${JSON.stringify(apiParams)}`);
         }).catch(ex => {
-          notify(`读取数据 ${apiParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
-          apiResult.resultList.push(`${new Date().toISOString()}: 读取数据失败, ${JSON.stringify({apiParams, ex})}`);
+          notify(`${this.$i18n.t('message.readDataFail')}: ${apiParams.deviceMac}, ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
+          apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.readDataFail')}, ${JSON.stringify({apiParams, ex})}`);
         });
       } else if (apiType === libEnum.apiType.WRITE) {
         apiModule.writeByHandleByDevConf(this.store.devConf, apiParams.deviceMac, apiParams.handle, apiParams.value, apiParams.noresponse).then(() => {
-          notify(`写入数据 ${apiParams.deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
-          apiResult.resultList.push(`${new Date().toISOString()}: 写入数据成功, ${JSON.stringify(apiParams)}`);
+          notify(`${this.$i18n.t('message.writeDataOk')}: ${apiParams.deviceMac}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
+          apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.writeDataOk')}, ${JSON.stringify(apiParams)}`);
         }).catch(ex => {
-          notify(`写入数据 ${apiParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
-          apiResult.resultList.push(`${new Date().toISOString()}: 写入数据失败, ${JSON.stringify({apiParams, ex})}`);
+          notify(`${this.$i18n.t('message.writeDataFail')}: ${apiParams.deviceMac}, ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
+          apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.writeDataFail')}, ${JSON.stringify({apiParams, ex})}`);
         });
       } else if (apiType === libEnum.apiType.DISCONNECT) {
         apiModule.disconnectByDevConf(this.store.devConf, apiParams.deviceMac).then(() => {
-          notify(`断连设备 ${apiParams.deviceMac} 成功`, '操作成功', libEnum.messageType.SUCCESS);
-          apiResult.resultList.push(`${new Date().toISOString()}: 断连设备成功, ${JSON.stringify(apiParams)}`);
+          notify(`${this.$i18n.t('message.disconnectDeviceOk')}: ${apiParams.deviceMac}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
+          apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.disconnectDeviceOk')}, ${JSON.stringify(apiParams)}`);
         }).catch(ex => {
-          notify(`断连设备 ${apiParams.deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
-          apiResult.resultList.push(`${new Date().toISOString()}: 断连设备失败, ${JSON.stringify({apiParams, ex})}`);
+          notify(`${this.$i18n.t('message.disconnectDeviceFail')}: ${apiParams.deviceMac}, ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
+          apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.disconnectDeviceFail')}, ${JSON.stringify({apiParams, ex})}`);
         });
       } else if (apiType === libEnum.apiType.CONNECT_LIST) {
         apiModule.getConnectedListByDevConf(this.store.devConf).then((data) => {
-          notify(`获取连接列表成功`, '操作成功', libEnum.messageType.SUCCESS);
-          apiResult.resultList.push(`${new Date().toISOString()}: 获取连接列表成功, ${JSON.stringify(data)}`);
+          notify(`${this.$i18n.t('message.getConnectListOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
+          apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.getConnectListOk')}, ${JSON.stringify(data)}`);
         }).catch(ex => {
-          notify(`获取连接列表失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
-          apiResult.resultList.push(`${new Date().toISOString()}: 获取连接列表失败, ${JSON.stringify({ex})}`);
+          notify(`${this.$i18n.t('message.getConnectListFail')}: ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
+          apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.getConnectListFail')}, ${JSON.stringify({ex})}`);
         });
       } else if (apiType === libEnum.apiType.DISCOVER) {
         apiModule.getDeviceServiceListByDevConf(this.store.devConf, apiParams.deviceMac).then((data) => {
-          notify(`获取设备服务列表成功`, '操作成功', libEnum.messageType.SUCCESS);
-          apiResult.resultList.push(`${new Date().toISOString()}: 获取设备服务列表成功, ${JSON.stringify(data)}`);
+          notify(`${this.$i18n.t('message.getDeviceServiceListOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
+          apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.getDeviceServiceListOk')}, ${JSON.stringify(data)}`);
         }).catch(ex => {
-          notify(`获取设备服务列表失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
-          apiResult.resultList.push(`${new Date().toISOString()}: 获取设备服务列表失败, ${JSON.stringify({ex})}`);
+          notify(`${this.$i18n.t('message.getDeviceServiceListFail')}: ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
+          apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.getDeviceServiceListFail')}, ${JSON.stringify({ex})}`);
         });
       } else if (apiType === libEnum.apiType.NOTIFY) {
         apiResult.sse = apiModule.startNotifyByDevConf(this.store.devConf, (message) => {
@@ -444,78 +447,78 @@ function createVueMethods(vue) {
               if (!apiResult.sse) return;
               apiResult.sse.close();
               apiResult.sse = null;
-              notify('已自动停止API通知', '操作成功', libEnum.messageType.SUCCESS);
+              notify(`${this.$i18n.t('message.alreadyStopNotify')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
             }, 0);
           }
         }, err => {
-          notify(`开启通知失败`, '操作失败', libEnum.messageType.SUCCESS);
+          notify(`${this.$i18n.t('message.openNotifyFail')}`, this.$i18n.t('message.operationFail'), libEnum.messageType.SUCCESS);
           this.cache.apiDebuggerResult[libEnum.apiType.NOTIFY].resultList.push({time: Date.now(), err: JSON.stringify(err)});
         });
-        notify('调试API开启通知后收到结果就主动停止，正常的SSE会一直收到数据', '操作成功', libEnum.messageType.SUCCESS);
+        notify(`${this.$i18n.t('message.debuggerNotifyAlert')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
       } else if (apiType === libEnum.apiType.CONNECT_STATUS) {
         apiResult.sse = apiModule.openConnectStatusSseByDevConf(this.store.devConf, (message) => {
           if (this.store.devConfDisplayVars.isApiScanResultDisplayOn) { // 追加到api扫描调试结果里面
             this.cache.apiDebuggerResult[libEnum.apiType.CONNECT_STATUS].resultList.push({time: Date.now(), data: message.data.trim()});
           }
         }, err => {
-          notify(`开启连接状态失败`, '操作失败', libEnum.messageType.SUCCESS);
+          notify(`${this.$i18n.t('message.openConnectStatusFail')}`, this.$i18n.t('message.operationFail'), libEnum.messageType.SUCCESS);
           this.cache.apiDebuggerResult[libEnum.apiType.CONNECT_STATUS].resultList.push({time: Date.now(), err: JSON.stringify(err)});
         });
-        notify(`开启连接状态成功`, '操作成功', libEnum.messageType.SUCCESS);
+        notify(`${this.$i18n.t('message.openConnectStatusOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
       } else if (apiType === libEnum.apiType.PAIR) {
         apiModule.pairByDevConf(this.store.devConf, apiParams.deviceMac).then((data) => {
-          notify(`配对成功`, '操作成功', libEnum.messageType.SUCCESS);
-          apiResult.resultList.push(`${new Date().toISOString()}: 配对成功, ${JSON.stringify(data)}`);
+          notify(`${this.$i18n.t('message.pairOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
+          apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.pairOk')}, ${JSON.stringify(data)}`);
         }).catch(ex => {
-          notify(`配对失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
-          apiResult.resultList.push(`${new Date().toISOString()}: 配对失败, ${JSON.stringify({ex})}`);
+          notify(`${this.$i18n.t('message.pairFail')}: ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
+          apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.pairFail')}, ${JSON.stringify({ex})}`);
         });
       } else if (apiType === libEnum.apiType.PAIR_INPUT) {
         if (apiParams.inputType === 'Passkey') { 
           apiModule.pairByPasskeyByDevConf(this.store.devConf, apiParams.deviceMac, apiParams.passkey).then((data) => {
-            notify(`配对成功`, '操作成功', libEnum.messageType.SUCCESS);
-            apiResult.resultList.push(`${new Date().toISOString()}: 配对成功, ${JSON.stringify(data)}`);
+            notify(`${this.$i18n.t('message.pairOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
+            apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.pairOk')}, ${JSON.stringify(data)}`);
           }).catch(ex => {
-            notify(`配对失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
-            apiResult.resultList.push(`${new Date().toISOString()}: 配对失败, ${JSON.stringify({ex})}`);
+            notify(`${this.$i18n.t('message.pairFail')}: ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
+            apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.pairFail')}, ${JSON.stringify({ex})}`);
           });
         } else if (apiParams.inputType === 'LegacyOOB') {
           apiModule.pairByLegacyOOBByDevConf(this.store.devConf, apiParams.deviceMac, tk).then((data) => {
-            notify(`配对成功`, '操作成功', libEnum.messageType.SUCCESS);
-            apiResult.resultList.push(`${new Date().toISOString()}: 配对成功, ${JSON.stringify(data)}`);
+            notify(`${this.$i18n.t('message.pairOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
+            apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.pairOk')}, ${JSON.stringify(data)}`);
           }).catch(ex => {
-            notify(`配对失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
-            apiResult.resultList.push(`${new Date().toISOString()}: 配对失败, ${JSON.stringify({ex})}`);
+            notify(`${this.$i18n.t('message.pairFail')}: ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
+            apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.pairFail')}, ${JSON.stringify({ex})}`);
           });
         } else if (apiParams.inputType === 'LegacyOOB') {
           apiModule.pairByLegacyOOBByDevConf(this.store.devConf, apiParams.deviceMac, tk).then((data) => {
-            notify(`配对成功`, '操作成功', libEnum.messageType.SUCCESS);
-            apiResult.resultList.push(`${new Date().toISOString()}: 配对成功, ${JSON.stringify(data)}`);
+            notify(`${this.$i18n.t('message.pairOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
+            apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.pairOk')}, ${JSON.stringify(data)}`);
           }).catch(ex => {
-            notify(`配对失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
-            apiResult.resultList.push(`${new Date().toISOString()}: 配对失败, ${JSON.stringify({ex})}`);
+            notify(`${this.$i18n.t('message.pairFail')}: ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
+            apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.pairFail')}, ${JSON.stringify({ex})}`);
           });
         }
       } else if (apiType === libEnum.apiType.UNPAIR) {
         apiModule.unpairByDevConf(this.store.devConf, apiParams.deviceMac).then((data) => {
-          notify(`取消配对成功`, '操作成功', libEnum.messageType.SUCCESS);
-          apiResult.resultList.push(`${new Date().toISOString()}: 取消配对成功, ${JSON.stringify(data)}`);
+          notify(`${this.$i18n.t('message.unpairOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
+          apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.unpairOk')}, ${JSON.stringify(data)}`);
         }).catch(ex => {
-          notify(`取消配对失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
-          apiResult.resultList.push(`${new Date().toISOString()}: 取消配对失败, ${JSON.stringify({ex})}`);
+          notify(`${this.$i18n.t('message.unpairFail')}: ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
+          apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.unpairFail')}, ${JSON.stringify({ex})}`);
         });
       }
     },
     openApiOutputDisplay() {
       this.store.devConfDisplayVars.isApiScanResultDisplayOn = true;
-      notify('开启API结果成功', '操作成功', libEnum.messageType.SUCCESS);
+      notify(`${this.$i18n.t('message.openApiResultOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
     },
     closeApiOutputDisplay() {
       this.store.devConfDisplayVars.isApiScanResultDisplayOn = false;
-      notify('关闭API结果成功', '操作成功', libEnum.messageType.SUCCESS);
+      notify(`${this.$i18n.t('message.closeApiResultOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
     },
     exportApiOutputDisplay() {
-      notify('功能待添加', '操作失败', libEnum.messageType.ERROR);
+      notify(`${this.$i18n.t('message.functionToBeAdd')}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
     },
     clearApiOutputDisplay() {
       const apiType = this.store.devConfDisplayVars.activeApiTabName;
@@ -523,22 +526,22 @@ function createVueMethods(vue) {
         this.cache.apiDebuggerResult[this.store.devConfDisplayVars.activeApiTabName].displayResultList.splice(0);
       }
       this.cache.apiDebuggerResult[this.store.devConfDisplayVars.activeApiTabName].resultList.splice(0);
-      notify('清除API结果成功', '操作成功', libEnum.messageType.SUCCESS);
+      notify(`${this.$i18n.t('message.clearApiResultOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
     },
     clearNotify() {
       this.cache.notifyResultList.splice(0);
       this.cache.notifyDisplayResultList.splice(0);
-      notify('清除Notify成功', '操作成功', libEnum.messageType.SUCCESS);
+      notify(`${this.$i18n.t('message.clearNotifyOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
     },
     openNotify() {
       notifyModule.openNotifySse();
       this.store.devConfDisplayVars.isNotifyOn = true;
-      notify('开启Notify成功', '操作成功', libEnum.messageType.SUCCESS);
+      notify(`${this.$i18n.t('message.openNotifyOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
     },
     closeNotify() {
       notifyModule.closeNotifySse();
       this.store.devConfDisplayVars.isNotifyOn = false;
-      notify('关闭Notify成功', '操作成功', libEnum.messageType.SUCCESS);
+      notify(`${this.$i18n.t('message.closeNotifyOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
     },
     stopRssiChart() { // 停止图表
       clearInterval(this.rssiChartUpdateInterval);
@@ -556,9 +559,9 @@ function createVueMethods(vue) {
     },
     destoryAndCreateRssiChart() { // 销毁重建图表
       if (!this.store.devConfDisplayVars.isScanning) {
-        this.$confirm('此操作需要开启扫描, 是否继续?（请配置合适的扫描过滤参数，暂时最多只支持5个设备，否则会自动暂停扫描）', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
+        this.$confirm(`${this.$i18n.t('message.openRssiChartAlert')}`, `${this.$i18n.t('message.alert')}`, {
+          confirmButtonText: `${this.$i18n.t('message.ok')}`,
+          cancelButtonText: `${this.$i18n.t('message.cancel')}`,
           type: 'warning'
         }).then(() => { // 点击确定
           this.startScan();
@@ -566,7 +569,7 @@ function createVueMethods(vue) {
           setTimeout(function(that) {
             that.chartOptions = createRssiChart();
             that.startRssiChart();
-            notify('开启RSSI图表成功', '操作成功', libEnum.messageType.SUCCESS);
+            notify(`${this.$i18n.t('message.openRssiChartOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
           }, 100, this);
           this.store.devConfDisplayVars.rssiChartSwitch = true;
         }).catch(() => { // 点击取消
@@ -577,7 +580,7 @@ function createVueMethods(vue) {
         setTimeout(function(that) {
           that.chartOptions = createRssiChart();
           that.startRssiChart();
-          notify('开启RSSI图表成功', '操作成功', libEnum.messageType.SUCCESS);
+          notify(`${this.$i18n.t('message.openRssiChartOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
         }, 100, this);
         this.store.devConfDisplayVars.rssiChartSwitch = true;
       }
@@ -681,7 +684,7 @@ function createVueMethods(vue) {
       this.cache.scanDisplayResultList.splice(0); // 清空扫描展示数据
       this.cache.scanDevicesRssiHistory = {}; // 清空扫描历史rssi记录
       this.store.devConfDisplayVars.activeMenuItem = 'scanListMenuItem'; // 跳转扫描结果tab页面
-      notify('开启扫描成功', '操作成功', libEnum.messageType.SUCCESS);
+      notify(`${this.$i18n.t('message.openScanOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
     },
     stopApiScan() {
       const apiType = this.store.devConfDisplayVars.activeApiTabName;
@@ -690,7 +693,7 @@ function createVueMethods(vue) {
       apiResult.sse.close();
       apiResult.sse = null;
       this.store.devConfDisplayVars.isApiScanning = false;
-      notify('已自动停止API扫描', '操作成功', libEnum.messageType.SUCCESS);
+      notify(`${this.$i18n.t('message.alreadyStopScan')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
     },
     stopScan() {
       scanModule.stopScan();
@@ -717,7 +720,7 @@ function createVueMethods(vue) {
           });
         }
       }).catch(ex => {
-        notify(`连接设备 ${deviceMac} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+        notify(`${this.$i18n.t('message.connectDeviceFail')}: ${deviceMac}, ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       }).then(() => {
         main.setObjProperty(this.cache.devicesConnectLoading, deviceMac, false);
       });
@@ -734,7 +737,7 @@ function createVueMethods(vue) {
         // CAUTION: 目前通过连接状态SSE发送通知，暂时不考虑SSE失败的情况
         // notify(`设备 ${deviceMac} 断开连接`, `操作成功`, libEnum.messageType.SUCCESS);
       }).catch(function(ex) {
-        notify(`设备 ${deviceMac} 断连失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+        notify(`${this.$i18n.t('message.disconnectFail')}: ${deviceMac}, ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       });
     },
     apiScanFilterNamesHandleClose(tag) {
@@ -820,7 +823,7 @@ function scanDataList2RssiChartData(periodStartTime, periodEndTime, vue) {
   let devicesCount = _.keys(dbModule.getCache().scanDevicesRssiHistory).length;
   if (devicesCount > 5) {
     vue.destoryRssiChart();
-    notify(`当前扫描设备数量超过5个，已自动关闭rssi图表，请配置合适的扫描过滤参数，防止卡顿`, '操作失败', libEnum.messageType.ERROR);
+    notify(`${this.$i18n.t('message.tooManyDeviceScannedAlert')}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
     return [];
   }
   _.forEach(dbModule.getCache().scanDevicesRssiHistory, (rssiHistory, deviceMac) => {

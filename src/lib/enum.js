@@ -70,6 +70,11 @@ const pairingStatusCode = {
   NUM_CMP_EXPECTED: 7,
 };
 
+const language = {
+  CN: 'cn',
+  EN: 'en'
+};
+
 export default {
   operation,
   controlStyle,
@@ -79,5 +84,6 @@ export default {
   apiType,
   codeType,
   deviceAddrType,
-  pairingStatusCode
+  pairingStatusCode,
+  language
 }

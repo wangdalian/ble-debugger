@@ -14,9 +14,10 @@
             <img :src="require('./assets/img/cassia.png')" style="vertical-align: middle; width: 38px; height: 38px; margin-top: -10px;"></img>
         </span>
         <span style="font-size: 22px;">
-        Cassia 蓝牙调试工具</span>
+        {{ $t('message.title') }}
+        </span>
         <span style="float: right;">Language
-          <el-select v-model="store.devConfDisplayVars.language" size="small" style="width: 120px; padding-right: 15px;">
+          <el-select @change="changeLanguage" v-model="store.devConfDisplayVars.language" size="small" style="width: 120px; padding-right: 15px;">
             <el-option label="中文" value="中文"></el-option>
             <el-option label="English" value="English"></el-option>
           </el-select>   
@@ -29,44 +30,44 @@
             <el-main>
               <el-form label-width="80px" size="small">
               <el-row style="font-size: 16px; border-bottom: 1px solid #ddd; margin-top: 10px;">
-                <span>配置连接参数</span>
+                <span>{{ $t('message.configConnectParams') }}</span>
               </el-row>
-              <el-form-item label="连接方式" style="margin-top: 15px;">
+              <el-form-item :label="$t('message.connectStyle')" style="margin-top: 15px;">
                 <el-select v-model="store.devConf.controlStyle" style="width: 100%">
                   <el-option label="ap" value="ap"></el-option>
                   <el-option label="ac" value="ac"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="服务URL" style="margin-top: 15px;">
+              <el-form-item :label="$t('message.serviceURI')" style="margin-top: 15px;">
                 <el-input v-model="store.devConf.serverURI" class="server-ip" clearable placeholder="http://192.168.0.100"></el-input>
               </el-form-item>
-              <el-form-item label="开发账号" v-show="store.devConf.controlStyle === 'ac'"  style="margin-top: 15px;">
+              <el-form-item :label="$t('message.devKey')" v-show="store.devConf.controlStyle === 'ac'"  style="margin-top: 15px;">
                 <el-input v-model="store.devConf.acDevKey" class="ac-dev-key" clearable></el-input>
               </el-form-item>
-              <el-form-item label="开发密码" v-show="store.devConf.controlStyle === 'ac'"  style="margin-top: 15px;">
+              <el-form-item :label="$t('message.devSecret')" v-show="store.devConf.controlStyle === 'ac'"  style="margin-top: 15px;">
                 <el-input v-model="store.devConf.acDevSecret" class="ac-dev-secret" clearable></el-input>
               </el-form-item>
-              <el-form-item label="AP MAC" v-show="store.devConf.controlStyle === 'ac'"  style="margin-top: 15px;">
+              <el-form-item :label="$t('message.apMac')" v-show="store.devConf.controlStyle === 'ac'"  style="margin-top: 15px;">
                 <el-input v-model="store.devConf.mac" class="ap-mac" placeholder="CC:1B:E0:E0:DD:70" clearable></el-input>
               </el-form-item>
               <el-row style="font-size: 16px; border-bottom: 1px solid #ddd; margin-top: 50px;">
-                <span>配置扫描参数</span>
+                <span>{{$t('message.configScanParams')}}</span>
               </el-row>
-              <el-form-item label="使用芯片" style="margin-top: 15px;">
+              <el-form-item :label="$t('message.useChip')" style="margin-top: 15px;">
                 <el-select v-model="store.devConf.chip" style="width: 100%">
                   <el-option label="0" value="0"></el-option>
                   <el-option label="1" value="1"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="过滤名称" style="margin-top: 15px;">
-                <el-select v-model="store.devConf.filter_name" placeholder="请输入" multiple filterable allow-create default-first-option style="width: 100%">
+              <el-form-item :label="$t('message.filterName')" style="margin-top: 15px;">
+                <el-select v-model="store.devConf.filter_name" multiple filterable allow-create default-first-option style="width: 100%">
                 </el-select>
               </el-form-item>
-              <el-form-item label="过滤MAC">
-                <el-select v-model="store.devConf.filter_mac" placeholder="请输入" multiple filterable allow-create default-first-option style="width: 100%">
+              <el-form-item :label="$t('message.filterMac')">
+                <el-select v-model="store.devConf.filter_mac" multiple filterable allow-create default-first-option style="width: 100%">
                 </el-select>
               </el-form-item>
-              <el-form-item label="过滤RSSI">
+              <el-form-item :label="$t('message.fitlerRSSI')">
                 <el-slider
                     v-model="store.devConf.filter_rssi"
                     :min="-85"
@@ -76,10 +77,10 @@
               </el-form>
             </el-main>
             <el-footer style="background-color: #ddd; width: 350px; height: 50px; line-height: 50px; vertial-align: middle; text-align: center; position: fixed; bottom: 0; left: 0;">
-              <el-button type="danger" size="small" @click="reboot" style="margin-right: 20px;">重启 AP</el-button>
+              <el-button type="danger" size="small" @click="reboot" style="margin-right: 30px;">{{$t('message.restartAP')}}</el-button>
               <!--<el-button type="primary" size="small" @click="apInfo" style="margin-right: 20px;">AP 信息</el-button>-->
-              <el-button type="primary" size="small" @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
-              <el-button type="danger" size="small" @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
+              <el-button type="primary" size="small" @click="startScan" v-show="!store.devConfDisplayVars.isScanning">{{$t('message.startScan')}}</el-button>
+              <el-button type="danger" size="small" @click="stopScan" v-show="store.devConfDisplayVars.isScanning">{{$t('message.stopScan')}}</el-button>
             </el-footer>
           </el-container>
         </el-aside>
@@ -96,48 +97,48 @@
                 class="el-menu-vertical-demo">
                 <el-menu-item index="configMenuItem">
                   <i class="el-icon-s-fold" style="font-size: 24px; color: #fff;"></i>
-                  <span slot="title">配置参数</span>
+                  <span slot="title">{{$t('message.configParams')}}</span>
                 </el-menu-item>
                 <el-menu-item index="scanListMenuItem">
                   <i class="el-icon-search" style="font-size: 24px; color: #fff;"></i>
-                  <span slot="title">扫描列表</span>
+                  <span slot="title">{{$t('message.scanList')}}</span>
                 </el-menu-item>
                 <el-menu-item index="connectListMenuItem">
                   <i class="el-icon-connection" style="font-size: 24px; color: #fff;"></i>
-                  <span slot="title">连接列表</span>
+                  <span slot="title">{{$t('message.connectList')}}</span>
                 </el-menu-item>
                 <el-menu-item index="notifyListMenuItem">
                   <i class="el-icon-message-solid" style="font-size: 24px; color: #fff;"></i>
-                  <span slot="title">通知列表</span>
+                  <span slot="title">{{$t('message.notifyList')}}</span>
                 </el-menu-item>
                 <el-menu-item index="apiLogListMenuItem">
                   <i class="el-icon-s-order" style="font-size: 24px; color: #fff;"></i>
-                  <span slot="title">接口日志</span>
+                  <span slot="title">{{$t('message.apiLogList')}}</span>
                 </el-menu-item>
                 <el-menu-item index="apiDebuggerMenuItem">
                   <i class="el-icon-service" style="font-size: 24px; color: #fff;"></i>
-                  <span slot="title">接口调试</span>
+                  <span slot="title">{{$t('message.apiDebugger')}}</span>
                 </el-menu-item>
                 <el-menu-item index="apiDemoMenuItem">
                   <i class="el-icon-magic-stick" style="font-size: 24px; color: #fff;"></i>
-                  <span slot="title">场景示例</span>
+                  <span slot="title">{{$t('message.apiDemo')}}</span>
                 </el-menu-item>
                 <el-menu-item index="toolsMenuItem">
                   <i class="el-icon-s-tools" style="font-size: 24px; color: #fff;"></i>
-                  <span slot="title">常用工具</span>
+                  <span slot="title">{{$t('message.tools')}}</span>
                 </el-menu-item>
               </el-menu>
             </el-aside>
             <el-main style="height: 100%; margin-left: 80px;">
               <el-tabs style="background-color: #fff"	@tab-click="scanTabsClick" v-show="store.devConfDisplayVars.activeMenuItem === 'scanListMenuItem'">
                 <el-tab-pane style="height: 100%; background-color: #fff; " >
-                  <span slot="label"><i class="el-icon-s-data"></i> 扫描结果</span>
+                  <span slot="label"><i class="el-icon-s-data"></i> {{$t('message.scanResult')}}</span>
                   <vxe-toolbar>
                     <template v-slot:buttons>
-                      <span>设备数量: <span style="font-weight: bold; color: #409eff">{{ getComputedScanDisplayResultList.length }} </span></span>
-                      <vxe-input v-model="cache.scanDisplayFilterContent" type="search" placeholder="搜索mac或name" size="small"></vxe-input>
-                      <vxe-button @click="scanDisplayResultExport" status="primary" size="small">导出</vxe-button>
-                      <vxe-button @click="scanDisplayResultClear" status="danger" size="small">清空</vxe-button>
+                      <span>{{$t('message.devicesCount')}}<span style="font-weight: bold; color: #409eff">{{ getComputedScanDisplayResultList.length }} </span></span>
+                      <vxe-input v-model="cache.scanDisplayFilterContent" type="search" :placeholder="$t('message.searchMacOrName')" size="small"></vxe-input>
+                      <vxe-button @click="scanDisplayResultExport" status="primary" size="small">{{$t('message.export')}}</vxe-button>
+                      <vxe-button @click="scanDisplayResultClear" status="danger" size="small">{{$t('message.clear')}}</vxe-button>
                     </template>
                   </vxe-toolbar>
                   <!-- 注意设置为固定高度，否则页面在过多的数据时候会造成卡顿，TODO: 是否考虑使用分页优化? -->
@@ -151,44 +152,44 @@
                     ref="refScanDisplayResultGrid"
                     :sort-config="{trigger: 'cell'}"
                     :data="getComputedScanDisplayResultList">
-                    <vxe-table-column field="name" title="名称" type="html" width="25%" sortable></vxe-table-column>
-                    <vxe-table-column field="mac" title="地址" type="html" width="30%" show-overflow></vxe-table-column>
-                    <vxe-table-column field="bdaddrType" title="类型" width="15%" sortable></vxe-table-column>
-                    <vxe-table-column field="rssi" title="信号" width="15%" sortable></vxe-table-column>
+                    <vxe-table-column field="name" :title="$t('message.name')" type="html" width="25%" sortable></vxe-table-column>
+                    <vxe-table-column field="mac" :title="$t('message.addr')" type="html" width="30%" show-overflow></vxe-table-column>
+                    <vxe-table-column field="bdaddrType" :title="$t('message.type')" width="15%" sortable></vxe-table-column>
+                    <vxe-table-column field="rssi" :title="$t('message.signal')" width="15%" sortable></vxe-table-column>
                     <!-- 暂时不显示广播包了，没有找到合适位置，上面的字段自定义slot，数据量大的话会卡顿 -->
                     <!-- <vxe-table-column field="adData" title="广播包" :width="store.devConfDisplayVars.adDataWidth" show-overflow></vxe-table-column> -->
-                    <vxe-table-column title="操作" width="15%">
+                    <vxe-table-column :title="$t('message.operation')" width="15%">
                       <template v-slot="{ row }">
-                        <vxe-button status="primary" size="small" @click="connectDeviceByRow(row, row.mac)" :loading="cache.devicesConnectLoading[row.mac]">连接</vxe-button>
+                        <vxe-button status="primary" size="small" @click="connectDeviceByRow(row, row.mac)" :loading="cache.devicesConnectLoading[row.mac]">{{$t('message.connect')}}</vxe-button>
                       </template>
                     </vxe-table-column>
                   </vxe-grid>
                 </el-tab-pane>
                 <el-tab-pane style="width: 100%;">
-                  <span slot="label"><i class="el-icon-pie-chart"></i> RSSI图表</span>
+                  <span slot="label"><i class="el-icon-pie-chart"></i> {{$t('message.rssiChart')}}</span>
                   <el-row>
                     <el-form inline size="small">
-                      <el-form-item label="统计周期">
-                        <el-select v-model="store.devConfDisplayVars.rssiChartPeriod" placeholder="统计周期" style="width: 100px;">
-                          <el-option label="60秒" value="60"></el-option>
+                      <el-form-item :label="$t('message.statsCycle')">
+                        <el-select v-model="store.devConfDisplayVars.rssiChartPeriod" :placeholder="$t('message.statsCycle')" style="width: 100px;">
+                          <el-option :label="$t('message.seconds60')" value="60"></el-option>
                         </el-select>
                       </el-form-item>
-                      <el-form-item label="统计间隔">
-                        <el-select v-model="store.devConfDisplayVars.rssiChartDataSpan" placeholder="统计间隔" @change="rssiChartDataSpanChange" style="width: 100px;">
-                          <el-option label="200毫秒" value="200"></el-option>
-                          <el-option label="500毫秒" value="500"></el-option>
-                          <el-option label="1秒" value="1000"></el-option>
-                          <el-option label="2秒" value="2000"></el-option>
-                          <el-option label="5秒" value="5000"></el-option>
-                          <el-option label="10秒" value="10000"></el-option>
-                          <el-option label="30秒" value="30000"></el-option>
+                      <el-form-item :label="$t('message.statsInterval')">
+                        <el-select v-model="store.devConfDisplayVars.rssiChartDataSpan" :placeholder="$t('message.statsInterval')" @change="rssiChartDataSpanChange" style="width: 100px;">
+                          <el-option :label="$t('message.millseconds200')" value="200"></el-option>
+                          <el-option :label="$t('message.millseconds500')" value="500"></el-option>
+                          <el-option :label="$t('message.seconds1')" value="1000"></el-option>
+                          <el-option :label="$t('message.seconds2')" value="2000"></el-option>
+                          <el-option :label="$t('message.seconds5')" value="5000"></el-option>
+                          <el-option :label="$t('message.seconds10')" value="10000"></el-option>
+                          <el-option :label="$t('message.seconds30')" value="30000"></el-option>
                         </el-select>
                       </el-form-item>
                       <el-form-item>
-                        <el-button v-show="!store.devConfDisplayVars.rssiChartSwitch" size="small" @click="destoryAndCreateRssiChart" type="primary">开启</el-button>
-                        <el-button v-show="store.devConfDisplayVars.rssiChartSwitch && !store.devConfDisplayVars.rssiChartStopped" size="small" @click="stopRssiChart" type="primary">暂停</el-button>
-                        <el-button v-show="store.devConfDisplayVars.rssiChartSwitch && store.devConfDisplayVars.rssiChartStopped" size="small" @click="startRssiChart" type="primary">继续</el-button>
-                        <el-button v-show="store.devConfDisplayVars.rssiChartSwitch" size="small" @click="destoryRssiChart" type="primary">关闭</el-button>
+                        <el-button v-show="!store.devConfDisplayVars.rssiChartSwitch" size="small" @click="destoryAndCreateRssiChart" type="primary">{{$t('message.open')}}</el-button>
+                        <el-button v-show="store.devConfDisplayVars.rssiChartSwitch && !store.devConfDisplayVars.rssiChartStopped" size="small" @click="stopRssiChart" type="primary">{{$t('message.stop')}}</el-button>
+                        <el-button v-show="store.devConfDisplayVars.rssiChartSwitch && store.devConfDisplayVars.rssiChartStopped" size="small" @click="startRssiChart" type="primary">{{$t('message.continue')}}</el-button>
+                        <el-button v-show="store.devConfDisplayVars.rssiChartSwitch" size="small" @click="destoryRssiChart" type="primary">{{$t('message.close')}}</el-button>
                       </el-form-item>
                     </el-form>
                   </el-row>
@@ -197,14 +198,14 @@
               </el-tabs>
               <el-tabs @tab-click="connectTabsClick" v-model="cache.currentConnectedTab" @tab-remove="connectedListTabRemove" v-show="store.devConfDisplayVars.activeMenuItem === 'connectListMenuItem'">
                 <el-tab-pane :closable="false">
-                  <span slot="label"><i class="el-icon-s-data"></i> 连接列表</span>
+                  <span slot="label"><i class="el-icon-s-data"></i> {{$t('message.connectList')}}</span>
                   <vxe-toolbar>
                     <template v-slot:buttons>
-                      <span>已连接设备: <span style="font-weight: bold; color: #409eff">{{ getComputedConnectDisplayResultList().length }} </span></span>
-                      <vxe-input v-model="cache.connectDisplayFilterContent" type="search" placeholder="搜索mac或name" size="small"></vxe-input>
-                      <vxe-button @click="connectDisplayResultExport" status="primary" size="small">导出</vxe-button>
-                      <vxe-button status="danger" size="small">清空</vxe-button>
-                      <vxe-button @click="disconnectAll" status="danger" size="small">全部断连</vxe-button>
+                      <span>{{$t('message.connectedDevices')}}: <span style="font-weight: bold; color: #409eff">{{ getComputedConnectDisplayResultList().length }} </span></span>
+                      <vxe-input v-model="cache.connectDisplayFilterContent" type="search" :placeholder="$t('message.searchMacOrName')" size="small"></vxe-input>
+                      <vxe-button @click="connectDisplayResultExport" status="primary" size="small">{{$t('message.export')}}</vxe-button>
+                      <vxe-button status="danger" size="small">{{$t('message.clear')}}</vxe-button>
+                      <vxe-button @click="disconnectAll" status="danger" size="small">{{$t('message.disconnectAll')}}</vxe-button>
                     </template>
                   </vxe-toolbar>
                   <!-- 注意设置为固定高度，否则页面在过多的数据时候会造成卡顿，TODO: 是否考虑使用分页优化? -->
@@ -218,18 +219,18 @@
                     ref="refConnectDisplayResultGrid"
                     :sort-config="{trigger: 'cell'}"
                     :data="getComputedConnectDisplayResultList()">
-                    <vxe-table-column field="name" title="名称" type="html" width="15%" sortable></vxe-table-column>
-                    <vxe-table-column field="mac" title="地址" type="html" width="20%" show-overflow></vxe-table-column>
-                    <vxe-table-column field="chip" title="芯片" type="html" width="15%" sortable></vxe-table-column>
-                    <vxe-table-column field="bdaddrType" title="类型" width="15%" sortable></vxe-table-column>
-                    <vxe-table-column title="操作" width="35%">
+                    <vxe-table-column field="name" :title="$t('message.name')" type="html" width="15%" sortable></vxe-table-column>
+                    <vxe-table-column field="mac" :title="$t('message.addr')" type="html" width="20%" show-overflow></vxe-table-column>
+                    <vxe-table-column field="chip" :title="$t('message.chip')" type="html" width="15%" sortable></vxe-table-column>
+                    <vxe-table-column field="bdaddrType" :title="$t('message.type')" width="15%" sortable></vxe-table-column>
+                    <vxe-table-column :title="$t('message.operation')" width="35%">
                       <template v-slot="{ row }">
                         <el-button-group>
-                          <el-button type="primary" size="small" @click="getDeviceServices(row.mac)">服务</el-button>
-                          <el-button type="primary" size="small" @click="disconnectDevice(row.mac)">断连</el-button>
-                          <el-button type="primary" size="small" @click="pair(row.mac)">配对</el-button>
-                          <el-button type="primary" size="small" @click="unpair(row.mac)">取消配对</el-button>
-                          <el-button type="primary" size="small" @click="exportDeviceServices(device.mac)">导出</el-button>
+                          <el-button type="primary" size="small" @click="getDeviceServices(row.mac)">{{$t('message.services')}}</el-button>
+                          <el-button type="primary" size="small" @click="disconnectDevice(row.mac)">{{$t('message.disconnect')}}</el-button>
+                          <el-button type="primary" size="small" @click="pair(row.mac)">{{$t('message.pair')}}</el-button>
+                          <el-button type="primary" size="small" @click="unpair(row.mac)">{{$t('message.unpair')}}</el-button>
+                          <el-button type="primary" size="small" @click="exportDeviceServices(device.mac)">{{$t('message.export')}}</el-button>
                         </el-button-group>
                       </template>
                     </vxe-table-column>
@@ -246,11 +247,11 @@
                     <el-col :span="3">chip{{ device.chip }}</el-col>
                     <el-col :span="12">
                       <el-button-group style="float: right; ">
-                        <el-button size="small" @click="getDeviceServices(device.mac)" style="color: #2897ff">服务</el-button>
-                        <el-button size="small" @click="disconnectDevice(device.mac)" style="color: #2897ff">断连</el-button>
-                        <el-button size="small" @click="pair(device.mac)" style="color: #2897ff">配对</el-button>
-                        <el-button size="small" @click="unpair(device.mac)" style="color: #2897ff">取消配对</el-button>
-                        <el-button size="small" @click="exportDeviceServices(device.mac)" style="color: #2897ff">导出</el-button>
+                        <el-button size="small" @click="getDeviceServices(device.mac)" style="color: #2897ff">{{$t('message.services')}}</el-button>
+                        <el-button size="small" @click="disconnectDevice(device.mac)" style="color: #2897ff">{{$t('message.disconnect')}}</el-button>
+                        <el-button size="small" @click="pair(device.mac)" style="color: #2897ff">{{$t('message.pair')}}</el-button>
+                        <el-button size="small" @click="unpair(device.mac)" style="color: #2897ff">{{$t('message.unpair')}}</el-button>
+                        <el-button size="small" @click="exportDeviceServices(device.mac)" style="color: #2897ff">{{$t('message.export')}}</el-button>
                       </el-button-group>
                     </el-col>
                   </el-row>
@@ -292,13 +293,13 @@
                           <el-row style="font-size: 12px; font-style: normal; color: #409eff" v-show="char.readValue.toString().length !== 0">
                             Value: (0x) 
                             <el-popover trigger="click" width="600" placement="right">
-                              <el-table :data="char.parsedReadValues" width="100%" stripe empty-text="暂未添加解析">
-                                <el-table-column label="字段" width="180">
+                              <el-table :data="char.parsedReadValues" width="100%" stripe :empty-text="$t('message.noParser')">
+                                <el-table-column :label="$t('message.field')" width="180">
                                   <template slot-scope="scope">
                                     <span>{{ scope.row.name }}</span>
                                   </template>
                                 </el-table-column>
-                                <el-table-column label="解析" width="300">
+                                <el-table-column :label="$t('message.parse')" width="300">
                                   <template slot-scope="scope">
                                     <span>{{ scope.row.parsed }}</span>
                                   </template>
@@ -322,16 +323,16 @@
               </el-tabs>
               <el-tabs v-show="store.devConfDisplayVars.activeMenuItem === 'notifyListMenuItem'">
                 <el-tab-pane>
-                  <span slot="label"><i class="el-icon-connection"></i> 通知列表</span>
+                  <span slot="label"><i class="el-icon-connection"></i> </span>
                   <el-row>
                     <vxe-toolbar>
                       <template v-slot:buttons>
-                        <span>收到通知: <span style="font-weight: bold; color: #409eff">{{ getComputedNotifyDisplayResultList.length }} </span></span>
-                        <vxe-input v-model="cache.notifyDisplayFilterContent" type="search" placeholder="搜索mac" size="small"></vxe-input>
-                        <vxe-button @click="openNotify" status="primary" size="small" v-show="!store.devConfDisplayVars.isNotifyOn">开启</vxe-button>
-                        <vxe-button @click="closeNotify" status="danger" size="small" v-show="store.devConfDisplayVars.isNotifyOn">关闭</vxe-button>
-                        <vxe-button @click="notifyDisplayResultExport" status="primary" size="small">导出</vxe-button>
-                        <vxe-button @click="notifyDisplayResultClear" status="danger" size="small">清空</vxe-button>
+                        <span>{{$t('message.receivedNotifys')}}: <span style="font-weight: bold; color: #409eff">{{ getComputedNotifyDisplayResultList.length }} </span></span>
+                        <vxe-input v-model="cache.notifyDisplayFilterContent" type="search" :placeholder="$t('message.searchMac')" size="small"></vxe-input>
+                        <vxe-button @click="openNotify" status="primary" size="small" v-show="!store.devConfDisplayVars.isNotifyOn">{{$t('message.open')}}</vxe-button>
+                        <vxe-button @click="closeNotify" status="danger" size="small" v-show="store.devConfDisplayVars.isNotifyOn">{{$t('message.close')}}</vxe-button>
+                        <vxe-button @click="notifyDisplayResultExport" status="primary" size="small">{{$t('message.export')}}</vxe-button>
+                        <vxe-button @click="notifyDisplayResultClear" status="danger" size="small">{{$t('message.clear')}}</vxe-button>
                       </template>
                     </vxe-toolbar>
                     <!-- 注意设置为固定高度，否则页面在过多的数据时候会造成卡顿，TODO: 是否考虑使用分页优化? -->
@@ -345,37 +346,67 @@
                       ref="refNotifyDisplayResultGrid"
                       :sort-config="{trigger: 'cell'}"
                       :data="getComputedNotifyDisplayResultList">
-                      <vxe-table-column field="time" title="时间戳" type="html" width="20%" sortable></vxe-table-column>
-                      <vxe-table-column field="mac" title="地址" type="html" width="30%" show-overflow></vxe-table-column>
+                      <vxe-table-column field="time" :title="$t('message.timestamp')" type="html" width="20%" sortable></vxe-table-column>
+                      <vxe-table-column field="mac" :title="$t('message.addr')" type="html" width="30%" show-overflow></vxe-table-column>
                       <vxe-table-column field="handle" title="HANDLE" width="10%" ></vxe-table-column>
                       <vxe-table-column field="value" title="VALUE" width="40%" show-overflow></vxe-table-column>
                     </vxe-grid>
                   </el-row>
                 </el-tab-pane>
               </el-tabs>
+              <el-tabs v-show="store.devConfDisplayVars.activeMenuItem === 'apiLogListMenuItem'">
+                <el-tab-pane>
+                  <span slot="label"><i class="el-icon-connection"></i> {{$t('message.apiLogList')}}</span>
+                  <el-row>
+                    <vxe-toolbar>
+                      <template v-slot:buttons>
+                        <span>{{$t('message.logsCount')}}: <span style="font-weight: bold; color: #409eff">{{ getComputedApiLogDisplayResultList().length }} </span></span>
+                        <vxe-input v-model="cache.apiLogDisplayFilterContent" type="search" :placeholder="$t('message.search')" size="small"></vxe-input>
+                        <vxe-button @click="apiLogDisplayResultExport" status="primary" size="small">{{$t('message.export')}}</vxe-button>
+                        <vxe-button @click="apiLogDisplayResultClear" status="danger" size="small">{{$t('message.clear')}}</vxe-button>
+                      </template>
+                    </vxe-toolbar>
+                    <!-- 注意设置为固定高度，否则页面在过多的数据时候会造成卡顿，TODO: 是否考虑使用分页优化? -->
+                    <vxe-grid 
+                      border="none"
+                      stripe
+                      height="560px"
+                      highlight-hover-row
+                      :header-row-style="{'background-color': '#f4f5f6'}"
+                      ref="refApiLogDisplayResultGrid"
+                      :sort-config="{trigger: 'cell'}"
+                      :data="getComputedApiLogDisplayResultList()">
+                      <vxe-table-column field="timeStr" :title="$t('message.time')" type="html" width="20%" sortable></vxe-table-column>
+                      <vxe-table-column field="apiName" :title="$t('message.apiName')" type="html" width="10%" sortable></vxe-table-column>
+                      <vxe-table-column field="apiContentJson" :title="$t('message.reqContent')" type="html" width="70%" sortable></vxe-table-column>
+                      <!-- TODO: 增加重放功能 -->
+                    </vxe-grid>
+                  </el-row>
+                </el-tab-pane>
+              </el-tabs>
               <el-tabs v-model="store.devConfDisplayVars.activeApiTabName" v-show="store.devConfDisplayVars.activeMenuItem === 'apiDebuggerMenuItem'">
                 <el-tab-pane name="scan">
-                  <span slot="label">扫描设备</span>
+                  <span slot="label">{{$t('message.scanDevices')}}</span>
                   <el-row class="apiHelp">
-                    此接口是SSE长连接，调用接口后，蓝牙路由器会扫描周边的设备，并将蓝牙设备的MAC地址(bdaddr)、地址类型（bdaddrType）、广播报数据（adData/scanData）、设备名称（name）、信号强度（rssi）等信息以http response的形式返回。
-                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#scan-bluetooth-devices" target="_blank">更多参考</a>
+                    {{$t('message.scanDevicesInfo')}}
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#scan-bluetooth-devices" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
-                    <el-form-item label="使用芯片">
+                    <el-form-item :label="$t('message.useChip')">
                       <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams['scan'].chip" size="small">
-                        <el-radio-button :label="0">芯片0</el-radio-button>
-                        <el-radio-button :label="1">芯片1</el-radio-button>
+                        <el-radio-button :label="0">{{$t('message.chip0')}}</el-radio-button>
+                        <el-radio-button :label="1">{{$t('message.chip1')}}</el-radio-button>
                       </el-radio-group>
                     </el-form-item>
-                    <el-form-item label="过滤名称">
-                      <el-select v-model="store.devConfDisplayVars.apiDebuggerParams['scan'].filter_name" placeholder="请输入" multiple filterable allow-create default-first-option style="width: 100%">
+                    <el-form-item :label="$t('message.filterName')">
+                      <el-select v-model="store.devConfDisplayVars.apiDebuggerParams['scan'].filter_name" multiple filterable allow-create default-first-option style="width: 100%">
                       </el-select>
                     </el-form-item>
-                    <el-form-item label="过滤MAC">
-                      <el-select v-model="store.devConfDisplayVars.apiDebuggerParams['scan'].filter_mac" placeholder="请输入" multiple filterable allow-create default-first-option style="width: 100%">
+                    <el-form-item :label="$t('message.filterMac')">
+                      <el-select v-model="store.devConfDisplayVars.apiDebuggerParams['scan'].filter_mac" multiple filterable allow-create default-first-option style="width: 100%">
                       </el-select>
                     </el-form-item>
-                    <el-form-item label="过滤RSSI">
+                    <el-form-item :label="$t('message.fitlerRSSI')">
                       <el-slider
                       v-model="store.devConfDisplayVars.apiDebuggerParams['scan'].filter_rssi"
                       show-input
@@ -385,69 +416,69 @@
                     </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
-                        <el-button type="primary" size="small" @click="startDebugApi" v-show="!store.devConfDisplayVars.isApiScanning">开始调试</el-button>
-                        <el-button type="danger" size="small" @click="stopApiScan" v-show="store.devConfDisplayVars.isApiScanning">停止扫描</el-button>
-                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                        <el-button type="primary" size="small" @click="startDebugApi" v-show="!store.devConfDisplayVars.isApiScanning">{{$t('message.startDebug')}}</el-button>
+                        <el-button type="danger" size="small" @click="stopApiScan" v-show="store.devConfDisplayVars.isApiScanning">{{$t('message.stopScan')}}</el-button>
+                        <el-button type="primary" size="small" @click="genCode">{{$t('message.genCode')}}</el-button>
                       </el-button-group>
                     </el-form-item>
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="connect">
-                  <span slot="label">连接设备</span>
+                  <span slot="label">{{$t('message.connectDevice')}}</span>
                   <el-row class="apiHelp">
-                    此接口为同步连接接口，调用接口后，蓝牙路由器会与指定的设备建立连接，并返回连接结果。
-                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#connectdisconnect-to-a-target-device" target="_blank">更多参考</a>
+                    {{$t('message.connectDeviceInfo')}}
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#connectdisconnect-to-a-target-device" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
-                    <el-form-item label="使用芯片">
+                    <el-form-item :label="$t('message.useChip')">
                       <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams['connect'].chip" size="small">
-                        <el-radio-button label="0">芯片0</el-radio-button>
-                        <el-radio-button label="1">芯片1</el-radio-button>
+                        <el-radio-button label="0">{{$t('message.chip0')}}</el-radio-button>
+                        <el-radio-button label="1">{{$t('message.chip1')}}</el-radio-button>
                       </el-radio-group>
                     </el-form-item>
-                    <el-form-item label="地址类型">
+                    <el-form-item :label="$t('message.addrType')">
                       <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams['connect'].addrType" size="small">
                         <el-radio-button label="public">PUBLIC</el-radio-button>
                         <el-radio-button label="random">RANDOM</el-radio-button>
                       </el-radio-group>
                     </el-form-item>
-                    <el-form-item label="设备地址">
+                    <el-form-item :label="$t('message.deviceAddr')">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['connect'].deviceMac"></el-input>
                     </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
-                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
-                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                        <el-button type="primary" size="small" @click="startDebugApi">{{$t('message.startDebug')}}</el-button>
+                        <el-button type="primary" size="small" @click="genCode">{{$t('message.genCode')}}</el-button>
                       </el-button-group>
                     </el-form-item>
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="read">
-                  <span slot="label">读取数据</span>
+                  <span slot="label">{{$t('message.readData')}}</span>
                   <el-row class="apiHelp">
-                    本接口是负责与设备通讯的主要接口，具体负责从蓝牙设备指定服务读取数据。
-                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#readwrite-the-value-of-a-specific-characteristic" target="_blank">更多参考</a>
+                    {{$t('message.readDataInfo')}}
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#readwrite-the-value-of-a-specific-characteristic" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="HANDLE">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['read'].handle"></el-input>
                     </el-form-item>
-                    <el-form-item label="设备地址">
+                    <el-form-item :label="$t('message.deviceAddr')">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['read'].deviceMac"></el-input>
                     </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
-                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
-                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                        <el-button type="primary" size="small" @click="startDebugApi">{{$t('message.startDebug')}}</el-button>
+                        <el-button type="primary" size="small" @click="genCode">{{$t('message.genCode')}}</el-button>
                       </el-button-group>
                     </el-form-item>
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="write">
-                  <span slot="label">写入数据</span>
+                  <span slot="label">{{$t('message.writeData')}}</span>
                   <el-row class="apiHelp">
-                    本接口是负责与设备通讯的主要接口，具体负责向蓝牙设备指定服务写入数据。
-                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#readwrite-the-value-of-a-specific-characteristic" target="_blank">更多参考</a>
+                    {{$t('message.writeDataInfo')}}
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#readwrite-the-value-of-a-specific-characteristic" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="HANDLE">
@@ -456,115 +487,115 @@
                     <el-form-item label="VALUE">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['write'].value"></el-input>
                     </el-form-item>
-                    <el-form-item label="写入方式">
+                    <el-form-item :label="$t('message.writeStyle')">
                       <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams['write'].noresponse" size="small">
-                        <el-radio-button label="false">等待</el-radio-button>
-                        <el-radio-button label="true">不等待</el-radio-button>
+                        <el-radio-button label="false">{{$t('message.wait')}}</el-radio-button>
+                        <el-radio-button label="true">{{$t('message.noWait')}}</el-radio-button>
                       </el-radio-group>
                     </el-form-item>
-                    <el-form-item label="设备地址">
+                    <el-form-item :label="$t('message.deviceAddr')">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['write'].deviceMac"></el-input>
                     </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
-                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
-                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                        <el-button type="primary" size="small" @click="startDebugApi">{{$t('message.startDebug')}}</el-button>
+                        <el-button type="primary" size="small" @click="genCode">{{$t('message.genCode')}}</el-button>
                       </el-button-group>
                     </el-form-item>
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="disconnect">
-                  <span slot="label">断开连接</span>
+                  <span slot="label">{{$t('message.disConnect')}}</span>
                   <el-row class="apiHelp">
-                    此接口是DELETE请求，调用接口后，蓝牙路由器会与指定MAC地址的蓝牙设备断连。
-                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#connectdisconnect-to-a-target-device" target="_blank">更多参考</a>
+                    {{$t('message.disConnectInfo')}}
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#connectdisconnect-to-a-target-device" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
-                    <el-form-item label="设备地址">
+                    <el-form-item :label="$t('message.deviceAddr')">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['disconnect'].deviceMac"></el-input>
                     </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
-                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
-                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                        <el-button type="primary" size="small" @click="startDebugApi">{{$t('message.startDebug')}}</el-button>
+                        <el-button type="primary" size="small" @click="genCode">{{$t('message.genCode')}}</el-button>
                       </el-button-group>
                     </el-form-item>
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="connectList">
-                  <span slot="label">连接列表</span>
+                  <span slot="label">{{$t('message.connectList')}}</span>
                   <el-row class="apiHelp">
-                    此接口是GET请求，调用接口后，蓝牙路由器会将目前连接的设备的列表返回。
-                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#connectdisconnect-to-a-target-device" target="_blank">更多参考</a>
+                    {{$t('message.connectListInfo')}}
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#connectdisconnect-to-a-target-device" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item align="left">
                       <el-button-group>
-                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
-                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                        <el-button type="primary" size="small" @click="startDebugApi">{{$t('message.startDebug')}}</el-button>
+                        <el-button type="primary" size="small" @click="genCode">{{$t('message.genCode')}}</el-button>
                       </el-button-group>
                     </el-form-item>
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="discover">
-                  <span slot="label">设备服务</span>
+                  <span slot="label">{{$t('message.deviceServices')}}</span>
                   <el-row class="apiHelp">
-                    此接口是GET请求，调用接口后，蓝牙路由器会向指定的蓝牙设备请求其服务的树形列表，调用次接口的主要目的是为对蓝牙设备进行读写操作时，获取蓝牙设备的characteristic所对应的valueHandle或者handle。
-                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#discover-gatt-services-and-characteristics" target="_blank">更多参考</a>
+                    {{$t('message.deivceServicesInfo')}}
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#discover-gatt-services-and-characteristics" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
-                    <el-form-item label="设备地址">
+                    <el-form-item :label="$t('message.deviceAddr')">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['discover'].deviceMac"></el-input>
                     </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
-                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
-                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                        <el-button type="primary" size="small" @click="startDebugApi">{{$t('message.startDebug')}}</el-button>
+                        <el-button type="primary" size="small" @click="genCode">{{$t('message.genCode')}}</el-button>
                       </el-button-group>
                     </el-form-item>
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="notify">
-                  <span slot="label">打开通知</span>
+                  <span slot="label">{{$t('message.openNotify')}}</span>
                   <el-row class="apiHelp">
-                    此接口是SSE长连接，当打开蓝牙设备的notification/indication后，蓝牙设备会将通知消息上报到蓝牙路由器。
-                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#receive-notification-and-indication" target="_blank">更多参考</a>
+                    {{$t('message.openNotifyInfo')}}
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#receive-notification-and-indication" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item align="left">
                       <el-button-group>
-                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
-                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                        <el-button type="primary" size="small" @click="startDebugApi">{{$t('message.startDebug')}}</el-button>
+                        <el-button type="primary" size="small" @click="genCode">{{$t('message.genCode')}}</el-button>
                       </el-button-group>
                     </el-form-item>
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="connectStatus">
-                  <span slot="label">连接状态</span>
+                  <span slot="label">{{$t('message.connectStatus')}}</span>
                   <el-row class="apiHelp">
-                    此接口是SSE长连接，当蓝牙路由器上的蓝牙设备的连接状态发生改变时（连接成功或者发生断连），会通过此接口将消息通知到pc端。
-                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#get-device-connection-status" target="_blank">更多参考</a>
+                    {{$t('message.connectStatusInfo')}}
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#get-device-connection-status" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item align="left">
                       <el-button-group>
-                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
-                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                        <el-button type="primary" size="small" @click="startDebugApi">{{$t('message.startDebug')}}</el-button>
+                        <el-button type="primary" size="small" @click="genCode">{{$t('message.genCode')}}</el-button>
                       </el-button-group>
                     </el-form-item>
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="pair">
-                  <span slot="label">配对</span>
+                  <span slot="label">{{$t('message.pair')}}</span>
                   <el-row class="apiHelp">
-                    通过此接口可以与蓝牙设备建立配对。
-                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#pair-request" target="_blank">更多参考</a>
+                    {{$t('message.pairInfo')}}
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#pair-request" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
-                    <el-form-item label="设备地址">
+                    <el-form-item :label="$t('message.deviceAddr')">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['pair'].deviceMac"></el-input>
                     </el-form-item>
-                    <el-form-item label="输入能力">
+                    <el-form-item :label="$t('message.ioCap')">
                       <el-select v-model="store.devConfDisplayVars.apiDebuggerParams['pair'].iocapability" style="width: 100%">
                         <el-option label="DisplayOnly" value="DisplayOnly" key="DisplayOnly"></el-option>
                         <el-option label="DisplayYesNo" value="DisplayYesNo" key="DisplayYesNo"></el-option>
@@ -575,23 +606,23 @@
                     </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
-                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
-                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                        <el-button type="primary" size="small" @click="startDebugApi">{{$t('message.startDebug')}}</el-button>
+                        <el-button type="primary" size="small" @click="genCode">{{$t('message.genCode')}}</el-button>
                       </el-button-group>
                     </el-form-item>
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="pairInput">
-                  <span slot="label">配对输入</span>
+                  <span slot="label">{{$t('message.pairInput')}}</span>
                   <el-row class="apiHelp">
-                    通过此接口可以与蓝牙设备建立输入配对。
-                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#pair-input-request" target="_blank">更多参考</a>
+                    {{$t('message.pairInputInfo')}}
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#pair-input-request" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
-                    <el-form-item label="设备地址">
+                    <el-form-item :label="$t('message.deviceAddr')">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['pairInput'].deviceMac"></el-input>
                     </el-form-item>
-                    <el-form-item label="输入能力">
+                    <el-form-item :label="$t('message.inputType')">
                       <el-select v-model="store.devConfDisplayVars.apiDebuggerParams['pairInput'].inputType" style="width: 100%">
                         <el-option label="Passkey" value="Passkey" key="Passkey"></el-option>
                         <el-option label="LegacyOOB" value="LegacyOOB" key="LegacyOOB"></el-option>
@@ -612,35 +643,34 @@
                     </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
-                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
-                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                        <el-button type="primary" size="small" @click="startDebugApi">{{$t('message.startDebug')}}</el-button>
+                        <el-button type="primary" size="small" @click="genCode">{{$t('message.genCode')}}</el-button>
                       </el-button-group>
                     </el-form-item>
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="unpair">
-                  <span slot="label">取消配对</span>
+                  <span slot="label">{{$t('message.unpair')}}</span>
                   <el-row class="apiHelp">
-                    此接口是DELETE请求，调用接口后，蓝牙路由器会与指定MAC地址的蓝牙设备取消配对。
-                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#unpair-request" target="_blank">更多参考</a>
+                    {{$t('message.unpairInfo')}}
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#unpair-request" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
-                    <el-form-item label="设备地址">
+                    <el-form-item :label="$t('message.deviceAddr')">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['unpair'].deviceMac"></el-input>
                     </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
-                        <el-button type="primary" size="small" @click="startDebugApi">开始调试</el-button>
-                        <el-button type="primary" size="small" @click="genCode">生成代码</el-button>
+                        <el-button type="primary" size="small" @click="startDebugApi">{{$t('message.startDebug')}}</el-button>
+                        <el-button type="primary" size="small" @click="genCode">{{$t('message.genCode')}}</el-button>
                       </el-button-group>
                     </el-form-item>
                   </el-form>
                 </el-tab-pane>
               </el-tabs>
-              </el-tabs>
               <el-tabs v-model="store.devConfDisplayVars.activeApiOutputTabName" v-show="store.devConfDisplayVars.activeMenuItem === 'apiDebuggerMenuItem'">
                 <el-tab-pane name="output">
-                  <span slot="label">调试结果</span>
+                  <span slot="label">{{$t('message.debugResult')}}</span>
                   <!--
                   <el-button-group>
                     <el-button size="small" type="primary" @click="exportApiOutputDisplay">导出</el-button>
@@ -655,88 +685,58 @@
                   </highlight-code>
                 </el-tab-pane>
                 <el-tab-pane name="curl">
-                  <span slot="label">cURL代码</span>
+                  <span slot="label">cURL</span>
                   <highlight-code lang="bash">
                     {{ cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].code['curl'] }}
                   </highlight-code>
                 </el-tab-pane>
                 <el-tab-pane name="nodejs">
-                  <span slot="label">NodeJS代码</span>
+                  <span slot="label">NodeJS</span>
                   <highlight-code lang="js">
                     {{ cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].code['nodejs'] }}
                   </highlight-code>
                 </el-tab-pane>
               </el-tabs>
-              <el-tabs v-show="store.devConfDisplayVars.activeMenuItem === 'apiLogListMenuItem'">
-                <el-tab-pane>
-                  <span slot="label"><i class="el-icon-connection"></i> 接口日志</span>
-                  <el-row>
-                    <vxe-toolbar>
-                      <template v-slot:buttons>
-                        <span>日志条数: <span style="font-weight: bold; color: #409eff">{{ getComputedApiLogDisplayResultList().length }} </span></span>
-                        <vxe-input v-model="cache.apiLogDisplayFilterContent" type="search" placeholder="搜索" size="small"></vxe-input>
-                        <vxe-button @click="apiLogDisplayResultExport" status="primary" size="small">导出</vxe-button>
-                        <vxe-button @click="apiLogDisplayResultClear" status="danger" size="small">清空</vxe-button>
-                      </template>
-                    </vxe-toolbar>
-                    <!-- 注意设置为固定高度，否则页面在过多的数据时候会造成卡顿，TODO: 是否考虑使用分页优化? -->
-                    <vxe-grid 
-                      border="none"
-                      stripe
-                      height="560px"
-                      highlight-hover-row
-                      :header-row-style="{'background-color': '#f4f5f6'}"
-                      ref="refApiLogDisplayResultGrid"
-                      :sort-config="{trigger: 'cell'}"
-                      :data="getComputedApiLogDisplayResultList()">
-                      <vxe-table-column field="timeStr" title="时间" type="html" width="20%" sortable></vxe-table-column>
-                      <vxe-table-column field="apiName" title="接口名称" type="html" width="10%" sortable></vxe-table-column>
-                      <vxe-table-column field="apiContentJson" title="请求内容" type="html" width="70%" sortable></vxe-table-column>
-                      <!-- TODO: 增加重放功能 -->
-                    </vxe-grid>
-                  </el-row>
-                </el-tab-pane>
-              </el-tabs>
               <el-tabs v-show="store.devConfDisplayVars.activeMenuItem === 'apiDemoMenuItem'">
                 <el-tab-pane>
-                  <span slot="label"><i class="el-icon-connection"></i> [单设备]建连->写入->通知</span>
+                  <span slot="label"><i class="el-icon-connection"></i> {{$t('message.connectWriteNotify')}}</span>
                   <el-card shadow="hover">
                     <div slot="header" class="clearfix">
-                      <span>1.连接设备</span>
-                      <el-button @click="apiDemoConnectTest" style="float: right; padding: 3px 0" type="text">测试</el-button>
+                      <span>1.{{$t('message.connectDevice')}}</span>
+                      <el-button @click="apiDemoConnectTest" style="float: right; padding: 3px 0" type="text">{{$t('message.test')}}</el-button>
                     </div>
                     <el-form label-width="80px" size="small">
-                      <el-form-item label="历史接口">
+                      <el-form-item :label="$t('message.historyApi')">
                         <el-select @change="apiDemoConnectChanged" v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect.tempFromApiLogUrl" style="width: 100%">
-                          <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: '连接设备'})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
+                          <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: $t('message.connectDevice')})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
                         </el-select>
                       </el-form-item>
-                      <el-form-item label="使用芯片">
+                      <el-form-item :label="$t('message.useChip')">
                         <el-radio-group v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect.chip" size="small">
-                          <el-radio-button label="0">芯片0</el-radio-button>
-                          <el-radio-button label="1">芯片1</el-radio-button>
+                          <el-radio-button label="0">{{$t('message.chip0')}}</el-radio-button>
+                          <el-radio-button label="1">{{$t('message.chip1')}}</el-radio-button>
                         </el-radio-group>
                       </el-form-item>
-                      <el-form-item label="地址类型">
+                      <el-form-item :label="$t('message.addrType')">
                         <el-radio-group v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect.addrType" size="small">
                           <el-radio-button label="public">PUBLIC</el-radio-button>
                           <el-radio-button label="random">RANDOM</el-radio-button>
                         </el-radio-group>
                       </el-form-item>
-                      <el-form-item label="设备地址">
+                      <el-form-item :label="$t('message.deviceAddr')">
                         <el-input clearable v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect.deviceMac"></el-input>
                       </el-form-item>
                     </el-form>
                   </el-card>
                   <el-card shadow="hover" style="margin-top: 15px;">
                     <div slot="header" class="clearfix">
-                      <span>2.写入指令</span>
-                      <el-button @click="apiDemoWriteTest" style="float: right; padding: 3px 0" type="text">测试</el-button>
+                      <span>2.{{$t('message.writeCmd')}}</span>
+                      <el-button @click="apiDemoWriteTest" style="float: right; padding: 3px 0" type="text">{{$t('message.test')}}</el-button>
                     </div>
                     <el-form label-width="80px" size="small">
-                      <el-form-item label="历史接口">
+                      <el-form-item :label="$t('message.historyApi')">
                         <el-select @change="apiDemoWriteChanged" v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write.tempFromApiLogUrl" style="width: 100%">
-                          <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: '写入数据'})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
+                          <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: $t('message.writeData')})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
                         </el-select>
                       </el-form-item>
                       <el-form-item label="HANDLE">
@@ -745,58 +745,58 @@
                       <el-form-item label="VALUE">
                         <el-input clearable v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write.value"></el-input>
                       </el-form-item>
-                      <el-form-item label="写入方式">
+                      <el-form-item :label="$t('message.writeStyle')">
                         <el-radio-group v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write.noresponse" size="small">
-                          <el-radio-button label="false">等待</el-radio-button>
-                          <el-radio-button label="true">不等待</el-radio-button>
+                          <el-radio-button label="false">{{$t('message.wait')}}</el-radio-button>
+                          <el-radio-button label="true">{{$t('message.noWait')}}</el-radio-button>
                         </el-radio-group>
                       </el-form-item>
                     </el-form>
                   </el-card>
                   <el-card shadow="hover" style="margin-top: 15px;">
                     <div slot="header" class="clearfix">
-                      <span>3.接收通知</span>
+                      <span>3.{{$t('message.receiveNotify')}}</span>
                     </div>
                     <el-form label-width="80px" size="small">
-                      <span style="font-size: 12px">通过SSE接收数据</span>
+                      <span style="font-size: 12px">{{$t('message.receiveDataBySSE')}}</span>
                     </el-form>
                   </el-card>
                   <el-button-group style="margin-top: 15px;">
-                    <el-button type="primary" size="small" @click="apiDemoConnectWriteNotifyGenCode">生成代码</el-button>
-                    <el-button type="primary" size="small">清空数据</el-button>
+                    <el-button type="primary" size="small" @click="apiDemoConnectWriteNotifyGenCode">{{$t('message.genCode')}}</el-button>
+                    <el-button type="primary" size="small">{{$t('message.clearData')}}</el-button>
                   </el-button-group>
                   <highlight-code lang="javascript">
                     {{ store.devConfDisplayVars.apiDemoParams.connectWriteNotify.code }}
                   </highlight-code>
                 </el-tab-pane>
                 <el-tab-pane>
-                  <span slot="label"><i class="el-icon-connection"></i> [多设备]扫描->建连->写入</span>
+                  <span slot="label"><i class="el-icon-connection"></i> {{$t('message.scanConnectWriteNotify')}}</span>
                   <el-card shadow="hover">
                     <div slot="header" class="clearfix">
-                      <span>1.扫描设备</span>
-                      <el-button @click="apiDemoScanTest" style="float: right; padding: 3px 0" type="text">测试</el-button>
+                      <span>1.{{$t('message.scanDevices')}}</span>
+                      <el-button @click="apiDemoScanTest" style="float: right; padding: 3px 0" type="text">{{$t('message.test')}}</el-button>
                     </div>
                     <el-form label-width="80px" style="margin-top: 15px;" size="small">
-                      <el-form-item label="历史接口">
+                      <el-form-item :label="$t('message.historyApi')">
                         <el-select @change="apiDemoScanChanged" v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.tempFromApiLogUrl" style="width: 100%">
-                          <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: '扫描设备'})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
+                          <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: $t('message.scanDevices')})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
                         </el-select>
                       </el-form-item>
-                      <el-form-item label="使用芯片">
+                      <el-form-item :label="$t('message.useChip')">
                         <el-radio-group v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.chip" size="small">
-                          <el-radio-button :label="0">芯片0</el-radio-button>
-                          <el-radio-button :label="1">芯片1</el-radio-button>
+                          <el-radio-button :label="0">{{$t('message.chip0')}}</el-radio-button>
+                          <el-radio-button :label="1">{{$t('message.chip1')}}</el-radio-button>
                         </el-radio-group>
                       </el-form-item>
-                      <el-form-item label="过滤名称">
-                        <el-select v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.filter_name" placeholder="请输入" multiple filterable allow-create default-first-option style="width: 100%">
+                      <el-form-item :label="$t('message.filterName')">
+                        <el-select v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.filter_name" multiple filterable allow-create default-first-option style="width: 100%">
                         </el-select>
                       </el-form-item>
-                      <el-form-item label="过滤MAC">
-                        <el-select v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.filter_mac" placeholder="请输入" multiple filterable allow-create default-first-option style="width: 100%">
+                      <el-form-item :label="$t('message.filterMac')">
+                        <el-select v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.filter_mac" multiple filterable allow-create default-first-option style="width: 100%">
                         </el-select>
                       </el-form-item>
-                      <el-form-item label="过滤RSSI">
+                      <el-form-item :label="$t('message.fitlerRSSI')">
                         <el-slider
                         v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.filter_rssi"
                         show-input
@@ -808,20 +808,20 @@
                   </el-card>
                   <el-card shadow="hover" style="margin-top: 15px;">
                     <div slot="header" class="clearfix">
-                      <span>2.连接设备</span>
+                      <span>2.{{$t('message.connectDevice')}}</span>
                     </div>
                     <el-form label-width="80px" size="small">
-                      <span style="font-size: 12px">连接扫描到的设备</span>
+                      <span style="font-size: 12px">{{$t('message.connectScannedDevices')}}</span>
                     </el-form>
                   </el-card>
                   <el-card shadow="hover" style="margin-top: 15px;">
                     <div slot="header" class="clearfix">
-                      <span>3.写入指令</span>
+                      <span>3.{{$t('message.writeCmd')}}</span>
                     </div>
                     <el-form label-width="80px" size="small">
-                      <el-form-item label="历史接口">
+                      <el-form-item :label="$t('message.historyApi')">
                         <el-select @change="apiDemoWriteChanged" v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.write.tempFromApiLogUrl" style="width: 100%">
-                          <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: '写入数据'})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
+                          <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: $t('message.writeData')})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
                         </el-select>
                       </el-form-item>
                       <el-form-item label="HANDLE">
@@ -830,17 +830,17 @@
                       <el-form-item label="VALUE">
                         <el-input clearable v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.write.value"></el-input>
                       </el-form-item>
-                      <el-form-item label="写入方式">
+                      <el-form-item :label="$t('message.writeStyle')">
                         <el-radio-group v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.write.noresponse" size="small">
-                          <el-radio-button label="false">等待</el-radio-button>
-                          <el-radio-button label="true">不等待</el-radio-button>
+                          <el-radio-button label="false">{{$t('message.wait')}}</el-radio-button>
+                          <el-radio-button label="true">{{$t('message.noWait')}}</el-radio-button>
                         </el-radio-group>
                       </el-form-item>
                     </el-form>
                   </el-card>
                   <el-button-group style="margin-top: 15px;">
-                    <el-button type="primary" size="small" @click="apiDemoScanConnectWriteNotifyGenCode">生成代码</el-button>
-                    <el-button type="primary" size="small">清空数据</el-button>
+                    <el-button type="primary" size="small" @click="apiDemoScanConnectWriteNotifyGenCode">{{$t('message.genCode')}}</el-button>
+                    <el-button type="primary" size="small">{{$t('message.clearData')}}</el-button>
                   </el-button-group>
                   <highlight-code lang="javascript">
                     {{ store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.code }}
@@ -849,10 +849,10 @@
               </el-tabs>
               <el-tabs v-show="store.devConfDisplayVars.activeMenuItem === 'toolsMenuItem'">
                 <el-tab-pane>
-                  <span slot="label"><i class="el-icon-s-tools"></i> 常用工具</span>
+                  <span slot="label"><i class="el-icon-s-tools"></i> {{$t('message.tools')}}</span>
                   <el-card shadow="hover">
                     <div slot="header" class="clearfix">
-                      <span>进制转换</span>
+                      <span>{{$t('message.binaryConversion')}}</span>
                     </div>
                     <el-form :inline="true" size="small" style="width: 100%">
                       <el-form-item>
@@ -870,7 +870,7 @@
                   </el-card>
                   <el-card shadow="hover" style="margin-top: 15px">
                     <div slot="header" class="clearfix">
-                      <span>HEX/TEXT转换</span>
+                      <span>HEX/TEXT</span>
                     </div>
                     <el-form :inline="true" size="small" style="width: 100%">
                       <el-form-item>
@@ -887,7 +887,7 @@
                   </el-card>
                   <el-card shadow="hover" style="margin-top: 15px">
                     <div slot="header" class="clearfix">
-                      <span>JSON格式化</span>
+                      <span>{{$t('message.jsonFormatter')}}</span>
                     </div>
                     <el-form size="small" style="width: 100%">
                       <el-form-item>
@@ -913,7 +913,7 @@
       center
       :visible.sync="store.devConfDisplayVars.pairBySecurityOOB.visible">
       <el-form label-width="80px" size="small">
-        <el-form-item label="设备地址">
+        <el-form-item :label="$t('message.deviceAddr')">
           <el-input v-model="store.devConfDisplayVars.pairBySecurityOOB.deviceMac" disabled></el-input>
         </el-form-item>
         <el-form-item label="rand">
@@ -924,8 +924,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="store.devConfDisplayVars.pairBySecurityOOB.visible = false">取 消</el-button>
-        <el-button type="primary" @click="pairBySecurityOOB">确 定</el-button>
+        <el-button @click="store.devConfDisplayVars.pairBySecurityOOB.visible = false">{{$t('message.cancel')}}</el-button>
+        <el-button type="primary" @click="pairBySecurityOOB">{{$t('message.ok')}}</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -933,7 +933,7 @@
       center
       :visible.sync="store.devConfDisplayVars.pairByLegacyOOB.visible">
       <el-form label-width="80px" size="small">
-        <el-form-item label="设备地址">
+        <el-form-item :label="$t('message.deviceAddr')">
           <el-input v-model="store.devConfDisplayVars.pairByLegacyOOB.deviceMac" disabled></el-input>
         </el-form-item>
         <el-form-item label="tk">
@@ -941,8 +941,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="store.devConfDisplayVars.pairByLegacyOOB.visible = false">取 消</el-button>
-        <el-button type="primary" @click="pairByLegacyOOB">确 定</el-button>
+        <el-button @click="store.devConfDisplayVars.pairByLegacyOOB.visible = false">{{$t('message.cancel')}}</el-button>
+        <el-button type="primary" @click="pairByLegacyOOB">{{$t('message.ok')}}</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -950,7 +950,7 @@
       center
       :visible.sync="store.devConfDisplayVars.pairByPasskey.visible">
       <el-form label-width="80px" size="small">
-        <el-form-item label="设备地址">
+        <el-form-item :label="$t('message.deviceAddr')">
           <el-input v-model="store.devConfDisplayVars.pairByPasskey.deviceMac" disabled></el-input>
         </el-form-item>
         <el-form-item label="passkey">
@@ -958,8 +958,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="store.devConfDisplayVars.pairByPasskey.visible = false">取 消</el-button>
-        <el-button type="primary" @click="pairByPasskey">确 定</el-button>
+        <el-button @click="store.devConfDisplayVars.pairByPasskey.visible = false">{{$t('message.cancel')}}</el-button>
+        <el-button type="primary" @click="pairByPasskey">{{$t('message.ok')}}</el-button>
       </span>
     </el-dialog>
   </div>

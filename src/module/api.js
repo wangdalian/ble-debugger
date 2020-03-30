@@ -5,6 +5,7 @@ import libEnum from '../lib/enum.js';
 import config from '../config/config.js';
 import base64 from '../lib/base64.js';
 import dbModule from './db.js';
+import main from '../main.js';
 
 const logger = libLogger.genModuleLogger('api');
 
@@ -48,7 +49,7 @@ function getAccessToken(baseURI, devKey, devSecret) {
     timeout: config.http.requestTimeout,
     headers: headers,
   });
-  addApiLogItem('请求令牌', 'POST', url, {}, body, {}, headers);
+  addApiLogItem(main.getGlobalVue().$i18n.t('message.apiGetToken'), 'POST', url, {}, body, {}, headers);
   return new Promise((resolve, reject) => {
     instance.post(url, body).then(function(response) {
       logger.info('get access token success:', response);
@@ -156,7 +157,7 @@ function notifySseErrorHandler(error) {
 // query -> {chip: 0, filter_mac: '1,2', filter_name: '2,3', filter_rssi: -75, mac: 'aa', access_token: 'bac'}
 function openNotifySse(baseURI, query, messageHandler, errorHandler) {
   const url = `${baseURI}/gatt/nodes?${obj2QueryStr(query)}`;
-  addApiLogItem('打开通知', 'GET/SSE', url, query);
+  addApiLogItem(main.getGlobalVue().$i18n.t('message.apiOpenNotify'), 'GET/SSE', url, query);
   let sse = new EventSource(url);
   sse.onmessage = messageHandler || notifySseMessageHandler;
   sse.onerror = errorHandler || notifySseErrorHandler;
@@ -167,7 +168,7 @@ function openNotifySse(baseURI, query, messageHandler, errorHandler) {
 // 取消配对
 function unpair(baseURI, query, deviceMac) {
   const url = `${baseURI}/management/nodes/${deviceMac}/bond/?${obj2QueryStr(query)}`;
-  addApiLogItem('取消配对', 'POST', url, query, {deviceMac});
+  addApiLogItem(main.getGlobalVue().$i18n.t('message.apiUnpair'), 'POST', url, query, {deviceMac});
   return new Promise((resolve, reject) => {
     axios.delete(url).then(function(response) {
       logger.info('unpair device success:', deviceMac, response);
@@ -183,7 +184,7 @@ function unpair(baseURI, query, deviceMac) {
 // 重启ap
 function info(baseURI, query) {
   const url = `${baseURI}/cassia/info/?${obj2QueryStr(query)}`;
-  addApiLogItem('获取AP信息', 'GET', url, query);
+  addApiLogItem(main.getGlobalVue().$i18n.t('message.apiInfo'), 'GET', url, query);
   return new Promise((resolve, reject) => {
     axios.get(url).then(function(response) {
       logger.info('get ap info success:', response);
@@ -199,7 +200,7 @@ function info(baseURI, query) {
 // 重启ap
 function reboot(baseURI, query) {
   const url = `${baseURI}/cassia/reboot/?${obj2QueryStr(query)}`;
-  addApiLogItem('重启AP', 'GET', url, query);
+  addApiLogItem(main.getGlobalVue().$i18n.t('message.apiReboot'), 'GET', url, query);
   return new Promise((resolve, reject) => {
     axios.get(url).then(function(response) {
       logger.info('reboot ap success:', response);
@@ -216,7 +217,7 @@ function reboot(baseURI, query) {
 function pair(baseURI, query, deviceMac, body={}) {
   const url = `${baseURI}/management/nodes/${deviceMac}/pair/?${obj2QueryStr(query)}`;
   if (!body.iocapability) body.iocapability = 'KeyboardDisplay';
-  addApiLogItem('设备配对', 'POST', url, query, {deviceMac});
+  addApiLogItem(main.getGlobalVue().$i18n.t('message.apiPair'), 'POST', url, query, {deviceMac});
   return new Promise((resolve, reject) => {
     axios.post(url, body).then(function(response) {
       logger.info('pair device success:', response);
@@ -232,7 +233,7 @@ function pair(baseURI, query, deviceMac, body={}) {
 // 配对输入
 function pairInput(baseURI, query, deviceMac, body) {
   const url = `${baseURI}/management/nodes/${deviceMac}/pair-input/?${obj2QueryStr(query)}`;
-  addApiLogItem('配对输入', 'POST', url, query, body, {deviceMac});
+  addApiLogItem(main.getGlobalVue().$i18n.t('message.apiPairInput'), 'POST', url, query, body, {deviceMac});
   return new Promise((resolve, reject) => {
     axios.post(url, body).then(function(response) {
       logger.info('pair input device success:', response);
@@ -286,7 +287,7 @@ function pairBySecurityOOB(baseURI, query, deviceMac, rand, confirm) {
 function connect(baseURI, query, deviceMac, addrType) {
   const url = `${baseURI}/gap/nodes/${deviceMac}/connection/?${obj2QueryStr(query)}`;
   const body = {timeout: config.http.requestTimeout, type: addrType};
-  addApiLogItem('连接设备', 'POST', url, query, body, {deviceMac});
+  addApiLogItem(main.getGlobalVue().$i18n.t('message.apiConnect'), 'POST', url, query, body, {deviceMac});
   return new Promise((resolve, reject) => {
     axios.post(url, body).then(function(response) {
       logger.info('connect device success:', response);
@@ -301,7 +302,7 @@ function connect(baseURI, query, deviceMac, addrType) {
 
 function disconnect(baseURI, query, deviceMac) {
   const url = `${baseURI}/gap/nodes/${deviceMac}/connection/?${obj2QueryStr(query)}`;
-  addApiLogItem('断开设备', 'DELETE', url, query, {}, {deviceMac});
+  addApiLogItem(main.getGlobalVue().$i18n.t('message.apiDisconnect'), 'DELETE', url, query, {}, {deviceMac});
   return new Promise((resolve, reject) => {
     axios.delete(url).then(function(response) {
       logger.info('disconnect device success:', response);
@@ -316,7 +317,7 @@ function disconnect(baseURI, query, deviceMac) {
 
 function getConnectedList(baseURI, query) {
   const url = `${baseURI}/gap/nodes?${obj2QueryStr(query)}&connection_state=connected`;
-  addApiLogItem('连接列表', 'GET', url, query);
+  addApiLogItem(main.getGlobalVue().$i18n.t('message.apiConnectList'), 'GET', url, query);
   return new Promise((resolve, reject) => {
     axios.get(url).then(function(response) {
       logger.info('get connected list success:', response);
@@ -331,7 +332,7 @@ function getConnectedList(baseURI, query) {
 
 function getDeviceServiceList(baseURI, query, deviceMac) {
   const url = `${baseURI}/gatt/nodes/${deviceMac}/services/characteristics/descriptors?${obj2QueryStr(query)}`;
-  addApiLogItem('服务列表', 'GET', url, query, {}, {deviceMac});
+  addApiLogItem(main.getGlobalVue().$i18n.t('message.apiServiceList'), 'GET', url, query, {}, {deviceMac});
   return new Promise((resolve, reject) => {
     axios.get(url).then(function(response) {
       logger.info('get device service list success:', response);
@@ -346,7 +347,7 @@ function getDeviceServiceList(baseURI, query, deviceMac) {
 
 function readByHandle(baseURI, query, deviceMac, handle) {
   const url = `${baseURI}/gatt/nodes/${deviceMac}/handle/${handle}/value?${obj2QueryStr(query)}`;
-  addApiLogItem('读取数据', 'GET', url, query, {}, {deviceMac});
+  addApiLogItem(main.getGlobalVue().$i18n.t('message.apiRead'), 'GET', url, query, {}, {deviceMac});
   return new Promise((resolve, reject) => {
     axios.get(url).then(function(response) {
       logger.info('read handle success:', response);
@@ -362,7 +363,7 @@ function readByHandle(baseURI, query, deviceMac, handle) {
 function writeByHandle(baseURI, query, deviceMac, handle, value, noresponse=false) {
   if (noresponse) query.noresponse = 1;
   let url = `${baseURI}/gatt/nodes/${deviceMac}/handle/${handle}/value/${value}?${obj2QueryStr(query)}`;
-  addApiLogItem('写入数据', 'GET', url, query, {}, {deviceMac, handle, value});
+  addApiLogItem(main.getGlobalVue().$i18n.t('message.apiWrite'), 'GET', url, query, {}, {deviceMac, handle, value});
   return new Promise((resolve, reject) => {
     axios.get(url).then(function(response) {
       logger.info('write handle success:', response);
@@ -498,7 +499,7 @@ function startScanByDevConf(devConf, messageHandler, errorHandler) {
   query.active = 1;
   query.event = 1;
   let url = `${devConf.baseURI}/gap/nodes?${obj2QueryStr(query)}`;
-  addApiLogItem('扫描设备', 'GET/SSE', url, query);
+  addApiLogItem(main.getGlobalVue().$i18n.t('message.apiScan'), 'GET/SSE', url, query);
   return startScan(url, messageHandler, errorHandler);
 }
 
@@ -513,7 +514,7 @@ function startScanByUserParams(devConf, chip, filter_mac, filter_name, filter_rs
 
 function openConnectStatusSseByDevConf(devConf, messageHandler, errorHandler) {
   const url = getConnectStatusUrlByDevConf(devConf);
-  addApiLogItem('连接事件', 'GET/SSE', url, '');
+  addApiLogItem(main.getGlobalVue().$i18n.t('message.apiConnectEvent'), 'GET/SSE', url, '');
   return connectStatusSse(url, messageHandler, errorHandler);
 }
 
