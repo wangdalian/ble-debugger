@@ -5,6 +5,7 @@ import libCharReadParser from '../lib/characteristics_read_parser.js';
 import apiModule from './api.js';
 import dbModule from './db.js';
 import vueModule from './vue.js';
+import main from '../main';
 
 const logger = libLogger.genModuleLogger('operation');
 
@@ -23,9 +24,9 @@ function notifyHandler(operation, deviceMac, char) {
   apiModule.writeByHandleByDevConf(devConf, deviceMac, handle, value, false).then(() => {
     if (char.notifyStatus === libEnum.notifyStatus.ON) char.notifyStatus = libEnum.notifyStatus.OFF;
     else if (char.notifyStatus === libEnum.notifyStatus.OFF) char.notifyStatus = libEnum.notifyStatus.ON;
-    vueModule.notify(`下发设备通知 ${deviceMac} handle ${handle} 成功`, '操作成功', libEnum.messageType.SUCCESS);
+    vueModule.notify(`${main.getGlobalVue().$i18n.t('message.sendNotifyOk')}: ${deviceMac}, handle ${handle} `, `${main.getGlobalVue().$i18n.t('message.operationOk')}`, libEnum.messageType.SUCCESS);
   }).catch(ex => {
-    vueModule.notify(`下发设备通知 ${deviceMac} handle ${handle} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+    vueModule.notify(`${main.getGlobalVue().$i18n.t('message.sendNotifyFail')}: ${deviceMac}, handle ${handle}, ${ex}`, `${main.getGlobalVue().$i18n.t('message.operationFail')}`, libEnum.messageType.ERROR);
   });
 }
 
@@ -42,9 +43,9 @@ function writeWithResHandler(operation, deviceMac, char) {
   }
   value = trimHexValue(value);
   apiModule.writeByHandleByDevConf(devConf, deviceMac, handle, value, false).then((data) => {
-    vueModule.notify(`写入设备 ${deviceMac} handle ${handle} value ${value} 成功`, '操作成功', libEnum.messageType.SUCCESS);
+    vueModule.notify(`${main.getGlobalVue().$i18n.t('message.writeDataOk')}: ${deviceMac}, handle ${handle}, ${value}`, `${main.getGlobalVue().$i18n.t('message.operationOk')}`, libEnum.messageType.SUCCESS);
   }).catch(ex => {
-    vueModule.notify(`写入设备 ${deviceMac} handle ${handle} value ${value} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+    vueModule.notify(`${main.getGlobalVue().$i18n.t('message.writeDataFail')}: ${deviceMac}, handle ${handle}, ${value}, ${ex}`, `${main.getGlobalVue().$i18n.t('message.operationFail')}`, libEnum.messageType.ERROR);
   });
 }
 
@@ -57,9 +58,9 @@ function writeWithoutResHandler(operation, deviceMac, char) {
   }
   value = trimHexValue(value);
   apiModule.writeByHandleByDevConf(devConf, deviceMac, handle, value, true).then((data) => {
-    vueModule.notify(`写入设备 ${deviceMac} handle ${handle} value ${value} 成功`, '操作成功', libEnum.messageType.SUCCESS);
+    vueModule.notify(`${main.getGlobalVue().$i18n.t('message.writeDataOk')}: ${deviceMac}, handle ${handle}, ${value}`, `${main.getGlobalVue().$i18n.t('message.operationOk')}`, libEnum.messageType.SUCCESS);
   }).catch(ex => {
-    vueModule.notify(`写入设备 ${deviceMac} handle ${handle} value ${value} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+    vueModule.notify(`${main.getGlobalVue().$i18n.t('message.writeDataFail')}: ${deviceMac}, handle ${handle}, ${value}, ${ex}`, `${main.getGlobalVue().$i18n.t('message.operationFail')}`, libEnum.messageType.ERROR);
   });
 }
 
@@ -69,11 +70,11 @@ function readHander(operation, deviceMac, char) {
   apiModule.readByHandleByDevConf(devConf, deviceMac, handle).then((data) => { // 成功了更新显示值
     char.readValue = data.value || 'No Data'; // CAUTION: 有时候返回的结果没有value字段
     char.parsedReadValues = libCharReadParser.getParsedValues(char.name, char.readValue);
-    vueModule.notify(`读取设备 ${deviceMac} handle ${handle} 成功`, '操作成功', libEnum.messageType.SUCCESS);
+    vueModule.notify(`${main.getGlobalVue().$i18n.t('message.readDataOk')}: ${deviceMac}, handle ${handle}`, `${main.getGlobalVue().$i18n.t('message.operationOk')}`, libEnum.messageType.SUCCESS);
   }).catch(ex => {
     char.readValue = '';
     char.parsedReadValues = [];
-    vueModule.notify(`读取设备 ${deviceMac} handle ${handle} 失败: ${ex}`, '操作失败', libEnum.messageType.ERROR);
+    vueModule.notify(`${main.getGlobalVue().$i18n.t('message.readDataFail')}: ${deviceMac}, handle ${handle}, ${ex}`, `${main.getGlobalVue().$i18n.t('message.operationFail')}`, libEnum.messageType.ERROR);
     logger.error(ex);
   });
 }

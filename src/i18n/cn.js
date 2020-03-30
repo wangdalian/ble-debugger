@@ -149,6 +149,8 @@ const cn = {
   cancel: '取 消',
   ok: '确 定',
 
+  router: '路由器',
+
   // vue.js
   noSupportByAp: '暂时不支持，请使用AC方式操作',
   operationFail: '操作失败',
@@ -199,6 +201,17 @@ const cn = {
   openRssiChartOk: '开启RSSI图表成功',
   openScanOk: '开启扫描成功',
   tooManyDeviceScannedAlert: '当前扫描设备数量超过5个，已自动关闭rssi图表，请配置合适的扫描过滤参数，防止卡顿',
+
+  // connect.js
+  closeConnectStatusSSE: '关闭连接状态SSE，SSE异常',
+
+  // operation.js
+  sendNotifyOk: '下发设备通知成功',
+  sendNotifyFail: '下发设备通知失败',
+
+  // scan.js
+  closeScanSSE: '停止扫描，扫描SSE异常',
+  stopScanOk: '停止扫描成功',
 
   // api
   apiGetToken: '请求令牌',

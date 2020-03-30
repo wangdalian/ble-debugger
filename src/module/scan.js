@@ -47,7 +47,7 @@ function scanSseMessageHandler(message) {
 
 function scanSseErrorHandler(error) {
   logger.error('scan sse error:', error);
-  vueModule.notify(`停止扫描，扫描SSE异常: ${error.message || JSON.stringify(error)}`, `服务异常`, libEnum.messageType.ERROR);
+  vueModule.notify(`${main.getGlobalVue().$i18n.t('message.closeScanSSE')}: ${error.message || JSON.stringify(error)}`, `${main.getGlobalVue().$i18n.t('message.alert')}`, libEnum.messageType.ERROR);
   sse.close();
   sse = null;
 }
@@ -64,7 +64,7 @@ function stopScan() {
     sse.close();
     sse = null;
   }
-  vueModule.notify('停止扫描成功', '操作成功', libEnum.messageType.SUCCESS);
+  vueModule.notify(`${main.getGlobalVue().$i18n.t('message.stopScanOk')}`, `${main.getGlobalVue().$i18n.t('message.operationOk')}`, libEnum.messageType.SUCCESS);
 }
 
 export default {

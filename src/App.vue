@@ -18,8 +18,8 @@
         </span>
         <span style="float: right;">Language
           <el-select @change="changeLanguage" v-model="store.devConfDisplayVars.language" size="small" style="width: 120px; padding-right: 15px;">
-            <el-option label="中文" value="中文"></el-option>
-            <el-option label="English" value="English"></el-option>
+            <el-option label="中文" value="cn"></el-option>
+            <el-option label="English" value="en"></el-option>
           </el-select>   
         </span>
       </el-header>
@@ -28,7 +28,7 @@
           z-index: 3;" v-show="this.store.devConfDisplayVars.isConfigMenuItemOpen">
           <el-container style="height: 100%; width: 100%;">
             <el-main>
-              <el-form label-width="80px" size="small">
+              <el-form label-width="85px" size="small">
               <el-row style="font-size: 16px; border-bottom: 1px solid #ddd; margin-top: 10px;">
                 <span>{{ $t('message.configConnectParams') }}</span>
               </el-row>
@@ -135,7 +135,7 @@
                   <span slot="label"><i class="el-icon-s-data"></i> {{$t('message.scanResult')}}</span>
                   <vxe-toolbar>
                     <template v-slot:buttons>
-                      <span>{{$t('message.devicesCount')}}<span style="font-weight: bold; color: #409eff">{{ getComputedScanDisplayResultList.length }} </span></span>
+                      <span>{{$t('message.devicesCount')}}: <span style="font-weight: bold; color: #409eff">{{ getComputedScanDisplayResultList.length }} </span></span>
                       <vxe-input v-model="cache.scanDisplayFilterContent" type="search" :placeholder="$t('message.searchMacOrName')" size="small"></vxe-input>
                       <vxe-button @click="scanDisplayResultExport" status="primary" size="small">{{$t('message.export')}}</vxe-button>
                       <vxe-button @click="scanDisplayResultClear" status="danger" size="small">{{$t('message.clear')}}</vxe-button>
@@ -222,8 +222,8 @@
                     <vxe-table-column field="name" :title="$t('message.name')" type="html" width="15%" sortable></vxe-table-column>
                     <vxe-table-column field="mac" :title="$t('message.addr')" type="html" width="20%" show-overflow></vxe-table-column>
                     <vxe-table-column field="chip" :title="$t('message.chip')" type="html" width="15%" sortable></vxe-table-column>
-                    <vxe-table-column field="bdaddrType" :title="$t('message.type')" width="15%" sortable></vxe-table-column>
-                    <vxe-table-column :title="$t('message.operation')" width="35%">
+                    <vxe-table-column field="bdaddrType" :title="$t('message.type')" width="10%" sortable></vxe-table-column>
+                    <vxe-table-column :title="$t('message.operation')" width="40%">
                       <template v-slot="{ row }">
                         <el-button-group>
                           <el-button type="primary" size="small" @click="getDeviceServices(row.mac)">{{$t('message.services')}}</el-button>
@@ -323,7 +323,7 @@
               </el-tabs>
               <el-tabs v-show="store.devConfDisplayVars.activeMenuItem === 'notifyListMenuItem'">
                 <el-tab-pane>
-                  <span slot="label"><i class="el-icon-connection"></i> </span>
+                  <span slot="label"><i class="el-icon-message-solid"></i>{{$t('message.notifyList')}}</span>
                   <el-row>
                     <vxe-toolbar>
                       <template v-slot:buttons>
@@ -377,8 +377,8 @@
                       :sort-config="{trigger: 'cell'}"
                       :data="getComputedApiLogDisplayResultList()">
                       <vxe-table-column field="timeStr" :title="$t('message.time')" type="html" width="20%" sortable></vxe-table-column>
-                      <vxe-table-column field="apiName" :title="$t('message.apiName')" type="html" width="10%" sortable></vxe-table-column>
-                      <vxe-table-column field="apiContentJson" :title="$t('message.reqContent')" type="html" width="70%" sortable></vxe-table-column>
+                      <vxe-table-column field="apiName" :title="$t('message.apiName')" type="html" width="15%" sortable></vxe-table-column>
+                      <vxe-table-column field="apiContentJson" :title="$t('message.reqContent')" type="html" width="65%" sortable></vxe-table-column>
                       <!-- TODO: 增加重放功能 -->
                     </vxe-grid>
                   </el-row>
@@ -391,7 +391,10 @@
                     {{$t('message.scanDevicesInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#scan-bluetooth-devices" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
-                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                  <el-form label-width="100px" style="margin-top: 15px;" size="small">
+                    <el-form-item :label="$t('message.router')">
+                      <el-input :disabled="true" v-model="store.devConf.controlStyle === 'ap' ? store.devConf.serverURI : store.devConf.mac"></el-input>
+                    </el-form-item>
                     <el-form-item :label="$t('message.useChip')">
                       <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams['scan'].chip" size="small">
                         <el-radio-button :label="0">{{$t('message.chip0')}}</el-radio-button>
@@ -429,7 +432,10 @@
                     {{$t('message.connectDeviceInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#connectdisconnect-to-a-target-device" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
-                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                  <el-form label-width="100px" style="margin-top: 15px;" size="small">
+                    <el-form-item :label="$t('message.router')">
+                      <el-input :disabled="true" v-model="store.devConf.controlStyle === 'ap' ? store.devConf.serverURI : store.devConf.mac"></el-input>
+                    </el-form-item>
                     <el-form-item :label="$t('message.useChip')">
                       <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams['connect'].chip" size="small">
                         <el-radio-button label="0">{{$t('message.chip0')}}</el-radio-button>
@@ -459,7 +465,10 @@
                     {{$t('message.readDataInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#readwrite-the-value-of-a-specific-characteristic" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
-                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                  <el-form label-width="100px" style="margin-top: 15px;" size="small">
+                    <el-form-item :label="$t('message.router')">
+                      <el-input :disabled="true" v-model="store.devConf.controlStyle === 'ap' ? store.devConf.serverURI : store.devConf.mac"></el-input>
+                    </el-form-item>
                     <el-form-item label="HANDLE">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['read'].handle"></el-input>
                     </el-form-item>
@@ -480,7 +489,10 @@
                     {{$t('message.writeDataInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#readwrite-the-value-of-a-specific-characteristic" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
-                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                  <el-form label-width="100px" style="margin-top: 15px;" size="small">
+                    <el-form-item :label="$t('message.router')">
+                      <el-input :disabled="true" v-model="store.devConf.controlStyle === 'ap' ? store.devConf.serverURI : store.devConf.mac"></el-input>
+                    </el-form-item>
                     <el-form-item label="HANDLE">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['write'].handle"></el-input>
                     </el-form-item>
@@ -510,7 +522,10 @@
                     {{$t('message.disConnectInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#connectdisconnect-to-a-target-device" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
-                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                  <el-form label-width="100px" style="margin-top: 15px;" size="small">
+                    <el-form-item :label="$t('message.router')">
+                      <el-input :disabled="true" v-model="store.devConf.controlStyle === 'ap' ? store.devConf.serverURI : store.devConf.mac"></el-input>
+                    </el-form-item>
                     <el-form-item :label="$t('message.deviceAddr')">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['disconnect'].deviceMac"></el-input>
                     </el-form-item>
@@ -528,7 +543,10 @@
                     {{$t('message.connectListInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#connectdisconnect-to-a-target-device" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
-                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                  <el-form label-width="100px" style="margin-top: 15px;" size="small">
+                    <el-form-item :label="$t('message.router')">
+                      <el-input :disabled="true" v-model="store.devConf.controlStyle === 'ap' ? store.devConf.serverURI : store.devConf.mac"></el-input>
+                    </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
                         <el-button type="primary" size="small" @click="startDebugApi">{{$t('message.startDebug')}}</el-button>
@@ -543,7 +561,10 @@
                     {{$t('message.deivceServicesInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#discover-gatt-services-and-characteristics" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
-                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                  <el-form label-width="100px" style="margin-top: 15px;" size="small">
+                    <el-form-item :label="$t('message.router')">
+                      <el-input :disabled="true" v-model="store.devConf.controlStyle === 'ap' ? store.devConf.serverURI : store.devConf.mac"></el-input>
+                    </el-form-item>
                     <el-form-item :label="$t('message.deviceAddr')">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['discover'].deviceMac"></el-input>
                     </el-form-item>
@@ -561,7 +582,10 @@
                     {{$t('message.openNotifyInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#receive-notification-and-indication" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
-                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                  <el-form label-width="100px" style="margin-top: 15px;" size="small">
+                    <el-form-item :label="$t('message.router')">
+                      <el-input :disabled="true" v-model="store.devConf.controlStyle === 'ap' ? store.devConf.serverURI : store.devConf.mac"></el-input>
+                    </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
                         <el-button type="primary" size="small" @click="startDebugApi">{{$t('message.startDebug')}}</el-button>
@@ -576,7 +600,10 @@
                     {{$t('message.connectStatusInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#get-device-connection-status" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
-                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                  <el-form label-width="100px" style="margin-top: 15px;" size="small">
+                    <el-form-item :label="$t('message.router')">
+                      <el-input :disabled="true" v-model="store.devConf.controlStyle === 'ap' ? store.devConf.serverURI : store.devConf.mac"></el-input>
+                    </el-form-item>
                     <el-form-item align="left">
                       <el-button-group>
                         <el-button type="primary" size="small" @click="startDebugApi">{{$t('message.startDebug')}}</el-button>
@@ -591,7 +618,10 @@
                     {{$t('message.pairInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#pair-request" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
-                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                  <el-form label-width="100px" style="margin-top: 15px;" size="small">
+                    <el-form-item :label="$t('message.router')">
+                      <el-input :disabled="true" v-model="store.devConf.controlStyle === 'ap' ? store.devConf.serverURI : store.devConf.mac"></el-input>
+                    </el-form-item>
                     <el-form-item :label="$t('message.deviceAddr')">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['pair'].deviceMac"></el-input>
                     </el-form-item>
@@ -618,7 +648,10 @@
                     {{$t('message.pairInputInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#pair-input-request" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
-                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                  <el-form label-width="100px" style="margin-top: 15px;" size="small">
+                    <el-form-item :label="$t('message.router')">
+                      <el-input :disabled="true" v-model="store.devConf.controlStyle === 'ap' ? store.devConf.serverURI : store.devConf.mac"></el-input>
+                    </el-form-item>
                     <el-form-item :label="$t('message.deviceAddr')">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['pairInput'].deviceMac"></el-input>
                     </el-form-item>
@@ -655,7 +688,10 @@
                     {{$t('message.unpairInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#unpair-request" target="_blank">{{$t('message.more')}}</a>
                   </el-row>
-                  <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                  <el-form label-width="100px" style="margin-top: 15px;" size="small">
+                    <el-form-item :label="$t('message.router')">
+                      <el-input :disabled="true" v-model="store.devConf.controlStyle === 'ap' ? store.devConf.serverURI : store.devConf.mac"></el-input>
+                    </el-form-item>
                     <el-form-item :label="$t('message.deviceAddr')">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['unpair'].deviceMac"></el-input>
                     </el-form-item>
@@ -705,7 +741,7 @@
                       <span>1.{{$t('message.connectDevice')}}</span>
                       <el-button @click="apiDemoConnectTest" style="float: right; padding: 3px 0" type="text">{{$t('message.test')}}</el-button>
                     </div>
-                    <el-form label-width="80px" size="small">
+                    <el-form label-width="100px" size="small">
                       <el-form-item :label="$t('message.historyApi')">
                         <el-select @change="apiDemoConnectChanged" v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect.tempFromApiLogUrl" style="width: 100%">
                           <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: $t('message.connectDevice')})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
@@ -733,7 +769,7 @@
                       <span>2.{{$t('message.writeCmd')}}</span>
                       <el-button @click="apiDemoWriteTest" style="float: right; padding: 3px 0" type="text">{{$t('message.test')}}</el-button>
                     </div>
-                    <el-form label-width="80px" size="small">
+                    <el-form label-width="100px" size="small">
                       <el-form-item :label="$t('message.historyApi')">
                         <el-select @change="apiDemoWriteChanged" v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write.tempFromApiLogUrl" style="width: 100%">
                           <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: $t('message.writeData')})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
@@ -757,7 +793,7 @@
                     <div slot="header" class="clearfix">
                       <span>3.{{$t('message.receiveNotify')}}</span>
                     </div>
-                    <el-form label-width="80px" size="small">
+                    <el-form label-width="100px" size="small">
                       <span style="font-size: 12px">{{$t('message.receiveDataBySSE')}}</span>
                     </el-form>
                   </el-card>
@@ -776,7 +812,7 @@
                       <span>1.{{$t('message.scanDevices')}}</span>
                       <el-button @click="apiDemoScanTest" style="float: right; padding: 3px 0" type="text">{{$t('message.test')}}</el-button>
                     </div>
-                    <el-form label-width="80px" style="margin-top: 15px;" size="small">
+                    <el-form label-width="100px" style="margin-top: 15px;" size="small">
                       <el-form-item :label="$t('message.historyApi')">
                         <el-select @change="apiDemoScanChanged" v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.tempFromApiLogUrl" style="width: 100%">
                           <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: $t('message.scanDevices')})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
@@ -810,7 +846,7 @@
                     <div slot="header" class="clearfix">
                       <span>2.{{$t('message.connectDevice')}}</span>
                     </div>
-                    <el-form label-width="80px" size="small">
+                    <el-form label-width="100px" size="small">
                       <span style="font-size: 12px">{{$t('message.connectScannedDevices')}}</span>
                     </el-form>
                   </el-card>
@@ -818,7 +854,7 @@
                     <div slot="header" class="clearfix">
                       <span>3.{{$t('message.writeCmd')}}</span>
                     </div>
-                    <el-form label-width="80px" size="small">
+                    <el-form label-width="100px" size="small">
                       <el-form-item :label="$t('message.historyApi')">
                         <el-select @change="apiDemoWriteChanged" v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.write.tempFromApiLogUrl" style="width: 100%">
                           <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: $t('message.writeData')})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
@@ -985,7 +1021,7 @@ HTML, BODY {
 }
 
 * {
-  font-family: "Monaco", "monospace", "Courier New", "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+  font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
 }
 
 #app {
@@ -1038,6 +1074,7 @@ pre::-webkit-scrollbar {
 
 code {
   overflow-y: scroll;
+  font-family: "Monaco", "monospace", "Courier New", "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
 }
 
 .hljs {
@@ -1068,5 +1105,9 @@ code {
 
 .apiHelp a {
   color: #67C23A;
+}
+
+.el-notification__content {
+  word-break: break-all;
 }
 </style>

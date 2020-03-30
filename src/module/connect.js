@@ -48,7 +48,7 @@ function connectStatusSseMessageHandler(message) {
       mac: data.handle,
       chip: data.chipId
     });
-    vueModule.notify(`chip${data.chipId} 连接${data.handle}成功`, `操作成功`, libEnum.messageType.SUCCESS);
+    vueModule.notify(`${main.getGlobalVue().$i18n.t('message.connectDeviceOk')}: chip${data.chipId} ${data.handle}`, `${main.getGlobalVue().$i18n.t('message.operationOk')}`, libEnum.messageType.SUCCESS);
   } else if (data.connectionState === 'disconnected') { 
     let index = _.findIndex(cache.connectedList, {mac: data.handle});
     if (index === -1) return; 
@@ -57,13 +57,13 @@ function connectStatusSseMessageHandler(message) {
     let activeItemName = activeItem ? activeItem.mac : '0';
     cache.currentConnectedTab = activeItemName;
     connectVuxTableForceResize();
-    vueModule.notify(`设备 ${data.handle} 断开连接`, '通知提示', libEnum.messageType.WARNING);
+    vueModule.notify(`${main.getGlobalVue().$i18n.t('message.apiDisconnect')}: ${data.handle}`, `${main.getGlobalVue().$i18n.t('message.alert')}`, libEnum.messageType.WARNING);
   }
 }
 
 function connectStatusSseErrorHandler(error) {
   logger.error('connect status sse error:', error);
-  vueModule.notify(`关闭连接状态SSE，SSE异常: ${error.message || JSON.stringify(error)}`, '服务异常', libEnum.messageType.ERROR);
+  vueModule.notify(`${main.getGlobalVue().$i18n.t('message.closeConnectStatusSSE')}: ${error.message || JSON.stringify(error)}`, `${main.getGlobalVue().$i18n.t('message.alert')}`, libEnum.messageType.ERROR);
   sse.close();
   sse = null;
 }
