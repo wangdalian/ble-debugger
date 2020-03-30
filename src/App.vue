@@ -77,7 +77,7 @@
             </el-main>
             <el-footer style="background-color: #ddd; width: 350px; height: 50px; line-height: 50px; vertial-align: middle; text-align: center; position: fixed; bottom: 0; left: 0;">
               <el-button type="danger" size="small" @click="reboot" style="margin-right: 20px;">重启 AP</el-button>
-              <el-button type="primary" size="small" @click="apInfo" style="margin-right: 20px;">AP 信息</el-button>
+              <!--<el-button type="primary" size="small" @click="apInfo" style="margin-right: 20px;">AP 信息</el-button>-->
               <el-button type="primary" size="small" @click="startScan" v-show="!store.devConfDisplayVars.isScanning">开始扫描</el-button>
               <el-button type="danger" size="small" @click="stopScan" v-show="store.devConfDisplayVars.isScanning">停止扫描</el-button>
             </el-footer>
@@ -355,7 +355,11 @@
               </el-tabs>
               <el-tabs v-model="store.devConfDisplayVars.activeApiTabName" v-show="store.devConfDisplayVars.activeMenuItem === 'apiDebuggerMenuItem'">
                 <el-tab-pane name="scan">
-                  <span slot="label"><i class="el-icon-search"></i> 扫描设备</span>
+                  <span slot="label">扫描设备</span>
+                  <el-row class="apiHelp">
+                    此接口是SSE长连接，调用接口后，蓝牙路由器会扫描周边的设备，并将蓝牙设备的MAC地址(bdaddr)、地址类型（bdaddrType）、广播报数据（adData/scanData）、设备名称（name）、信号强度（rssi）等信息以http response的形式返回。
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#scan-bluetooth-devices" target="_blank">更多参考</a>
+                  </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="使用芯片">
                       <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams['scan'].chip" size="small">
@@ -389,7 +393,11 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="connect">
-                  <span slot="label"><i class="el-icon-connection"></i> 连接设备</span>
+                  <span slot="label">连接设备</span>
+                  <el-row class="apiHelp">
+                    此接口为同步连接接口，调用接口后，蓝牙路由器会与指定的设备建立连接，并返回连接结果。
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#connectdisconnect-to-a-target-device" target="_blank">更多参考</a>
+                  </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="使用芯片">
                       <el-radio-group v-model="store.devConfDisplayVars.apiDebuggerParams['connect'].chip" size="small">
@@ -415,7 +423,11 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="read">
-                  <span slot="label"><i class="el-icon-reading"></i> 读取数据</span>
+                  <span slot="label">读取数据</span>
+                  <el-row class="apiHelp">
+                    本接口是负责与设备通讯的主要接口，具体负责从蓝牙设备指定服务读取数据。
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#readwrite-the-value-of-a-specific-characteristic" target="_blank">更多参考</a>
+                  </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="HANDLE">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['read'].handle"></el-input>
@@ -432,7 +444,11 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="write">
-                  <span slot="label"><i class="el-icon-edit-outline"></i> 写入数据</span>
+                  <span slot="label">写入数据</span>
+                  <el-row class="apiHelp">
+                    本接口是负责与设备通讯的主要接口，具体负责向蓝牙设备指定服务写入数据。
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#readwrite-the-value-of-a-specific-characteristic" target="_blank">更多参考</a>
+                  </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="HANDLE">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['write'].handle"></el-input>
@@ -458,7 +474,11 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="disconnect">
-                  <span slot="label"><i class="el-icon-scissors"></i> 断开连接</span>
+                  <span slot="label">断开连接</span>
+                  <el-row class="apiHelp">
+                    此接口是DELETE请求，调用接口后，蓝牙路由器会与指定MAC地址的蓝牙设备断连。
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#connectdisconnect-to-a-target-device" target="_blank">更多参考</a>
+                  </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="设备地址">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['disconnect'].deviceMac"></el-input>
@@ -472,7 +492,11 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="connectList">
-                  <span slot="label"><i class="el-icon-scissors"></i> 连接列表</span>
+                  <span slot="label">连接列表</span>
+                  <el-row class="apiHelp">
+                    此接口是GET请求，调用接口后，蓝牙路由器会将目前连接的设备的列表返回。
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#connectdisconnect-to-a-target-device" target="_blank">更多参考</a>
+                  </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item align="left">
                       <el-button-group>
@@ -483,7 +507,11 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="discover">
-                  <span slot="label"><i class="el-icon-scissors"></i> 设备服务</span>
+                  <span slot="label">设备服务</span>
+                  <el-row class="apiHelp">
+                    此接口是GET请求，调用接口后，蓝牙路由器会向指定的蓝牙设备请求其服务的树形列表，调用次接口的主要目的是为对蓝牙设备进行读写操作时，获取蓝牙设备的characteristic所对应的valueHandle或者handle。
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#discover-gatt-services-and-characteristics" target="_blank">更多参考</a>
+                  </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="设备地址">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['discover'].deviceMac"></el-input>
@@ -497,7 +525,11 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="notify">
-                  <span slot="label"><i class="el-icon-scissors"></i> 打开通知</span>
+                  <span slot="label">打开通知</span>
+                  <el-row class="apiHelp">
+                    此接口是SSE长连接，当打开蓝牙设备的notification/indication后，蓝牙设备会将通知消息上报到蓝牙路由器。
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#receive-notification-and-indication" target="_blank">更多参考</a>
+                  </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item align="left">
                       <el-button-group>
@@ -508,7 +540,11 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="connectStatus">
-                  <span slot="label"><i class="el-icon-scissors"></i> 连接状态</span>
+                  <span slot="label">连接状态</span>
+                  <el-row class="apiHelp">
+                    此接口是SSE长连接，当蓝牙路由器上的蓝牙设备的连接状态发生改变时（连接成功或者发生断连），会通过此接口将消息通知到pc端。
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#get-device-connection-status" target="_blank">更多参考</a>
+                  </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item align="left">
                       <el-button-group>
@@ -519,7 +555,11 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="pair">
-                  <span slot="label"><i class="el-icon-scissors"></i> 配对</span>
+                  <span slot="label">配对</span>
+                  <el-row class="apiHelp">
+                    通过此接口可以与蓝牙设备建立配对。
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#pair-request" target="_blank">更多参考</a>
+                  </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="设备地址">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['pair'].deviceMac"></el-input>
@@ -542,7 +582,11 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="pairInput">
-                  <span slot="label"><i class="el-icon-scissors"></i> 配对输入</span>
+                  <span slot="label">配对输入</span>
+                  <el-row class="apiHelp">
+                    通过此接口可以与蓝牙设备建立输入配对。
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#pair-input-request" target="_blank">更多参考</a>
+                  </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="设备地址">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['pairInput'].deviceMac"></el-input>
@@ -575,7 +619,11 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="unpair">
-                  <span slot="label"><i class="el-icon-scissors"></i> 取消配对</span>
+                  <span slot="label">取消配对</span>
+                  <el-row class="apiHelp">
+                    此接口是DELETE请求，调用接口后，蓝牙路由器会与指定MAC地址的蓝牙设备取消配对。
+                    <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#unpair-request" target="_blank">更多参考</a>
+                  </el-row>
                   <el-form label-width="80px" style="margin-top: 15px;" size="small">
                     <el-form-item label="设备地址">
                       <el-input clearable v-model="store.devConfDisplayVars.apiDebuggerParams['unpair'].deviceMac"></el-input>
@@ -592,7 +640,7 @@
               </el-tabs>
               <el-tabs v-model="store.devConfDisplayVars.activeApiOutputTabName" v-show="store.devConfDisplayVars.activeMenuItem === 'apiDebuggerMenuItem'">
                 <el-tab-pane name="output">
-                  <span slot="label"><i class="el-icon-circle-check"></i> 调试结果</span>
+                  <span slot="label">调试结果</span>
                   <!--
                   <el-button-group>
                     <el-button size="small" type="primary" @click="exportApiOutputDisplay">导出</el-button>
@@ -607,13 +655,13 @@
                   </highlight-code>
                 </el-tab-pane>
                 <el-tab-pane name="curl">
-                  <span slot="label"><i class="el-icon-circle-plus-outline"></i> cURL代码</span>
+                  <span slot="label">cURL代码</span>
                   <highlight-code lang="bash">
                     {{ cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].code['curl'] }}
                   </highlight-code>
                 </el-tab-pane>
                 <el-tab-pane name="nodejs">
-                  <span slot="label"><i class="el-icon-circle-plus-outline"></i> NodeJS代码</span>
+                  <span slot="label">NodeJS代码</span>
                   <highlight-code lang="js">
                     {{ cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].code['nodejs'] }}
                   </highlight-code>
@@ -1008,5 +1056,17 @@ code {
 
 .el-radio-button__inner {
   width: 80px;
+}
+
+.apiHelp {
+  background-color:#eefbea; 
+  color: #67C23A; 
+  font-size: 12px; 
+  padding: 10px 15px 10px 15px; 
+  border-radius: 3px;
+}
+
+.apiHelp a {
+  color: #67C23A;
 }
 </style>
