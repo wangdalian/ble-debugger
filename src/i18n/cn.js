@@ -150,6 +150,10 @@ const cn = {
   ok: '确 定',
 
   router: '路由器',
+  noData: '无数据',
+  pleaseSelect: '请选择',
+  pleaseInput: '请输入',
+  noMatchData: '无匹配数据',
 
   // vue.js
   noSupportByAp: '暂时不支持，请使用AC方式操作',

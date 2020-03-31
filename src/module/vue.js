@@ -569,7 +569,7 @@ function createVueMethods(vue) {
           setTimeout(function(that) {
             that.chartOptions = createRssiChart();
             that.startRssiChart();
-            notify(`${this.$i18n.t('message.openRssiChartOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
+            notify(`${that.$i18n.t('message.openRssiChartOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
           }, 100, this);
           this.store.devConfDisplayVars.rssiChartSwitch = true;
         }).catch(() => { // 点击取消
@@ -580,7 +580,7 @@ function createVueMethods(vue) {
         setTimeout(function(that) {
           that.chartOptions = createRssiChart();
           that.startRssiChart();
-          notify(`${this.$i18n.t('message.openRssiChartOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
+          notify(`${that.$i18n.t('message.openRssiChartOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
         }, 100, this);
         this.store.devConfDisplayVars.rssiChartSwitch = true;
       }
@@ -877,8 +877,10 @@ function createWatch() {
     },
     'store.devConfDisplayVars.toolsBinaryConversion.type': {
       handler: function(val, oldVal) {
-        let value = parseInt(this.store.devConfDisplayVars.toolsBinaryConversion.value, oldVal);
-        this.store.devConfDisplayVars.toolsBinaryConversion.value = value.toString(val);
+        if (this.store.devConfDisplayVars.toolsBinaryConversion.value) {
+          let value = parseInt(this.store.devConfDisplayVars.toolsBinaryConversion.value, oldVal);
+          this.store.devConfDisplayVars.toolsBinaryConversion.value = value.toString(val);
+        }
       }
     },
     'store.devConfDisplayVars.toolsHexTextConversion.type': {

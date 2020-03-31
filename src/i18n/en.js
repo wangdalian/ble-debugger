@@ -141,7 +141,7 @@ const en = {
   clearData: 'Clear Data',
 
   scanConnectWriteNotify: '[Multiple Devices]Scan->Connect->Write',
-  connectScannedDevices: 'Connect Scanned Device',
+  connectScannedDevices: 'Connect Scanned Devices',
 
   binaryConversion: 'Base Conversion',
   jsonFormatter: 'JSON Formatter',
@@ -150,6 +150,9 @@ const en = {
   ok: 'OK',
 
   router: 'Router',
+  noData: 'No Data',
+  pleaseSelect: 'Please Select',
+  pleaseInput: 'Please Input',
 
   // vue.js
   noSupportByAp: 'Not currently supported, please use AC mode',

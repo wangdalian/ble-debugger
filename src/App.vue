@@ -60,11 +60,11 @@
                 </el-select>
               </el-form-item>
               <el-form-item :label="$t('message.filterName')" style="margin-top: 15px;">
-                <el-select v-model="store.devConf.filter_name" multiple filterable allow-create default-first-option style="width: 100%">
+                <el-select v-model="store.devConf.filter_name" :no-data-text="$t('message.noData')" :no-match-text="$t('message.noMatchData')" :placeholder="$t('message.pleaseInput')" multiple filterable allow-create default-first-option style="width: 100%">
                 </el-select>
               </el-form-item>
               <el-form-item :label="$t('message.filterMac')">
-                <el-select v-model="store.devConf.filter_mac" multiple filterable allow-create default-first-option style="width: 100%">
+                <el-select v-model="store.devConf.filter_mac" :no-data-text="$t('message.noData')" :no-match-text="$t('message.noMatchData')" :placeholder="$t('message.pleaseInput')" multiple filterable allow-create default-first-option style="width: 100%">
                 </el-select>
               </el-form-item>
               <el-form-item :label="$t('message.fitlerRSSI')">
@@ -163,6 +163,11 @@
                         <vxe-button status="primary" size="small" @click="connectDeviceByRow(row, row.mac)" :loading="cache.devicesConnectLoading[row.mac]">{{$t('message.connect')}}</vxe-button>
                       </template>
                     </vxe-table-column>
+                    <template v-slot:empty>
+                      <span>
+                        <p>{{$t('message.noData')}}</p>
+                      </span>
+                    </template>
                   </vxe-grid>
                 </el-tab-pane>
                 <el-tab-pane style="width: 100%;">
@@ -234,6 +239,11 @@
                         </el-button-group>
                       </template>
                     </vxe-table-column>
+                    <template v-slot:empty>
+                      <span>
+                        <p>{{$t('message.noData')}}</p>
+                      </span>
+                    </template>
                   </vxe-grid>
                 </el-tab-pane>
                 <el-tab-pane :closable="true" v-for="(device, index) in cache.connectedList" :key="device.mac" :name="device.mac">
@@ -350,6 +360,11 @@
                       <vxe-table-column field="mac" :title="$t('message.addr')" type="html" width="30%" show-overflow></vxe-table-column>
                       <vxe-table-column field="handle" title="HANDLE" width="10%" ></vxe-table-column>
                       <vxe-table-column field="value" title="VALUE" width="40%" show-overflow></vxe-table-column>
+                      <template v-slot:empty>
+                        <span>
+                          <p>{{$t('message.noData')}}</p>
+                        </span>
+                      </template>
                     </vxe-grid>
                   </el-row>
                 </el-tab-pane>
@@ -380,6 +395,11 @@
                       <vxe-table-column field="apiName" :title="$t('message.apiName')" type="html" width="15%" sortable></vxe-table-column>
                       <vxe-table-column field="apiContentJson" :title="$t('message.reqContent')" type="html" width="65%" sortable></vxe-table-column>
                       <!-- TODO: 增加重放功能 -->
+                      <template v-slot:empty>
+                        <span>
+                          <p>{{$t('message.noData')}}</p>
+                        </span>
+                      </template>
                     </vxe-grid>
                   </el-row>
                 </el-tab-pane>
@@ -402,11 +422,11 @@
                       </el-radio-group>
                     </el-form-item>
                     <el-form-item :label="$t('message.filterName')">
-                      <el-select v-model="store.devConfDisplayVars.apiDebuggerParams['scan'].filter_name" multiple filterable allow-create default-first-option style="width: 100%">
+                      <el-select v-model="store.devConfDisplayVars.apiDebuggerParams['scan'].filter_name" :no-data-text="$t('message.noData')" :no-match-text="$t('message.noMatchData')" :placeholder="$t('message.pleaseInput')" multiple filterable allow-create default-first-option style="width: 100%">
                       </el-select>
                     </el-form-item>
                     <el-form-item :label="$t('message.filterMac')">
-                      <el-select v-model="store.devConfDisplayVars.apiDebuggerParams['scan'].filter_mac" multiple filterable allow-create default-first-option style="width: 100%">
+                      <el-select v-model="store.devConfDisplayVars.apiDebuggerParams['scan'].filter_mac" :no-data-text="$t('message.noData')" :no-match-text="$t('message.noMatchData')"  :placeholder="$t('message.pleaseInput')" multiple filterable allow-create default-first-option style="width: 100%">
                       </el-select>
                     </el-form-item>
                     <el-form-item :label="$t('message.fitlerRSSI')">
@@ -743,7 +763,7 @@
                     </div>
                     <el-form label-width="100px" size="small">
                       <el-form-item :label="$t('message.historyApi')">
-                        <el-select @change="apiDemoConnectChanged" v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect.tempFromApiLogUrl" style="width: 100%">
+                        <el-select @change="apiDemoConnectChanged" v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.connect.tempFromApiLogUrl" :no-data-text="$t('message.noData')" :no-match-text="$t('message.noMatchData')" :placeholder="$t('message.pleaseSelect')" style="width: 100%">
                           <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: $t('message.connectDevice')})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
                         </el-select>
                       </el-form-item>
@@ -771,7 +791,7 @@
                     </div>
                     <el-form label-width="100px" size="small">
                       <el-form-item :label="$t('message.historyApi')">
-                        <el-select @change="apiDemoWriteChanged" v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write.tempFromApiLogUrl" style="width: 100%">
+                        <el-select @change="apiDemoWriteChanged" v-model="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.write.tempFromApiLogUrl" :no-data-text="$t('message.noData')" :no-match-text="$t('message.noMatchData')" :placeholder="$t('message.pleaseSelect')" style="width: 100%">
                           <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: $t('message.writeData')})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
                         </el-select>
                       </el-form-item>
@@ -814,7 +834,7 @@
                     </div>
                     <el-form label-width="100px" style="margin-top: 15px;" size="small">
                       <el-form-item :label="$t('message.historyApi')">
-                        <el-select @change="apiDemoScanChanged" v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.tempFromApiLogUrl" style="width: 100%">
+                        <el-select @change="apiDemoScanChanged" v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.tempFromApiLogUrl" :no-data-text="$t('message.noData')" :no-match-text="$t('message.noMatchData')" :placeholder="$t('message.pleaseInput')" style="width: 100%">
                           <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: $t('message.scanDevices')})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
                         </el-select>
                       </el-form-item>
@@ -825,11 +845,11 @@
                         </el-radio-group>
                       </el-form-item>
                       <el-form-item :label="$t('message.filterName')">
-                        <el-select v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.filter_name" multiple filterable allow-create default-first-option style="width: 100%">
+                        <el-select v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.filter_name" :no-data-text="$t('message.noData')" :no-match-text="$t('message.noMatchData')" :placeholder="$t('message.pleaseInput')" multiple filterable allow-create default-first-option style="width: 100%">
                         </el-select>
                       </el-form-item>
                       <el-form-item :label="$t('message.filterMac')">
-                        <el-select v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.filter_mac" multiple filterable allow-create default-first-option style="width: 100%">
+                        <el-select v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.scan.filter_mac" :no-data-text="$t('message.noData')" :no-match-text="$t('message.noMatchData')" :placeholder="$t('message.pleaseInput')" multiple filterable allow-create default-first-option style="width: 100%">
                         </el-select>
                       </el-form-item>
                       <el-form-item :label="$t('message.fitlerRSSI')">
@@ -856,7 +876,7 @@
                     </div>
                     <el-form label-width="100px" size="small">
                       <el-form-item :label="$t('message.historyApi')">
-                        <el-select @change="apiDemoWriteChanged" v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.write.tempFromApiLogUrl" style="width: 100%">
+                        <el-select @change="apiDemoWriteChanged" v-model="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.write.tempFromApiLogUrl" :no-data-text="$t('message.noData')" :no-match-text="$t('message.noMatchData')" :placeholder="$t('message.pleaseSelect')" style="width: 100%">
                           <el-option v-for="(logItem, index) in getApiLogListByFilter({apiName: $t('message.writeData')})" :label="logItem.apiContentJson" :value="logItem.apiContentJson" :key="index"></el-option>
                         </el-select>
                       </el-form-item>
