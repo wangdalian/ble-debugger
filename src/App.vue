@@ -753,9 +753,9 @@
                   </highlight-code>
                 </el-tab-pane>
               </el-tabs>
-              <el-tabs v-show="store.devConfDisplayVars.activeMenuItem === 'apiDemoMenuItem'">
-                <el-tab-pane>
-                  <span slot="label"><i class="el-icon-caret-right"></i> {{$t('message.connectWriteNotify')}}</span>
+              <el-tabs v-show="store.devConfDisplayVars.activeMenuItem === 'apiDemoMenuItem'" v-model="store.devConfDisplayVars.apiDemoTabsActiveTab">
+                <el-tab-pane name="singleDevice">
+                  <span slot="label"><i :class="store.devConfDisplayVars.apiDemoTabsActiveTab === 'singleDevice' ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i> {{$t('message.connectWriteNotify')}}</span>
                   <el-card shadow="hover">
                     <div slot="header" class="clearfix">
                       <span>1.{{$t('message.connectDevice')}}</span>
@@ -825,8 +825,8 @@
                     {{ store.devConfDisplayVars.apiDemoParams.connectWriteNotify.code }}
                   </highlight-code>
                 </el-tab-pane>
-                <el-tab-pane>
-                  <span slot="label"><i class="el-icon-caret-right"></i> {{$t('message.scanConnectWriteNotify')}}</span>
+                <el-tab-pane name="multipleDevice">
+                  <span slot="label"><i :class="store.devConfDisplayVars.apiDemoTabsActiveTab === 'multipleDevice' ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i> {{$t('message.scanConnectWriteNotify')}}</span>
                   <el-card shadow="hover">
                     <div slot="header" class="clearfix">
                       <span>1.{{$t('message.scanDevices')}}</span>
@@ -905,7 +905,7 @@
               </el-tabs>
               <el-tabs v-show="store.devConfDisplayVars.activeMenuItem === 'toolsMenuItem'">
                 <el-tab-pane>
-                  <span slot="label"><i class="el-icon-caret-right"></i> {{$t('message.tools')}}</span>
+                  <span slot="label"><i class="el-icon-caret-bottom"></i> {{$t('message.tools')}}</span>
                   <el-card shadow="hover">
                     <div slot="header" class="clearfix">
                       <span>{{$t('message.binaryConversion')}}</span>

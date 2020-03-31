@@ -23,6 +23,7 @@ let storage = {
   },
   devConfDisplayVars: {
     scanTabsActiveTab: 'scanResult', // 当前激活的扫描tab页
+    apiDemoTabsActiveTab: 'singleDevice', // API demo激活的tab页
     pairBySecurityOOB: { // security pair
       visible: false, 
       deviceMac: '',

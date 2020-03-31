@@ -129,7 +129,7 @@ const en = {
   unpairInfo: 'This API is a DELETE request. After calling the API, the Bluetooth router will unpair with the Bluetooth device with the specified MAC address.',
 
   debugResult: 'Debug Results',
-  connectWriteNotify: '[Single Device]Connect->Write->Receive notifications',
+  connectWriteNotify: '[Single Device] Connect->Write->Receive notifications',
   test: 'Test',
   historyApi: 'History API',
 
@@ -140,7 +140,7 @@ const en = {
 
   clearData: 'Clear Data',
 
-  scanConnectWriteNotify: '[Multiple Devices]Scan->Connect->Write',
+  scanConnectWriteNotify: '[Multiple Devices] Scan->Connect->Write',
   connectScannedDevices: 'Connect Scanned Devices',
 
   binaryConversion: 'Base Conversion',
