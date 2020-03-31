@@ -140,7 +140,9 @@ let cache = {
   apiDebuggerResult: { 
     [libEnum.apiType.SCAN]: {
       sse: null,
-      resultList: [{time: 1582882186095, data: '{"name":"(unknown)","evtType":3,"rssi":-80,"adData":"1EFF06000109200262A12A0E18F1516C3D7DABD42556C51B45E9094EB88D2B","bdaddrs":[{"bdaddr":"76:95:9B:89:BB:A5","bdaddrType":"random"}]}'}],
+      resultList: [
+        // {time: 1582882186095, data: '{"name":"(unknown)","evtType":3,"rssi":-80,"adData":"1EFF06000109200262A12A0E18F1516C3D7DABD42556C51B45E9094EB88D2B","bdaddrs":[{"bdaddr":"76:95:9B:89:BB:A5","bdaddrType":"random"}]}'}
+      ],
       displayResultList: [],
       code: {
         [libEnum.codeType.CURL]: '',

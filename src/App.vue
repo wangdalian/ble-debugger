@@ -736,22 +736,22 @@
                     <el-button size="small" type="danger" @click="clearApiOutputDisplay">清空</el-button>
                   </el-button-group>
                   -->
-                  <highlight-code lang="javascript" v-if="store.devConfDisplayVars.activeApiTabName === 'scan'" v-infinite-scroll="loadApiDebuggerResult" infinite-scroll-distance="200px" :infinite-scroll-disabled="cache.isApiDebuggerLoading">
+                  <highlight-code lang="javascript" v-if="store.devConfDisplayVars.activeApiTabName === 'scan' && cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].displayResultList.length > 0" v-infinite-scroll="loadApiDebuggerResult" infinite-scroll-distance="200px" :infinite-scroll-disabled="cache.isApiDebuggerLoading">
                     {{ cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].displayResultList.join('\n') }}
                   </highlight-code>
-                  <highlight-code lang="javascript" v-if="store.devConfDisplayVars.activeApiTabName !== 'scan'">
+                  <highlight-code lang="javascript" v-if="store.devConfDisplayVars.activeApiTabName !== 'scan' && cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].resultList.length > 0">
                     {{ cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].resultList.join('\n') }}
                   </highlight-code>
                 </el-tab-pane>
                 <el-tab-pane name="curl">
                   <span slot="label">cURL</span>
-                  <highlight-code lang="bash">
+                  <highlight-code lang="bash" v-if="cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].code['curl'].length > 0">
                     {{ cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].code['curl'] }}
                   </highlight-code>
                 </el-tab-pane>
                 <el-tab-pane name="nodejs">
                   <span slot="label">NodeJS</span>
-                  <highlight-code lang="js">
+                  <highlight-code lang="js" v-if="cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].code['nodejs'].length > 0">
                     {{ cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].code['nodejs'] }}
                   </highlight-code>
                 </el-tab-pane>
@@ -1097,7 +1097,6 @@ pre::-webkit-scrollbar {
 
 code {
   overflow-y: scroll;
-  font-family: "Monaco", "monospace", "Courier New", "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
 }
 
 .hljs {
