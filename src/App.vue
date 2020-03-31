@@ -116,15 +116,15 @@
                   <span slot="title">{{$t('message.apiLogList')}}</span>
                 </el-menu-item>
                 <el-menu-item index="apiDebuggerMenuItem">
-                  <i class="el-icon-service" style="font-size: 24px; color: #fff;"></i>
+                  <i class="el-icon-cpu" style="font-size: 24px; color: #fff;"></i>
                   <span slot="title">{{$t('message.apiDebugger')}}</span>
                 </el-menu-item>
                 <el-menu-item index="apiDemoMenuItem">
-                  <i class="el-icon-magic-stick" style="font-size: 24px; color: #fff;"></i>
+                  <i class="el-icon-s-help" style="font-size: 24px; color: #fff;"></i>
                   <span slot="title">{{$t('message.apiDemo')}}</span>
                 </el-menu-item>
                 <el-menu-item index="toolsMenuItem">
-                  <i class="el-icon-s-tools" style="font-size: 24px; color: #fff;"></i>
+                  <i class="el-icon-s-opportunity" style="font-size: 24px; color: #fff;"></i>
                   <span slot="title">{{$t('message.tools')}}</span>
                 </el-menu-item>
               </el-menu>

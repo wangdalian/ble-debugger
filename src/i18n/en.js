@@ -153,6 +153,7 @@ const en = {
   noData: 'No Data',
   pleaseSelect: 'Please Select',
   pleaseInput: 'Please Input',
+  noMatchData: 'No Matched Data',
 
   // vue.js
   noSupportByAp: 'Not currently supported, please use AC mode',
