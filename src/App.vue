@@ -128,6 +128,10 @@
                   <span slot="title">{{$t('message.tools')}}</span>
                 </el-menu-item>
               </el-menu>
+              <el-row style="position: fixed; bottom: 10px; margin-left: 12px;">
+                <el-button type="primary" size="medium" v-if="!store.devConfDisplayVars.isScanning" @click="startScan" icon="el-icon-video-pause"></el-button>
+                <el-button type="primary" size="medium" v-if="store.devConfDisplayVars.isScanning" @click="stopScan" icon="el-icon-loading"></el-button>
+              </el-row>
             </el-aside>
             <el-main style="height: 100%; margin-left: 80px;">
               <el-tabs style="background-color: #fff"	v-model="store.devConfDisplayVars.scanTabsActiveTab" @tab-click="scanTabsClick" v-show="store.devConfDisplayVars.activeMenuItem === 'scanListMenuItem'">
