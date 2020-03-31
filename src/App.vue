@@ -285,6 +285,9 @@
                               <el-button style="font-style: normal; font-weight: bold;" v-bind:type="char.notifyStatus === 'on' ? 'primary' : 'info'" v-show="char.propertiesStr.includes('NOTIFY')" size="small" @click="propertyClick('NOTIFY', device.mac, char)">
                                 NOTIFY
                               </el-button>
+                              <el-button style="font-style: normal; font-weight: bold;" v-bind:type="char.notifyStatus === 'on' ? 'primary' : 'info'" v-show="char.propertiesStr.includes('INDICATE')" size="small" @click="propertyClick('INDICATE', device.mac, char)">
+                                INDICATE
+                              </el-button>
                               </el-switch>
                               <el-button style="font-style: normal; font-weight: bold;" v-show="char.propertiesStr.includes('WRITE NO RES')" type="primary" size="small" @click="propertyClick('WRITE NO RES', device.mac, char)">
                                 WRITE NO RES

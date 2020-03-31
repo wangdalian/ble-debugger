@@ -731,7 +731,7 @@ function createVueMethods(vue) {
         if (index === -1) return; 
         this.cache.connectedList.splice(index, 1); // 删除此设备
         let activeItem = this.cache.connectedList[index] || this.cache.connectedList[index-1];
-        let activeItemName = activeItem ? activeItem.mac : '0';
+        let activeItemName = activeItem ? activeItem.mac : 'connectTab0';
         this.cache.currentConnectedTab = activeItemName;
         this.connectVuxTableForceResize();
         // CAUTION: 目前通过连接状态SSE发送通知，暂时不考虑SSE失败的情况

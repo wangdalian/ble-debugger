@@ -12,9 +12,24 @@ const logger = libLogger.genModuleLogger('operation');
 const operationsHandler = {
   [libEnum.operation.READ]: readHander,
   [libEnum.operation.NOTIFY]: notifyHandler,
+  [libEnum.operation.INDICATE]: indicateHandler,
   [libEnum.operation.WRITE_NO_RES]: writeWithoutResHandler,
   [libEnum.operation.WRITE]: writeWithResHandler,  
 };
+
+function indicateHandler(operation, deviceMac, char) {
+  const devConf = dbModule.getDevConf();
+  const handle = char.notifyHandle || char.handle;
+  const notifyStatus = char.notifyStatus;
+  let value = (notifyStatus === libEnum.notifyStatus.ON ? '0000' : '0200');
+  apiModule.writeByHandleByDevConf(devConf, deviceMac, handle, value, false).then(() => {
+    if (char.notifyStatus === libEnum.notifyStatus.ON) char.notifyStatus = libEnum.notifyStatus.OFF;
+    else if (char.notifyStatus === libEnum.notifyStatus.OFF) char.notifyStatus = libEnum.notifyStatus.ON;
+    vueModule.notify(`${main.getGlobalVue().$i18n.t('message.sendNotifyOk')}: ${deviceMac}, handle ${handle} `, `${main.getGlobalVue().$i18n.t('message.operationOk')}`, libEnum.messageType.SUCCESS);
+  }).catch(ex => {
+    vueModule.notify(`${main.getGlobalVue().$i18n.t('message.sendNotifyFail')}: ${deviceMac}, handle ${handle}, ${ex}`, `${main.getGlobalVue().$i18n.t('message.operationFail')}`, libEnum.messageType.ERROR);
+  });
+}
 
 function notifyHandler(operation, deviceMac, char) {
   const devConf = dbModule.getDevConf();
