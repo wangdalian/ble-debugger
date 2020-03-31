@@ -892,6 +892,10 @@ function createWatch() {
     },
     'store.devConfDisplayVars.toolsJsonConversion.inline': {
       handler: function(val, oldVal) {
+        if (!val || val.length === 0) {
+          this.store.devConfDisplayVars.toolsJsonConversion.format = '';
+          return;
+        }
         try {
           this.store.devConfDisplayVars.toolsJsonConversion.format = JSON.stringify(JSON.parse(val), null, 2);
         } catch (ex) {

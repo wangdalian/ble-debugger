@@ -126,7 +126,7 @@ let storage = {
 };
 
 let cache = {
-  currentConnectedTab: '0',
+  currentConnectedTab: 'connectTab0',
   scanDisplayFilterContent: '',
   connectDisplayFilterContent: '',
   notifyDisplayFilterContent: '',

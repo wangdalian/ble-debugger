@@ -821,7 +821,7 @@
                     <el-button type="primary" size="small" @click="apiDemoConnectWriteNotifyGenCode">{{$t('message.genCode')}}</el-button>
                     <el-button type="primary" size="small">{{$t('message.clearData')}}</el-button>
                   </el-button-group>
-                  <highlight-code lang="javascript">
+                  <highlight-code lang="javascript" v-if="store.devConfDisplayVars.apiDemoParams.connectWriteNotify.code.length > 0">
                     {{ store.devConfDisplayVars.apiDemoParams.connectWriteNotify.code }}
                   </highlight-code>
                 </el-tab-pane>
@@ -898,7 +898,7 @@
                     <el-button type="primary" size="small" @click="apiDemoScanConnectWriteNotifyGenCode">{{$t('message.genCode')}}</el-button>
                     <el-button type="primary" size="small">{{$t('message.clearData')}}</el-button>
                   </el-button-group>
-                  <highlight-code lang="javascript">
+                  <highlight-code lang="javascript" v-if="store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.code.length > 0">
                     {{ store.devConfDisplayVars.apiDemoParams.scanConnectWriteNotify.code }}
                   </highlight-code>
                 </el-tab-pane>
@@ -951,7 +951,7 @@
                         </el-input>
                       </el-form-item>
                       <el-form-item>
-                        <highlight-code lang="javascript">
+                        <highlight-code lang="javascript" v-if="store.devConfDisplayVars.toolsJsonConversion.format.length > 0">
                           {{ store.devConfDisplayVars.toolsJsonConversion.format }}
                         </highlight-code>
                       </el-form-item>
