@@ -22,6 +22,7 @@ let storage = {
     chip: 0, // 扫描使用的芯片
   },
   devConfDisplayVars: {
+    scanTabsActiveTab: 'scanResult', // 当前激活的扫描tab页
     pairBySecurityOOB: { // security pair
       visible: false, 
       deviceMac: '',

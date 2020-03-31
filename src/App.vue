@@ -130,9 +130,9 @@
               </el-menu>
             </el-aside>
             <el-main style="height: 100%; margin-left: 80px;">
-              <el-tabs style="background-color: #fff"	@tab-click="scanTabsClick" v-show="store.devConfDisplayVars.activeMenuItem === 'scanListMenuItem'">
-                <el-tab-pane style="height: 100%; background-color: #fff; " >
-                  <span slot="label"><i class="el-icon-s-data"></i> {{$t('message.scanResult')}}</span>
+              <el-tabs style="background-color: #fff"	v-model="store.devConfDisplayVars.scanTabsActiveTab" @tab-click="scanTabsClick" v-show="store.devConfDisplayVars.activeMenuItem === 'scanListMenuItem'">
+                <el-tab-pane name="scanResult" style="height: 100%; background-color: #fff; " >
+                  <span slot="label"><i :class="store.devConfDisplayVars.scanTabsActiveTab === 'scanResult' ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i> {{$t('message.scanResult')}}</span>
                   <vxe-toolbar>
                     <template v-slot:buttons>
                       <span>{{$t('message.devicesCount')}}: <span style="font-weight: bold; color: #409eff">{{ getComputedScanDisplayResultList.length }} </span></span>
@@ -170,8 +170,8 @@
                     </template>
                   </vxe-grid>
                 </el-tab-pane>
-                <el-tab-pane style="width: 100%;">
-                  <span slot="label"><i class="el-icon-pie-chart"></i> {{$t('message.rssiChart')}}</span>
+                <el-tab-pane name="rssiChart" style="width: 100%;">
+                  <span slot="label"><i :class="store.devConfDisplayVars.scanTabsActiveTab === 'rssiChart' ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i> {{$t('message.rssiChart')}}</span>
                   <el-row>
                     <el-form inline size="small">
                       <el-form-item :label="$t('message.statsCycle')">
@@ -202,8 +202,8 @@
                 </el-tab-pane>
               </el-tabs>
               <el-tabs @tab-click="connectTabsClick" v-model="cache.currentConnectedTab" @tab-remove="connectedListTabRemove" v-show="store.devConfDisplayVars.activeMenuItem === 'connectListMenuItem'">
-                <el-tab-pane :closable="false">
-                  <span slot="label"><i class="el-icon-s-data"></i> {{$t('message.connectList')}}</span>
+                <el-tab-pane name="connectTab0" :closable="false">
+                  <span slot="label"><i :class="cache.currentConnectedTab === 'connectTab0' ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i> {{$t('message.connectList')}} </span>
                   <vxe-toolbar>
                     <template v-slot:buttons>
                       <span>{{$t('message.connectedDevices')}}: <span style="font-weight: bold; color: #409eff">{{ getComputedConnectDisplayResultList().length }} </span></span>
@@ -247,7 +247,7 @@
                   </vxe-grid>
                 </el-tab-pane>
                 <el-tab-pane :closable="true" v-for="(device, index) in cache.connectedList" :key="device.mac" :name="device.mac">
-                  <span slot="label"><i class="el-icon-connection"></i> {{ device.mac }}</span>
+                  <span slot="label"><i :class="cache.currentConnectedTab === device.mac ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i> {{ device.mac }}</span>
                   <el-row style="background-color: #409eff; font-size: 14px; font-style: normal; border-radius: 3px; color: #fff; height: 60px; display: flex; align-items: center; padding-left: 15px; padding-right: 15px;">
                     <el-col :span="6">
                       <el-row>{{ device.name }}</el-row>
@@ -333,7 +333,7 @@
               </el-tabs>
               <el-tabs v-show="store.devConfDisplayVars.activeMenuItem === 'notifyListMenuItem'">
                 <el-tab-pane>
-                  <span slot="label"><i class="el-icon-message-solid"></i>{{$t('message.notifyList')}}</span>
+                  <span slot="label"><i class="el-icon-caret-bottom"></i> {{$t('message.notifyList')}}</span>
                   <el-row>
                     <vxe-toolbar>
                       <template v-slot:buttons>
@@ -371,7 +371,7 @@
               </el-tabs>
               <el-tabs v-show="store.devConfDisplayVars.activeMenuItem === 'apiLogListMenuItem'">
                 <el-tab-pane>
-                  <span slot="label"><i class="el-icon-connection"></i> {{$t('message.apiLogList')}}</span>
+                  <span slot="label"><i class="el-icon-caret-bottom"></i> {{$t('message.apiLogList')}}</span>
                   <el-row>
                     <vxe-toolbar>
                       <template v-slot:buttons>
@@ -406,7 +406,7 @@
               </el-tabs>
               <el-tabs v-model="store.devConfDisplayVars.activeApiTabName" v-show="store.devConfDisplayVars.activeMenuItem === 'apiDebuggerMenuItem'">
                 <el-tab-pane name="scan">
-                  <span slot="label">{{$t('message.scanDevices')}}</span>
+                  <span slot="label"><i :class="store.devConfDisplayVars.activeApiTabName === 'scan' ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i> {{$t('message.scanDevices')}}</span>
                   <el-row class="apiHelp">
                     {{$t('message.scanDevicesInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#scan-bluetooth-devices" target="_blank">{{$t('message.more')}}</a>
@@ -447,7 +447,7 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="connect">
-                  <span slot="label">{{$t('message.connectDevice')}}</span>
+                  <span slot="label"><i :class="store.devConfDisplayVars.activeApiTabName === 'connect' ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i> {{$t('message.connectDevice')}}</span>
                   <el-row class="apiHelp">
                     {{$t('message.connectDeviceInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#connectdisconnect-to-a-target-device" target="_blank">{{$t('message.more')}}</a>
@@ -480,7 +480,7 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="read">
-                  <span slot="label">{{$t('message.readData')}}</span>
+                  <span slot="label"><i :class="store.devConfDisplayVars.activeApiTabName === 'read' ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i> {{$t('message.readData')}}</span>
                   <el-row class="apiHelp">
                     {{$t('message.readDataInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#readwrite-the-value-of-a-specific-characteristic" target="_blank">{{$t('message.more')}}</a>
@@ -504,7 +504,7 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="write">
-                  <span slot="label">{{$t('message.writeData')}}</span>
+                  <span slot="label"><i :class="store.devConfDisplayVars.activeApiTabName === 'write' ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i> {{$t('message.writeData')}}</span>
                   <el-row class="apiHelp">
                     {{$t('message.writeDataInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#readwrite-the-value-of-a-specific-characteristic" target="_blank">{{$t('message.more')}}</a>
@@ -537,7 +537,7 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="disconnect">
-                  <span slot="label">{{$t('message.disConnect')}}</span>
+                  <span slot="label"><i :class="store.devConfDisplayVars.activeApiTabName === 'disconnect' ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i> {{$t('message.disConnect')}}</span>
                   <el-row class="apiHelp">
                     {{$t('message.disConnectInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#connectdisconnect-to-a-target-device" target="_blank">{{$t('message.more')}}</a>
@@ -558,7 +558,7 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="connectList">
-                  <span slot="label">{{$t('message.connectList')}}</span>
+                  <span slot="label"><i :class="store.devConfDisplayVars.activeApiTabName === 'connectList' ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i> {{$t('message.connectList')}}</span>
                   <el-row class="apiHelp">
                     {{$t('message.connectListInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#connectdisconnect-to-a-target-device" target="_blank">{{$t('message.more')}}</a>
@@ -576,7 +576,7 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="discover">
-                  <span slot="label">{{$t('message.deviceServices')}}</span>
+                  <span slot="label"><i :class="store.devConfDisplayVars.activeApiTabName === 'discover' ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i> {{$t('message.deviceServices')}}</span>
                   <el-row class="apiHelp">
                     {{$t('message.deivceServicesInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#discover-gatt-services-and-characteristics" target="_blank">{{$t('message.more')}}</a>
@@ -597,7 +597,7 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="notify">
-                  <span slot="label">{{$t('message.openNotify')}}</span>
+                  <span slot="label"><i :class="store.devConfDisplayVars.activeApiTabName === 'notify' ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i> {{$t('message.openNotify')}}</span>
                   <el-row class="apiHelp">
                     {{$t('message.openNotifyInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#receive-notification-and-indication" target="_blank">{{$t('message.more')}}</a>
@@ -615,7 +615,7 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="connectStatus">
-                  <span slot="label">{{$t('message.connectStatus')}}</span>
+                  <span slot="label"><i :class="store.devConfDisplayVars.activeApiTabName === 'connectStatus' ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i> {{$t('message.connectStatus')}}</span>
                   <el-row class="apiHelp">
                     {{$t('message.connectStatusInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#get-device-connection-status" target="_blank">{{$t('message.more')}}</a>
@@ -633,7 +633,7 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="pair">
-                  <span slot="label">{{$t('message.pair')}}</span>
+                  <span slot="label"><i :class="store.devConfDisplayVars.activeApiTabName === 'pair' ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i> {{$t('message.pair')}}</span>
                   <el-row class="apiHelp">
                     {{$t('message.pairInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#pair-request" target="_blank">{{$t('message.more')}}</a>
@@ -663,7 +663,7 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="pairInput">
-                  <span slot="label">{{$t('message.pairInput')}}</span>
+                  <span slot="label"><i :class="store.devConfDisplayVars.activeApiTabName === 'pairInput' ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i> {{$t('message.pairInput')}}</span>
                   <el-row class="apiHelp">
                     {{$t('message.pairInputInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#pair-input-request" target="_blank">{{$t('message.more')}}</a>
@@ -703,7 +703,7 @@
                   </el-form>
                 </el-tab-pane>
                 <el-tab-pane name="unpair">
-                  <span slot="label">{{$t('message.unpair')}}</span>
+                  <span slot="label"><i :class="store.devConfDisplayVars.activeApiTabName === 'unpair' ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i> {{$t('message.unpair')}}</span>
                   <el-row class="apiHelp">
                     {{$t('message.unpairInfo')}}
                     <a href="https://github.com/CassiaNetworks/CassiaSDKGuide/wiki/RESTful-API#unpair-request" target="_blank">{{$t('message.more')}}</a>
@@ -755,7 +755,7 @@
               </el-tabs>
               <el-tabs v-show="store.devConfDisplayVars.activeMenuItem === 'apiDemoMenuItem'">
                 <el-tab-pane>
-                  <span slot="label"><i class="el-icon-connection"></i> {{$t('message.connectWriteNotify')}}</span>
+                  <span slot="label"><i class="el-icon-caret-right"></i> {{$t('message.connectWriteNotify')}}</span>
                   <el-card shadow="hover">
                     <div slot="header" class="clearfix">
                       <span>1.{{$t('message.connectDevice')}}</span>
@@ -826,7 +826,7 @@
                   </highlight-code>
                 </el-tab-pane>
                 <el-tab-pane>
-                  <span slot="label"><i class="el-icon-connection"></i> {{$t('message.scanConnectWriteNotify')}}</span>
+                  <span slot="label"><i class="el-icon-caret-right"></i> {{$t('message.scanConnectWriteNotify')}}</span>
                   <el-card shadow="hover">
                     <div slot="header" class="clearfix">
                       <span>1.{{$t('message.scanDevices')}}</span>
@@ -905,7 +905,7 @@
               </el-tabs>
               <el-tabs v-show="store.devConfDisplayVars.activeMenuItem === 'toolsMenuItem'">
                 <el-tab-pane>
-                  <span slot="label"><i class="el-icon-s-tools"></i> {{$t('message.tools')}}</span>
+                  <span slot="label"><i class="el-icon-caret-right"></i> {{$t('message.tools')}}</span>
                   <el-card shadow="hover">
                     <div slot="header" class="clearfix">
                       <span>{{$t('message.binaryConversion')}}</span>
