@@ -34,8 +34,8 @@
               </el-row>
               <el-form-item :label="$t('message.connectStyle')" style="margin-top: 15px;">
                 <el-select v-model="store.devConf.controlStyle" style="width: 100%">
-                  <el-option label="ap" value="ap"></el-option>
-                  <el-option label="ac" value="ac"></el-option>
+                  <el-option label="Router" value="ap"></el-option>
+                  <el-option label="AC" value="ac"></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item :label="$t('message.serviceURI')" style="margin-top: 15px;">
