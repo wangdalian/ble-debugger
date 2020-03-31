@@ -50,7 +50,7 @@ let storage = {
       inline: '',
       format: ''
     },
-    language: '中文',
+    language: 'cn',
     mainWidth: 18,
     isConfigMenuItemOpen: true,
     scanFilterNamesInputVisible: false,

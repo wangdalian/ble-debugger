@@ -573,7 +573,7 @@ function createVueMethods(vue) {
           }, 100, this);
           this.store.devConfDisplayVars.rssiChartSwitch = true;
         }).catch(() => { // 点击取消
-               
+          
         });
       } else {
         this.destoryRssiChart();
@@ -982,6 +982,9 @@ function createVue() {
     computed: createComputed(),
     methods: createVueMethods(),
     watch: createWatch(),
+    mounted: function() {
+      this.store.devConfDisplayVars.language = this.$i18n.locale;
+    }
   };
 }
 
