@@ -32,6 +32,10 @@ const generater = {
     [libEnum.codeType.CURL]: _genDiscoverCodeCurl,
     [libEnum.codeType.NODEJS]: _genDiscoverCodeNodeJS,
   },
+  [libEnum.apiType.CONNECT_STATUS]: {
+    [libEnum.codeType.CURL]: _genConnectStatusCodeCurl,
+    [libEnum.codeType.NODEJS]: _genConnectStatusCodeNodeJS,
+  },
   [libEnum.apiType.NOTIFY]: {
     [libEnum.codeType.CURL]: _genNotifyCodeCurl,
     [libEnum.codeType.NODEJS]: _genNotifyCodeNodeJS,
@@ -175,6 +179,15 @@ function _genConnectListCodeNodeJS(apiParams) {
 function _genNotifyCodeCurl(apiParams) {
   const devConf = dbModule.getDevConf();
   let url = apiModule.getNotifyUrlByDevConf(devConf);
+
+  return `
+  curl -H "Accept: text/event-stream" '${url}'
+  `;
+}
+
+function _genConnectStatusCodeCurl(apiParams) {
+  const devConf = dbModule.getDevConf();
+  let url = apiModule.getConnectStatusUrlByDevConf(devConf);
 
   return `
   curl -H "Accept: text/event-stream" '${url}'
@@ -396,6 +409,27 @@ function _genNotifyCodeNodeJS(apiParams) {
 
   sse.onmessage = function(message) {
     console.log('recevied notify sse message:', message);
+  };
+  `;
+}
+
+function _genConnectStatusCodeNodeJS(apiParams) {
+  const devConf = dbModule.getDevConf();
+  let url = apiModule.getScanUrlByDevConf(devConf);
+
+  return `
+  const EventSource = require('eventsource');
+
+  const url = '${url}';
+
+  const sse = new EventSource(url);
+
+  sse.onerror = function(error) {
+    console.log('open connect status sse failed:', error);
+  };
+
+  sse.onmessage = function(message) {
+    console.log('recevied connect status sse message:', message);
   };
   `;
 }
