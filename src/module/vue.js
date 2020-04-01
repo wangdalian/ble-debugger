@@ -823,7 +823,7 @@ function scanDataList2RssiChartData(periodStartTime, periodEndTime, vue) {
   let devicesCount = _.keys(dbModule.getCache().scanDevicesRssiHistory).length;
   if (devicesCount > 5) {
     vue.destoryRssiChart();
-    notify(`${this.$i18n.t('message.tooManyDeviceScannedAlert')}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
+    notify(`${main.getGlobalVue().$i18n.t('message.tooManyDeviceScannedAlert')}`, main.getGlobalVue().$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
     return [];
   }
   _.forEach(dbModule.getCache().scanDevicesRssiHistory, (rssiHistory, deviceMac) => {
