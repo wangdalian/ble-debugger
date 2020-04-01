@@ -439,24 +439,24 @@ function createVueMethods(vue) {
         });
       } else if (apiType === libEnum.apiType.NOTIFY) {
         apiResult.sse = apiModule.startNotifyByDevConf(this.store.devConf, (message) => {
-          this.cache.apiDebuggerResult[libEnum.apiType.NOTIFY].resultList.push({time: Date.now(), data: message.data.trim()});
-          setTimeout(() => {
-            if (!apiResult.sse) return;
-            apiResult.sse.close();
-            apiResult.sse = null;
-            notify(`${this.$i18n.t('message.alreadyStopNotify')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
-          }, 0);
+          this.cache.apiDebuggerResult[libEnum.apiType.NOTIFY].resultList.push(`${new Date().toISOString()}: ${message.data}`);
+          if (!apiResult.sse) return;
+          if (apiResult.resultList.length < 5) return;
+          apiResult.resultList = apiResult.resultList.splice(0);
+          apiResult.sse.close();
+          apiResult.sse = null;
+          notify(`${this.$i18n.t('message.alreadyStopNotify')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
         }, err => {
           notify(`${this.$i18n.t('message.openNotifyFail')}`, this.$i18n.t('message.operationFail'), libEnum.messageType.SUCCESS);
-          this.cache.apiDebuggerResult[libEnum.apiType.NOTIFY].resultList.push({time: Date.now(), err: JSON.stringify(err)});
+          this.cache.apiDebuggerResult[libEnum.apiType.NOTIFY].resultList.push(`${new Date().toISOString()}: ${JSON.stringify(err)}`);
         });
         notify(`${this.$i18n.t('message.debuggerNotifyAlert')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
       } else if (apiType === libEnum.apiType.CONNECT_STATUS) {
         apiResult.sse = apiModule.openConnectStatusSseByDevConf(this.store.devConf, (message) => {
-          this.cache.apiDebuggerResult[libEnum.apiType.CONNECT_STATUS].resultList.push({time: Date.now(), data: message.data.trim()});
+          this.cache.apiDebuggerResult[libEnum.apiType.CONNECT_STATUS].resultList.push(`${new Date().toISOString()}: ${message.data}`);
         }, err => {
           notify(`${this.$i18n.t('message.openConnectStatusFail')}`, this.$i18n.t('message.operationFail'), libEnum.messageType.SUCCESS);
-          this.cache.apiDebuggerResult[libEnum.apiType.CONNECT_STATUS].resultList.push({time: Date.now(), err: JSON.stringify(err)});
+          this.cache.apiDebuggerResult[libEnum.apiType.CONNECT_STATUS].resultList.push(`${new Date().toISOString()}: ${JSON.stringify(err)}`);
         });
         notify(`${this.$i18n.t('message.openConnectStatusOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
       } else if (apiType === libEnum.apiType.PAIR) {
