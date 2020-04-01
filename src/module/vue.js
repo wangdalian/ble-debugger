@@ -325,16 +325,16 @@ function createVueMethods(vue) {
       this.cache.apiLogResultList.splice(0);
     },
     scanDisplayResultExport () {
-      this.$refs.refScanDisplayResultGrid.exportData({ type: 'csv' })
+      this.$refs.refScanDisplayResultGrid.exportData({ filename: 'scan', type: 'csv' })
     },
     connectDisplayResultExport () {
-      this.$refs.refConnectDisplayResultGrid.exportData({ type: 'csv' })
+      this.$refs.refConnectDisplayResultGrid.exportData({ filename: 'connect', type: 'csv' })
     },
     notifyDisplayResultExport () {
-      this.$refs.refNotifyDisplayResultGrid.exportData({ type: 'csv' })
+      this.$refs.refNotifyDisplayResultGrid.exportData({ filename: 'notify', type: 'csv' })
     },
     apiLogDisplayResultExport () {
-      this.$refs.refApiLogDisplayResultGrid.exportData({ type: 'csv' })
+      this.$refs.refApiLogDisplayResultGrid.exportData({ filename: 'api_log', type: 'csv' })
     },
     loadNotifyResult() {
       const loadPageSize = 5;
