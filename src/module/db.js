@@ -15,7 +15,7 @@ let storage = {
     baseURI: 'http://192.168.5.100', //
     acDevKey: 'cassia', // 开发者账号
     acDevSecret: 'cassia', // 开发者密码
-    mac: 'CC:1B:E0:E0:DD:70', // 路由器MAC
+    mac: '', // 路由器MAC
     filter_name: [], // 扫描name过滤
     filter_mac: [], // 扫描mac过滤
     filter_rssi: -75,
@@ -126,8 +126,11 @@ let storage = {
 };
 
 let cache = {
-  clientHeight: 0,
-  vxeGridHeight: 0,
+  isGettingAcRouterList: false, // AC动态获取router列表
+  acRouterList: [], // AC动态获取router列表
+
+  clientHeight: 0, // dom高度, 响应动态变化
+  vxeGridHeight: 0, // vxe表格高度, 响应动态变化
   currentConnectedTab: 'connectTab0',
   scanDisplayFilterContent: '',
   connectDisplayFilterContent: '',

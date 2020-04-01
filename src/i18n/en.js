@@ -237,6 +237,8 @@ const en = {
   replayApiOperation: 'replay',
   replayApiOk: 'API replay successful',
   replayApiFail: 'API replay failed',
+
+  getAcRouterListFail: 'Failed to get AC route list',
 };
 
 export default {

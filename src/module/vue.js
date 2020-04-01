@@ -107,6 +107,26 @@ function createRssiChart() {
 
 function createVueMethods(vue) {
   return {
+    getAcRouterList(keyword) {
+      this.cache.isGettingAcRouterList = true;
+      this.cache.acRouterList = [];
+      apiModule.getAccessToken(this.store.devConf.serverURI + '/api', this.store.devConf.acDevKey, this.store.devConf.acDevSecret)
+      .then(data => {
+        return apiModule.getAcRouterList(data.access_token);
+      }).then(data => {
+        if (_.isEmpty(keyword) || !_.isString(keyword)) this.cache.acRouterList = data;
+        else {
+          keyword = keyword.toLowerCase();
+          this.cache.acRouterList = _.filter(data, item => {
+            return item.name.toLowerCase().includes(keyword) || item.mac.toLowerCase().includes(keyword);
+          });
+        }
+      }).catch(ex => {
+        notify(`${this.$i18n.t('message.getAcRouterListFail')} ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
+      }).finally(() => {
+        this.cache.isGettingAcRouterList = false;
+      });
+    },
     replayApi(row) {
       apiModule.replayApi(row.apiContent).then((data) => {
         notify(`${this.$i18n.t('message.replayApiOk')}: ${JSON.stringify(data)}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);

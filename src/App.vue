@@ -48,7 +48,16 @@
                 <el-input v-model="store.devConf.acDevSecret" class="ac-dev-secret" clearable></el-input>
               </el-form-item>
               <el-form-item :label="$t('message.apMac')" v-show="store.devConf.controlStyle === 'ac'"  style="margin-top: 15px;">
-                <el-input v-model="store.devConf.mac" class="ap-mac" placeholder="CC:1B:E0:E0:DD:70" clearable></el-input>
+                <el-select @focus="getAcRouterList" :remote-method="getAcRouterList" :loading="cache.isGettingAcRouterList" v-model="store.devConf.mac" :no-data-text="$t('message.noData')" :no-match-text="$t('message.noMatchData')" :placeholder="$t('message.pleaseInput')" filterable remote style="width: 100%">
+                  <el-option
+                    v-for="item in cache.acRouterList"
+                    :key="item.mac"
+                    :label="item.label"
+                    :value="item.mac">
+                    <span style="float: left; color: #8492a6; font-size: 13px; margin-right: 15px">{{ item.mac }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
+                  </el-option>
+                </el-select>
               </el-form-item>
               <el-row style="font-size: 16px; border-bottom: 1px solid #ddd; margin-top: 50px;">
                 <span>{{$t('message.configScanParams')}}</span>

@@ -629,6 +629,20 @@ function replayApi(apiContent) {
   });
 }
 
+function getAcRouterList(token) {
+  const url = `${dbModule.getDevConf().serverURI}/api/ac/ap?access_token=${token}`;
+  return new Promise((resolve, reject) => {
+    axios.get(url).then(function(response) {
+      logger.info('get ac router list success:', response);
+      resolve(response.data);
+    }).catch(function(error) {
+      let info = error.response ? error.response.data : error;
+      logger.error('get ac router list error:', info);
+      reject(info);
+    });
+  });
+}
+
 export default {
   getAccessToken,
   startScanByDevConf,
@@ -665,4 +679,5 @@ export default {
   getPairInputUrlByDevConf,
   getUnpairUrlByDevConf,
   replayApi,
+  getAcRouterList,
 }

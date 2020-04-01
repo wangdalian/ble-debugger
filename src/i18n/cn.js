@@ -30,7 +30,7 @@ const cn = {
 
   // scan result tab
   scanResult: '扫描结果',
-  devicesCount: '设备数量: ',
+  devicesCount: '设备数量',
   searchMacOrName: '搜索mac或name',
   export: '导出',
   clear: '清空',
@@ -252,6 +252,8 @@ const cn = {
   replayApiOperation: '执行',
   replayApiOk: '执行成功',
   replayApiFail: '执行失败',
+
+  getAcRouterListFail: '获取AC路由列表失败',
 };
 
 export default {
