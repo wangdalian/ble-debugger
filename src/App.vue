@@ -390,6 +390,7 @@
                     </vxe-toolbar>
                     <!-- 注意设置为固定高度，否则页面在过多的数据时候会造成卡顿，TODO: 是否考虑使用分页优化? -->
                     <vxe-grid 
+                      class="apiLog"
                       border="none"
                       stripe
                       :height="cache.vxeGridHeight + 'px'"
@@ -1132,6 +1133,10 @@ code {
 
 .apiHelp a {
   color: #67C23A;
+}
+
+.apiLog a {
+  color: #2897ff;
 }
 
 .el-notification__content {
