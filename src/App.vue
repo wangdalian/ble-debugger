@@ -400,8 +400,12 @@
                       :data="getComputedApiLogDisplayResultList()">
                       <vxe-table-column field="timeStr" :title="$t('message.time')" type="html" width="20%" sortable></vxe-table-column>
                       <vxe-table-column field="apiName" :title="$t('message.apiName')" type="html" width="15%" sortable></vxe-table-column>
-                      <vxe-table-column field="apiContentJson" :title="$t('message.reqContent')" type="html" width="65%" sortable></vxe-table-column>
-                      <!-- TODO: 增加重放功能 -->
+                      <vxe-table-column field="apiContentJson" :title="$t('message.reqContent')" type="html" width="55%" sortable></vxe-table-column>
+                      <vxe-table-column :title="$t('message.operation')" width="10%">
+                        <template v-slot="{ row }">
+                          <vxe-button status="primary" size="small" @click="replayApi(row)">{{$t('message.replayApiOperation')}}</vxe-button>
+                        </template>
+                      </vxe-table-column>
                       <template v-slot:empty>
                         <span>
                           <p>{{$t('message.noData')}}</p>

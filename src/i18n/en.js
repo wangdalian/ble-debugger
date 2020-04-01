@@ -233,6 +233,10 @@ const en = {
   apiWrite: 'Write',
   apiScan: 'Scan',
   apiConnectEvent: 'Connection Event',
+
+  replayApiOperation: 'replay',
+  replayApiOk: 'API replay successful',
+  replayApiFail: 'API replay failed',
 };
 
 export default {

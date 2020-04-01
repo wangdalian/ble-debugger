@@ -604,6 +604,31 @@ function writeByHandleByDevConf(devConf, deviceMac, handle, value, noresponse) {
   return writeByHandle(devConf.baseURI, params, deviceMac, handle, value, noresponse);
 }
 
+function replayApi(apiContent) {
+  const supportedMethod = ['GET', 'POST', 'DELETE'];
+  if (apiContent.method === 'GET/SSE') {
+    return Promise.reject('no support SSE');
+  } else if (!_.includes(supportedMethod, apiContent.method)) {
+    return Promise.reject(`no support method: ${apiContent.method}`);
+  }
+  const instance = axios.create({
+    timeout: config.http.requestTimeout,
+    headers: apiContent.headers,
+  });
+  return new Promise((resolve, reject) => {
+    const action = instance.get;
+    if (apiContent.method === 'POST') action = instance.post;
+    else if (apiContent.method === 'DELETE') action = instance.delete;
+    action(apiContent.url, apiContent.data.body).then(function(response) {
+      logger.info('replay api success:', response, apiContent);
+      resolve(response.data);
+    }).catch(function(error) {
+      logger.error('replay api error:', error);
+      reject(error);
+    });
+  });
+}
+
 export default {
   getAccessToken,
   startScanByDevConf,
@@ -638,5 +663,6 @@ export default {
   getDiscoverUrlByDevConf,
   getPairUrlByDevConf,
   getPairInputUrlByDevConf,
-  getUnpairUrlByDevConf
+  getUnpairUrlByDevConf,
+  replayApi,
 }

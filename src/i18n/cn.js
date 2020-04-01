@@ -248,6 +248,10 @@ const cn = {
   apiWrite: 'Write',
   apiScan: 'Scan',
   apiConnectEvent: 'Connection Event',
+  
+  replayApiOperation: '执行',
+  replayApiOk: '执行成功',
+  replayApiFail: '执行失败',
 };
 
 export default {

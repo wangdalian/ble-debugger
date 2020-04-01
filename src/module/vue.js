@@ -103,6 +103,13 @@ function createRssiChart() {
 
 function createVueMethods(vue) {
   return {
+    replayApi(row) {
+      apiModule.replayApi(row.apiContent).then((data) => {
+        notify(`${this.$i18n.t('message.replayApiOk')}: ${JSON.stringify(data)}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
+      }).catch(ex => {
+        notify(`${this.$i18n.t('message.replayApiFail')} ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
+      });
+    },
     changeLanguage() {
       this.$i18n.locale = this.store.devConfDisplayVars.language;
     },
@@ -111,7 +118,7 @@ function createVueMethods(vue) {
         return notify(this.$i18n.t('message.noSupportByAp'), this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       }
       apiModule.infoByDevConf(this.store.devConf).then(() => {
-        notify(this.$i18n.t('message.getApInfoOk'), this.$i18n.t('message.operationOk'));
+        notify(this.$i18n.t('message.getApInfoOk'), this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
       }).catch(ex => {
         notify(`${this.$i18n.t('message.getApInfoFail')} ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       });
@@ -121,14 +128,14 @@ function createVueMethods(vue) {
         return notify(this.$i18n.t('message.noSupportByAp'), this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       }
       apiModule.rebootByDevConf(this.store.devConf).then(() => {
-        notify(this.$i18n.t('message.rebootApOk'), this.$i18n.t('message.operationOk'));
+        notify(this.$i18n.t('message.rebootApOk'), this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
       }).catch(ex => {
         notify(`${this.$i18n.t('message.rebootApFail')} ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       });
     },
     unpair(deviceMac) {
       apiModule.unpairByDevConf(this.store.devConf, deviceMac).then(() => {
-        notify(`${this.$i18n.t('message.unpairOk')} ${deviceMac}`, this.$i18n.t('message.operationOk'));
+        notify(`${this.$i18n.t('message.unpairOk')} ${deviceMac}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
       }).catch(ex => {
         notify(`${this.$i18n.t('message.unpairFail')} ${deviceMac} ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       });
@@ -137,7 +144,7 @@ function createVueMethods(vue) {
       const deviceMac = this.store.devConfDisplayVars.pairByLegacyOOB.deviceMac;
       const tk = this.store.devConfDisplayVars.pairByLegacyOOB.tk;
       apiModule.pairByLegacyOOBByDevConf(this.store.devConf, deviceMac, tk).then(() => {
-        notify(`${this.$i18n.t('message.pairOk')} ${deviceMac}`, this.$i18n.t('message.operationOk'));
+        notify(`${this.$i18n.t('message.pairOk')} ${deviceMac}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
       }).catch(ex => {
         notify(`${this.$i18n.t('message.pairFail')} ${deviceMac} ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       });
@@ -147,7 +154,7 @@ function createVueMethods(vue) {
       const rand = this.store.devConfDisplayVars.pairBySecurityOOB.rand;
       const confirm = this.store.devConfDisplayVars.pairBySecurityOOB.confirm;
       apiModule.pairBySecurityOOBByDevConf(this.store.devConf, deviceMac, rand, confirm).then(() => {
-        notify(`${this.$i18n.t('message.pairOk')} ${deviceMac}`, this.$i18n.t('message.operationOk'));
+        notify(`${this.$i18n.t('message.pairOk')} ${deviceMac}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
       }).catch(ex => {
         notify(`${this.$i18n.t('message.pairFail')} ${deviceMac} ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       });
@@ -156,7 +163,7 @@ function createVueMethods(vue) {
       const deviceMac = this.store.devConfDisplayVars.pairByPasskey.deviceMac;
       const passkey = this.store.devConfDisplayVars.pairByPasskey.passkey;
       apiModule.pairByPasskeyByDevConf(this.store.devConf, deviceMac, passkey).then(() => {
-        notify(`${this.$i18n.t('message.pairOk')} ${deviceMac}`, this.$i18n.t('message.operationOk'));
+        notify(`${this.$i18n.t('message.pairOk')} ${deviceMac}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
       }).catch(ex => {
         notify(`${this.$i18n.t('message.pairFail')} ${deviceMac} ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
       });
@@ -164,7 +171,7 @@ function createVueMethods(vue) {
     pair(deviceMac) {
       apiModule.pairByDevConf(this.store.devConf, deviceMac).then((x) => {
         if (x.pairingStatusCode === libEnum.pairingStatusCode.SUCCESS) {
-          return notify(`${this.$i18n.t('message.pairOk')} ${deviceMac}`, this.$i18n.t('message.operationOk'));
+          return notify(`${this.$i18n.t('message.pairOk')} ${deviceMac}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
         } 
         if (x.pairingStatusCode === libEnum.pairingStatusCode.FAILED) {
           return notify(`${this.$i18n.t('message.pairFail')} ${deviceMac}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
@@ -189,7 +196,7 @@ function createVueMethods(vue) {
         }
         if (x.pairingStatusCode === libEnum.pairingStatusCode.NUM_CMP_EXPECTED) {
           apiModule.pairByNumbericComparisonByDevConf(this.store.devConf, deviceMac).then(() => {
-            notify(`${this.$i18n.t('message.pairOk')} ${deviceMac}`, this.$i18n.t('message.operationOk'));
+            notify(`${this.$i18n.t('message.pairOk')} ${deviceMac}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
           }).catch(ex => {
             notify(`${this.$i18n.t('message.pairFail')} ${deviceMac} ${ex}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);
           });
