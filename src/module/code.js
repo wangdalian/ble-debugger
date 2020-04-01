@@ -196,7 +196,7 @@ function _genScanCodeCurl(apiParams) {
 
 function _genDiscoverCodeNodeJS(apiParams) {
   const devConf = dbModule.getDevConf();
-  let url = apiModule.getConnectUrlByDevConf(devConf, apiParams.deviceMac);
+  let url = apiModule.getDiscoverUrlByDevConf(devConf, apiParams.deviceMac);
   return `
   var request = require('request');
   var options = {
