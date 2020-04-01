@@ -65,7 +65,6 @@ let storage = {
     apiScanFilterMacsInputValue: '',
     isScanning: false,
     isNotifyOn: false,
-    isApiScanResultDisplayOn: true,
     isApiScanning: false,
     apiOutputDisplayCount: 20,
     activeMenuItem: 'scanListMenuItem',

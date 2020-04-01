@@ -377,16 +377,14 @@ function createVueMethods(vue) {
       const apiResult = this.cache.apiDebuggerResult[apiType];
       if (apiType === libEnum.apiType.SCAN) {
         apiResult.sse = apiModule.startScanByUserParams(this.store.devConf, apiParams.chip, apiParams.filter_mac, apiParams.filter_name, apiParams.filter_rssi, (message) => {
-          if (this.store.devConfDisplayVars.isApiScanResultDisplayOn) { // 追加到api扫描调试结果里面
-            apiResult.resultList.push({time: Date.now(), data: message.data.trim()});
-            setTimeout(() => {
-              if (!apiResult.sse) return;
-              apiResult.sse.close();
-              apiResult.sse = null;
-              this.store.devConfDisplayVars.isApiScanning = false;
-              notify(`${this.$i18n.t('message.alreadyStopScan')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
-            }, 0);
-          }
+          apiResult.resultList.push(`${new Date().toISOString()}: ${message.data}`);
+          if (apiResult.resultList.length < 5) return;
+          apiResult.resultList = apiResult.resultList.splice(0);
+          if (!apiResult.sse) return;
+          apiResult.sse.close();
+          apiResult.sse = null;
+          this.store.devConfDisplayVars.isApiScanning = false;
+          notify(`${this.$i18n.t('message.alreadyStopScan')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
         });
         this.store.devConfDisplayVars.isApiScanning = true;
         this.store.devConfDisplayVars.activeApiOutputTabName = 'output'; // 切换到调试结果页面
@@ -441,15 +439,13 @@ function createVueMethods(vue) {
         });
       } else if (apiType === libEnum.apiType.NOTIFY) {
         apiResult.sse = apiModule.startNotifyByDevConf(this.store.devConf, (message) => {
-          if (this.store.devConfDisplayVars.isApiScanResultDisplayOn) { // 追加到api扫描调试结果里面
-            this.cache.apiDebuggerResult[libEnum.apiType.NOTIFY].resultList.push({time: Date.now(), data: message.data.trim()});
-            setTimeout(() => {
-              if (!apiResult.sse) return;
-              apiResult.sse.close();
-              apiResult.sse = null;
-              notify(`${this.$i18n.t('message.alreadyStopNotify')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
-            }, 0);
-          }
+          this.cache.apiDebuggerResult[libEnum.apiType.NOTIFY].resultList.push({time: Date.now(), data: message.data.trim()});
+          setTimeout(() => {
+            if (!apiResult.sse) return;
+            apiResult.sse.close();
+            apiResult.sse = null;
+            notify(`${this.$i18n.t('message.alreadyStopNotify')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
+          }, 0);
         }, err => {
           notify(`${this.$i18n.t('message.openNotifyFail')}`, this.$i18n.t('message.operationFail'), libEnum.messageType.SUCCESS);
           this.cache.apiDebuggerResult[libEnum.apiType.NOTIFY].resultList.push({time: Date.now(), err: JSON.stringify(err)});
@@ -457,9 +453,7 @@ function createVueMethods(vue) {
         notify(`${this.$i18n.t('message.debuggerNotifyAlert')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
       } else if (apiType === libEnum.apiType.CONNECT_STATUS) {
         apiResult.sse = apiModule.openConnectStatusSseByDevConf(this.store.devConf, (message) => {
-          if (this.store.devConfDisplayVars.isApiScanResultDisplayOn) { // 追加到api扫描调试结果里面
-            this.cache.apiDebuggerResult[libEnum.apiType.CONNECT_STATUS].resultList.push({time: Date.now(), data: message.data.trim()});
-          }
+          this.cache.apiDebuggerResult[libEnum.apiType.CONNECT_STATUS].resultList.push({time: Date.now(), data: message.data.trim()});
         }, err => {
           notify(`${this.$i18n.t('message.openConnectStatusFail')}`, this.$i18n.t('message.operationFail'), libEnum.messageType.SUCCESS);
           this.cache.apiDebuggerResult[libEnum.apiType.CONNECT_STATUS].resultList.push({time: Date.now(), err: JSON.stringify(err)});
@@ -508,14 +502,6 @@ function createVueMethods(vue) {
           apiResult.resultList.push(`${new Date().toISOString()}: ${this.$i18n.t('message.unpairFail')}, ${JSON.stringify({ex})}`);
         });
       }
-    },
-    openApiOutputDisplay() {
-      this.store.devConfDisplayVars.isApiScanResultDisplayOn = true;
-      notify(`${this.$i18n.t('message.openApiResultOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
-    },
-    closeApiOutputDisplay() {
-      this.store.devConfDisplayVars.isApiScanResultDisplayOn = false;
-      notify(`${this.$i18n.t('message.closeApiResultOk')}`, this.$i18n.t('message.operationOk'), libEnum.messageType.SUCCESS);
     },
     exportApiOutputDisplay() {
       notify(`${this.$i18n.t('message.functionToBeAdd')}`, this.$i18n.t('message.operationFail'), libEnum.messageType.ERROR);

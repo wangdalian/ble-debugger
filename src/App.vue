@@ -740,10 +740,7 @@
                     <el-button size="small" type="danger" @click="clearApiOutputDisplay">清空</el-button>
                   </el-button-group>
                   -->
-                  <highlight-code lang="javascript" v-if="store.devConfDisplayVars.activeApiTabName === 'scan' && cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].displayResultList.length > 0" v-infinite-scroll="loadApiDebuggerResult" infinite-scroll-distance="200px" :infinite-scroll-disabled="cache.isApiDebuggerLoading">
-                    {{ cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].displayResultList.join('\n') }}
-                  </highlight-code>
-                  <highlight-code lang="javascript" v-if="store.devConfDisplayVars.activeApiTabName !== 'scan' && cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].resultList.length > 0">
+                  <highlight-code lang="javascript" v-if="cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].resultList.length > 0">
                     {{ cache.apiDebuggerResult[store.devConfDisplayVars.activeApiTabName].resultList.join('\n') }}
                   </highlight-code>
                 </el-tab-pane>
