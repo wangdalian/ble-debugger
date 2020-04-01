@@ -484,12 +484,14 @@ function addApiLogItem(apiName, method, url, query = {}, body = {}, params = {},
   if (!_.isEmpty(query)) apiContent.data.query = query;
   if (!_.isEmpty(body)) apiContent.data.body = body;
   if (!_.isEmpty(params)) apiContent.data.params = params;
+  const apiContentJson = _.cloneDeep(apiContent);
+  apiContentJson.url = `<a href=${apiContentJson.url} target='_blank'>${apiContentJson.url}</a>`;
   dbModule.cache.apiLogResultList.push({
     timestamp: now,
     timeStr: new Date(now).toISOString(),
     apiName,
     apiContent: apiContent,
-    apiContentJson: JSON.stringify(apiContent)
+    apiContentJson: JSON.stringify(apiContentJson)
   });
 }
 
