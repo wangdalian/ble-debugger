@@ -363,7 +363,7 @@ function _genWriteCodeNodeJS(apiParams) {
 
 function _genReadCodeNodeJS(apiParams) {
   const devConf = dbModule.getDevConf();
-  let url = apiModule.getConnectUrlByDevConf(devConf, apiParams.deviceMac);
+  let url = apiModule.getReadUrlByDevConf(devConf, apiParams.deviceMac);
   return `
   var request = require('request');
   var options = {
