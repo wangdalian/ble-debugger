@@ -28,7 +28,7 @@
           z-index: 3;" v-show="this.store.devConfDisplayVars.isConfigMenuItemOpen">
           <el-container style="height: 100%; width: 100%;">
             <el-main>
-              <el-form label-width="85px" size="small">
+              <el-form label-width="85px" size="small" :model="store.devConf" :rules="cache.devConfRules">
               <el-row style="font-size: 16px; border-bottom: 1px solid #ddd; margin-top: 10px;">
                 <span>{{ $t('message.configConnectParams') }}</span>
               </el-row>
@@ -38,7 +38,7 @@
                   <el-option label="AC" value="ac"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item :label="$t('message.serviceURI')" style="margin-top: 15px;">
+              <el-form-item :label="$t('message.serviceURI')" prop="serverURI" style="margin-top: 15px;">
                 <el-input v-model="store.devConf.serverURI" class="server-ip" clearable placeholder="http://192.168.0.100"></el-input>
               </el-form-item>
               <el-form-item :label="$t('message.devKey')" v-show="store.devConf.controlStyle === 'ac'"  style="margin-top: 15px;">

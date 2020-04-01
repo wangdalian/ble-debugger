@@ -125,7 +125,16 @@ let storage = {
   }
 };
 
-let cache = {
+let cache = { 
+  devConfRules: {
+    'serverURI': [
+      { validator: function(rule, value, callback) {
+        if(!/(http|https):\/\/.*[^/^api]$/.test(value)) callback('Eg: http://192.168.5.100');
+        else callback();
+      }, trigger: 'change' }
+    ],
+  }, // devConf检查规则
+
   isGettingAcRouterList: false, // AC动态获取router列表
   acRouterList: [], // AC动态获取router列表
 
