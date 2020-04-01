@@ -988,6 +988,12 @@ function createVue() {
     watch: createWatch(),
     mounted: function() {
       this.store.devConfDisplayVars.language = this.$i18n.locale;
+      this.cache.clientHeight = document.documentElement.clientHeight;
+      this.cache.vxeGridHeight = this.cache.clientHeight - 240;
+      window.onresize = () => {
+        this.cache.clientHeight = `${document.documentElement.clientHeight}`;
+        this.cache.vxeGridHeight = this.cache.clientHeight - 240;
+      };
     }
   };
 }

@@ -152,7 +152,7 @@
                     stripe
                     highlight-hover-row
                     :header-row-style="{'background-color': '#f4f5f6'}"
-                    height="560px"
+                    :height="cache.vxeGridHeight + 'px'"
                     ref="refScanDisplayResultGrid"
                     :sort-config="{trigger: 'cell'}"
                     :data="getComputedScanDisplayResultList">
@@ -202,7 +202,7 @@
                       </el-form-item>
                     </el-form>
                   </el-row>
-                  <v-chart :options="chartOptions" ref="rssiChart" :autoresize="true" style="width: 100%; height: 500px; "></v-chart>
+                  <v-chart :options="chartOptions" ref="rssiChart" :autoresize="true" :style="{width: '100%', height: cache.vxeGridHeight + 'px'}"></v-chart>
                 </el-tab-pane>
               </el-tabs>
               <el-tabs @tab-click="connectTabsClick" v-model="cache.currentConnectedTab" @tab-remove="connectedListTabRemove" v-show="store.devConfDisplayVars.activeMenuItem === 'connectListMenuItem'">
@@ -223,7 +223,7 @@
                     show-overflow
                     stripe
                     highlight-hover-row
-                    height="560px"
+                    :height="cache.vxeGridHeight + 'px'"
                     :header-row-style="{'background-color': '#f4f5f6'}"
                     ref="refConnectDisplayResultGrid"
                     :sort-config="{trigger: 'cell'}"
@@ -357,7 +357,7 @@
                       border="none"
                       show-overflow
                       stripe
-                      height="560px"
+                      :height="cache.vxeGridHeight + 'px'"
                       highlight-hover-row
                       :header-row-style="{'background-color': '#f4f5f6'}"
                       ref="refNotifyDisplayResultGrid"
@@ -392,7 +392,7 @@
                     <vxe-grid 
                       border="none"
                       stripe
-                      height="560px"
+                      :height="cache.vxeGridHeight + 'px'"
                       highlight-hover-row
                       :header-row-style="{'background-color': '#f4f5f6'}"
                       ref="refApiLogDisplayResultGrid"

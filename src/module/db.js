@@ -127,6 +127,8 @@ let storage = {
 };
 
 let cache = {
+  clientHeight: 0,
+  vxeGridHeight: 0,
   currentConnectedTab: 'connectTab0',
   scanDisplayFilterContent: '',
   connectDisplayFilterContent: '',
