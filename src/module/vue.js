@@ -74,6 +74,8 @@ function createRssiChart() {
     // },
     xAxis: {
         type: 'category',
+        name: 'Time Span',
+        nameLocation: 'middle',
         data: xAxisData,
         // showSymbol: true,
         // axisPointer: {
@@ -92,6 +94,8 @@ function createRssiChart() {
     },
     yAxis: {
         type: 'value',
+        name: 'RSSI',
+        nameLocation: 'start',
         min: -100,
         max: -10,
         splitNumber: 10, // 每10dbm1个间隔
