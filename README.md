@@ -1,6 +1,6 @@
 # debugger-vue
 
-## 黑色主题，蓝色主题在bluetooth.tech/debugger2
+## 黑色主题，蓝色主题在bluetooth.tech/debugger2, 使用vue-cli3进行开发
 
 ## Project setup
 ```
