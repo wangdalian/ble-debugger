@@ -1,5 +1,7 @@
 # debugger-vue
 
+## 黑色主题，蓝色主题在bluetooth.tech/debugger2
+
 ## Project setup
 ```
 yarn install
